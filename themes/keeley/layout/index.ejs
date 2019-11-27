@@ -3,7 +3,7 @@
 		<% site.posts.forEach(function(post){ %>
 			<li class="article-li">
 				<span class="article-date"><%- date(post.date, "YYYY / MM / DD") %></span>
-				<a class="article-title" href="<%- config.root %><%- post.path %>"><%- post.slug.split("/")[post.slug.split("/").length-1] %></a>
+				<a class="article-title" href="<%- config.root %><%- post.path %>"><%- post.title %></a>
 			</li>
 		<% }); %>
 	</ul>
