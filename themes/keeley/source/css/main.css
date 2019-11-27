@@ -107,3 +107,6 @@ header .link:not(:first-child){
 #post-tags {
 	margin-left: 20px;
 }
+.seq20 {
+    height: 20px;
+}
