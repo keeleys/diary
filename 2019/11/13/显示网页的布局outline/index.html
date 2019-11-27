@@ -5,6 +5,8 @@
 	<meta charset="utf-8">
 	<!-- 引入配置文件 -->
 	<link rel="stylesheet" href="/diary/css/main.css">
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
 </head>
 <body>
 	<div id="main">
@@ -33,13 +35,21 @@
 		</header>
 		<!-- 引入正文 -->
 		<div id="content">
-			<div>
-	<span id="post-author">keeley</span>
-	<span id="post-date">2019-11-13 10:02:53</span>
+			<div id="post-header">
+	<h1 id="post-author">显示网页的布局outline</h1>
+	<div id="post-detail">
+		<span id="post-date">13 / 11 / 2019</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">css</span>
+			
+		</span>
+	</div>
 </div>
 
 <div id="article">
-	<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[].forEach.call($$(<span class="string">"*"</span>),<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123; a.style.outline=<span class="string">"1px solid #"</span>+(~~(<span class="built_in">Math</span>.random()*(<span class="number">1</span>&lt;&lt;<span class="number">24</span>))).toString(<span class="number">16</span>)&#125;)</span><br></pre></td></tr></table></figure>
+	<pre><code class="js">[].forEach.call($$(&quot;*&quot;),function(a){ a.style.outline=&quot;1px solid #&quot;+(~~(Math.random()*(1&lt;&lt;24))).toString(16)})</code></pre>
+
 </div>
 
 		</div>
@@ -47,5 +57,7 @@
 	</div>
 	<!-- 引入 js 文件 -->
 	<script src="/diary/js/main.js"></script>
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

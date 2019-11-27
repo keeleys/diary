@@ -90,3 +90,31 @@ header .link:not(:first-child){
     	font-size: 12px;
 	}
 }
+
+/* post */
+
+#post-header {
+	padding: 30px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px dashed #eee;
+}
+#post-author {
+	margin: 0;
+    font-size: 32px;
+    font-weight: lighter;
+}
+#post-detail {
+	margin-top: 20px;
+    color: hsla(0,0%,40%,.6);
+    font-size: 14px;
+    overflow: hidden;
+}
+#post-date {
+	margin-top: 20px;
+    color: hsla(0,0%,40%,.6);
+    font-size: 14px;
+    overflow: hidden;
+}
+#post-tags {
+	margin-left: 20px;
+}
