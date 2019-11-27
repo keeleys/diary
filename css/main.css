@@ -1,0 +1,92 @@
+/* #################### 全局 #################### */
+html, body{
+	color: #666;
+	height: 100%;
+}
+body {
+	font-family: Segoe UI,Consolas,monospace,Microsoft YaHei;
+	font-weight: lighter;
+}
+#main {
+	margin: 0 auto;
+    padding: 0 20px;
+    max-width: 600px;
+}
+a {
+	text-decoration: none;
+    color: inherit;
+    transition: color .3s;
+}
+a:hover{color:#cd3f45}
+
+/* header */
+header {
+	text-align: center;
+}
+header > .title{
+	font-size: 20px;
+}
+header > .links{
+	padding: 0;
+    text-align: center;
+    overflow: hidden;
+}
+header .link {
+	list-style: none;
+    display: inline-block;
+}
+
+header .link:not(:first-child){
+	margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid #eee;
+}
+
+
+
+/* list */
+#articleList {
+	margin-top: 50px;
+}
+#articleList > ul {
+	display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+#articleList > ul > li{
+	position: relative;
+    padding-left: 140px;
+    line-height: 80px;
+    list-style: none;
+    border-top: 1px dashed #eee;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#articleList > ul > li > span{
+	position: absolute;
+    left: 0;
+    font-size: 14px;
+    color: hsla(0,0%,40%,.6);
+}
+#articleList > ul > li > a{
+	margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+    word-break: keep-all;
+    white-space: nowrap;
+}
+
+
+@media (max-width: 767px) {
+	#articleList > ul > li{
+		padding-left: 120px;
+    	line-height: 60px;
+	}
+	#articleList > ul > li > span{
+    	font-size: 12px;
+	}
+}
