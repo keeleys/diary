@@ -1,0 +1,11 @@
+<div class="title">
+    <a href="<%- config.root %>"><%- config.title %></a>
+</div>
+<ul class="links">
+    <%# 外部链接打开新的窗口跳转 %>
+    <% for ( link in theme.links ) { %>
+    <li class="link">
+        <a href="<%- theme.links[link] %>" target="_blank"><%- link %></a>
+    </li>
+    <% } %>
+</ul>
