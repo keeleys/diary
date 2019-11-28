@@ -50,7 +50,6 @@ header {
     ul > li{
         position: relative;
         padding-left: 140px;
-        line-height: 80px;
         list-style: none;
         border-top: 1px dashed #eee;
         overflow: hidden;
@@ -61,12 +60,16 @@ header {
             top: 0;
             bottom: 0;
             font-size: 14px;
+            height: 20px;
+            line-height: 20px;
+            margin: auto;
             color: hsla(0,0%,40%,.6);
         }
         > a{
             margin: 0;
             font-size: 16px;
             font-weight: 400;
+            line-height: 80px;
             word-break: keep-all;
             white-space: nowrap;
         }
