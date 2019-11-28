@@ -2,6 +2,8 @@
 html, body{
 	color: #666;
 	height: 100%;
+    padding: 0px;
+    margin: 0px;
 }
 body {
 	font-family: Segoe UI,Consolas,monospace,Microsoft YaHei;
@@ -47,22 +49,23 @@ header {
     padding: 0 20px;
     max-width: 600px;
 	margin-top: 50px;
-    ul > li{
-        list-style: none;
-        border-top: 1px dashed #eee;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 80px;
-        white-space: nowrap;
-        word-break: keep-all;
-        > span{
-            font-size: 14px;
-            color: hsla(0,0%,40%,.6);
-        }
-        > a{
-            margin: 0;
-            font-size: 16px;
-            font-weight: 400;
+    ul{
+        padding: 0px;
+        > li{
+            list-style: none;
+            border-top: 1px dashed #eee;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 80px;
+            white-space: nowrap;
+            word-break: keep-all;
+            > span{
+                font-size: 14px;
+                color: hsla(0,0%,40%,.6);
+            }
+            .article-title {
+                font-weight: 400;
+            }
         }
     }
 }
