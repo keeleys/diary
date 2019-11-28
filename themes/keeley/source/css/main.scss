@@ -10,7 +10,7 @@ body {
 a {
 	text-decoration: none;
     color: inherit;
-    transition: color .3s;
+    transition: all .3s ease;
     &:hover{
         color:#cd3f45;
     }
@@ -48,30 +48,21 @@ header {
     max-width: 600px;
 	margin-top: 50px;
     ul > li{
-        position: relative;
-        padding-left: 140px;
         list-style: none;
         border-top: 1px dashed #eee;
         overflow: hidden;
         text-overflow: ellipsis;
+        line-height: 80px;
+        white-space: nowrap;
+        word-break: keep-all;
         > span{
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
             font-size: 14px;
-            height: 20px;
-            line-height: 20px;
-            margin: auto;
             color: hsla(0,0%,40%,.6);
         }
         > a{
             margin: 0;
             font-size: 16px;
             font-weight: 400;
-            line-height: 80px;
-            word-break: keep-all;
-            white-space: nowrap;
         }
     }
 }
@@ -79,7 +70,6 @@ header {
 
 @media (max-width: 767px) {
 	#articleList > ul > li{
-		padding-left: 120px;
         line-height: 60px;
         > span{
     	    font-size: 12px;
@@ -90,11 +80,9 @@ header {
 /* post */
 
 #post-header {
-    padding: 0 20px;
     max-width: 1000px;
-	margin: 0 auto;
-	padding: 30px 0;
-    margin-bottom: 30px;
+	margin: 0 auto 10px auto;
+	padding: 30px 0px;
     border-bottom: 1px dashed #eee;
 }
 #post-author {
@@ -121,8 +109,9 @@ header {
     height: 20px;
 }
 #article {
-    padding: 20px;
+    padding: 10px 20px;
     max-width: 1000px;
+    box-sizing: border-box;
 	margin: 0 auto;
     @import "solarized";
 }
