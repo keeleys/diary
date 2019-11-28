@@ -11,8 +11,10 @@ a {
 	text-decoration: none;
     color: inherit;
     transition: color .3s;
+    &:hover{
+        color:#cd3f45;
+    }
 }
-a:hover{color:#cd3f45}
 
 /* header */
 header {
@@ -21,7 +23,7 @@ header {
     padding: 0 20px;
     max-width: 800px;
     > .title{
-        font-size: 20px;
+        font-size: 32px;
     }
     > .links{
         padding: 0;
@@ -43,7 +45,7 @@ header {
 #articleList {
     margin: 0 auto;
     padding: 0 20px;
-    max-width: 800px;
+    max-width: 600px;
 	margin-top: 50px;
     ul > li{
         position: relative;
@@ -53,9 +55,11 @@ header {
         border-top: 1px dashed #eee;
         overflow: hidden;
         text-overflow: ellipsis;
-         > span{
+        > span{
             position: absolute;
             left: 0;
+            top: 0;
+            bottom: 0;
             font-size: 14px;
             color: hsla(0,0%,40%,.6);
         }
