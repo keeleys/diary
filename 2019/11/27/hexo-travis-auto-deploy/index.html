@@ -55,7 +55,7 @@
 <li>去<a href="https://github.com/settings/installations" target="_blank" rel="noopener">Applications settings</a>设置下授权自动构建的仓库，这里可以选前面步骤1的项目。</li>
 <li>生成一个<a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github的token</a>,复制好生成的token字符串哦。、</li>
 <li>然后回到你的<a href="https://travis-ci.com/" target="_blank" rel="noopener">Travis CI</a>网站,在<code>My Repositories</code>里面找到你授权的项目，点击进入项目详情，然后在右边的<code>more action</code>里面选择<code>setting</code>,在页面中间部分的<code>Environment Variables</code>里面添加一个环境变量<code>GH_TOKEN</code>,值就是你前面github生成的 <code>token</code>，然后点击add添加成功。</li>
-<li>前面几步就弄完了项目关联了，现在我们在hexo的源代码根目录添加<code>.travis.yml</code>文件，配置下让travis知道我们提交代码之后触发什么命令,内容如下，这段配置的含义就是让关联的仓库的master分支提交代码之后，执行下指定script，然后将<code>local-dir</code>目录推到<code>gh-pages</code>分支<pre><code class="yml">sudo: false
+<li>前面几步就弄完了项目关联了，现在我们在hexo的源代码根目录添加<code>.travis.yml</code>文件，配置下让travis知道我们提交代码之后触发什么命令。内容如下，这段配置的含义就是让关联的仓库的master分支提交代码之后，执行下指定script，然后将<code>local-dir</code>目录推到<code>gh-pages</code>分支<pre><code class="yml">sudo: false
 language: node_js
 node_js:
 - 10 # use nodejs v10 LTS
@@ -74,6 +74,7 @@ on:
  branch: master
 local-dir: public</code></pre>
 </li>
+<li>现在将你加好配置的hexo源代码推送到github的master分支，travis就会自动给你构建好代码推送到<code>gh-pages</code>分支了。</li>
 </ol>
 
 </div>
