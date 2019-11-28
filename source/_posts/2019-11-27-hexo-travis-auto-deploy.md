@@ -7,6 +7,7 @@ tags: github
 ## 前言
 hexo是个本地构建md生成静态页面的工具，今天我讲下搭配自动部署的方法。   
 我感觉这个travis还是不错的，相较于jenkins需要自己搭建服务，还需要公网接受hook，这个完全免费，配置也简单
+ps:(travis有两个域名，记得用 https://travis-ci.com/ 这个域名)
 
 ## 步骤
 1. github建立一个项目，关联你的hexo源代码，先不用提交代码
