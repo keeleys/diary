@@ -12,9 +12,8 @@ a {
   text-decoration: none;
   color: inherit;
   transition: color .3s; }
-
-a:hover {
-  color: #cd3f45; }
+  a:hover {
+    color: #cd3f45; }
 
 /* header */
 header {
@@ -23,7 +22,7 @@ header {
   padding: 0 20px;
   max-width: 800px; }
   header > .title {
-    font-size: 20px; }
+    font-size: 32px; }
   header > .links {
     padding: 0;
     text-align: center;
@@ -40,7 +39,7 @@ header {
 #articleList {
   margin: 0 auto;
   padding: 0 20px;
-  max-width: 800px;
+  max-width: 600px;
   margin-top: 50px; }
   #articleList ul > li {
     position: relative;
@@ -53,6 +52,8 @@ header {
     #articleList ul > li > span {
       position: absolute;
       left: 0;
+      top: 0;
+      bottom: 0;
       font-size: 14px;
       color: rgba(102, 102, 102, 0.6); }
     #articleList ul > li > a {
