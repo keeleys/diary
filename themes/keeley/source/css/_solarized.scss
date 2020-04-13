@@ -8,45 +8,15 @@
     --item-hover-text-color: #93a1a1;
 }
 
-@include-when-export url(http://fonts.googleapis.com/css?family=Roboto+Mono:400italic,700italic,700,400&subset=latin,latin-ext);
-
-@font-face {
-    font-family: 'Mononoki';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Mononoki Regular'), url('./solarized/mononoki-regular.woff') format('woff')
-}
-
-@font-face {
-    font-family: 'Mononoki';
-    font-style: italic;
-    font-weight: normal;
-    src: local('Mononoki Italic'), url('./solarized/mononoki-italic.woff') format('woff')
-}
-
-@font-face {
-    font-family: 'Mononoki';
-    font-style: normal;
-    font-weight: bold;
-    src: local('Mononoki Bold'), url('./solarized/mononoki-bold.woff') format('woff')
-}
-
-@font-face {
-    font-family: 'Mononoki';
-    font-style: italic;
-    font-weight: bold;
-    src: local('Mononoki Bold Italic'), url('./solarized/mononoki-bolditalic.woff') format('woff')
-}
-
 & {
     font-size: 16px;
 }
 
 & {
     font-family: Consolas, Mononoki, "Roboto Sans", "Liberation Mono", monospace;
-    color: #586e75;
+    color: #666;
     line-height: 1.6;
-    background-color: #fdf6e3;
+    background-color: #fafafa;
 }
 
 #write {
@@ -137,34 +107,40 @@ h6 code {
 
 h1 {
     padding-bottom: .3em;
-    font-size: 2.25em;
+    font-size: 2.45em;
     line-height: 1.2;
     border-bottom: 1px solid #eee8d5;
+    font-weight: bold;
 }
 
 h2 {
     padding-bottom: .3em;
-    font-size: 1.75em;
+    font-size: 2em;
     line-height: 1.225;
     border-bottom: 1px solid #eee8d5;
+    font-weight: bold;
 }
 
 h3 {
-    font-size: 1.5em;
+    font-size: 1.75em;
     line-height: 1.43;
+    font-weight: bold;
 }
 
 h4 {
-    font-size: 1.25em;
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
 h5 {
-    font-size: 1em;
+    font-size: 1.25em;
+    font-weight: bold;
 }
 
 h6 {
     font-size: 1em;
     color: #777;
+    font-weight: bold;
 }
 
 p,
@@ -313,7 +289,7 @@ table tr td:last-child {
 .md-fences,
 code,
 tt {
-    background-color: #eee8d5;
+    background-color: #ddd;
     color: #cb4b16;
     border-radius: 3px;
     padding: 0;
@@ -458,4 +434,24 @@ footer {
 
 .mac-seamless-mode #typora-sidebar {
     background-color: var(--side-bar-bg-color);
+}
+
+code {
+    color: #cccccc;
+    background-color: #2d2c2c;
+    > .hljs-keyword {
+        color: #c58c75;
+    }
+    > .hljs-comment {
+        color:#4e844e
+    }
+}
+.hljs-title {
+    color: #a5a758;
+}
+.hljs-number {
+    color: #689dca;
+}
+.hljs-string {
+    color: #646934;
 }

@@ -1,7 +1,7 @@
 <div id="post-header">
 	<h1 id="post-author"><%- page.title %></h1>
 	<div id="post-detail">
-		<span id="post-date"><%- date(page.date, "DD / MM / YYYY") %></span>
+		<span id="post-date"><%- date(page.date, "YYYY / MM / DD") %></span>
 		<span id="post-tags">
 			<% page.tags.forEach(function(tag){ %>
 				<span id="post-tag"><%- tag.name %></span>
