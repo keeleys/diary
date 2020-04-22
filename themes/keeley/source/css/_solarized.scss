@@ -39,7 +39,10 @@
 & > *:last-child {
     margin-bottom: 0 !important;
 }
-
+& > ul {
+    border: 1px solid;
+    padding: 10px 30px;
+}
 a {
     color: #268bd2;
 }
@@ -245,12 +248,15 @@ blockquote blockquote {
 table {
     padding: 0;
     word-break: initial;
+    border-collapse: collapse;
+    border: 2px solid;
 }
 
 table tr {
-    border-top: 1px solid #cccccc;
+    border-top: 2px solid ;
     margin: 0;
     padding: 0;
+    border: 2px solid;
 }
 
 table tr:nth-child(2n) {
@@ -259,17 +265,17 @@ table tr:nth-child(2n) {
 
 table tr th {
     font-weight: bold;
-    border: 1px solid #cccccc;
+    border: 2px solid;
     text-align: left;
     margin: 0;
     padding: 6px 13px;
 }
 
 table tr td {
-    border: 1px solid #cccccc;
     text-align: left;
     margin: 0;
     padding: 6px 13px;
+    border: 2px solid;
 }
 
 table tr th:first-child,
