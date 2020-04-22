@@ -65,29 +65,29 @@
 <td><code>1&amp;3=1</code>，即0001&amp;0011 =0001</td>
 </tr>
 <tr>
-<td>`按位或</td>
-<td>`</td>
+<td><code>按位或&#124;</code></td>
 <td>如果相对应位都是0，则结果为0，否则为1</td>
+<td><code>1&#124;3=3</code>，即0001&#124;0011 =0011</td>
 </tr>
 <tr>
-<td>按位异或^</td>
+<td>按位异或<code>^</code></td>
 <td>相对应位一个0，一个1，则结果1，否则0</td>
 <td><code>1^3=2</code>，即0001^0011=0010</td>
 </tr>
 <tr>
-<td>按位取反~</td>
+<td>按位取反<code>~</code></td>
 <td>按位取反运算符翻转操作数的每一位，即0变成1，1变成0</td>
 <td></td>
 </tr>
 <tr>
-<td>左移 &lt;&lt;</td>
+<td>左移 <code>&lt;&lt;</code></td>
 <td>按位左移运算符。左操作数按位左移右操作数指定的位数</td>
-<td>1 &lt;&lt; 2 = 4，即100</td>
+<td>1 &lt;&lt; 2 = 4，即0100</td>
 </tr>
 <tr>
-<td>右移 &gt;&gt;</td>
+<td>右移 <code>&gt;&gt;</code></td>
 <td>按位右移运算符。左操作数按位右移右操作数指定的位数</td>
-<td>4 &gt;&gt; 2 = 1，即001</td>
+<td>4 &gt;&gt; 2 = 1，0100 &gt;&gt; 2 = 0001</td>
 </tr>
 </tbody></table>
 <h2 id="具体例子"><a href="#具体例子" class="headerlink" title="具体例子"></a>具体例子</h2><h3 id="按位存储不同的数值"><a href="#按位存储不同的数值" class="headerlink" title="按位存储不同的数值"></a>按位存储不同的数值</h3><p>看一段线程池原码，我们通过注解来分析</p>
