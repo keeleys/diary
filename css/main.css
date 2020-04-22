@@ -72,7 +72,7 @@ header {
 
 /* post */
 #post-header {
-  max-width: 900px;
+  max-width: 1080px;
   margin: 0 auto 10px auto;
   padding: 30px 10px;
   box-sizing: border-box;
@@ -106,7 +106,7 @@ header {
 #article {
   outline: #6f5e5e 2px solid;
   padding: 10px 20px;
-  max-width: 900px;
+  max-width: 1080px;
   box-sizing: border-box;
   margin: 0 auto;
   /** focus mode */ }
@@ -138,6 +138,9 @@ header {
     margin-top: 0 !important; }
   #article > *:last-child {
     margin-bottom: 0 !important; }
+  #article > ul {
+    border: 1px solid;
+    padding: 10px 30px; }
   #article a {
     color: #268bd2; }
   #article a:hover {
@@ -277,24 +280,27 @@ header {
     padding-right: 0; }
   #article table {
     padding: 0;
-    word-break: initial; }
+    word-break: initial;
+    border-collapse: collapse;
+    border: 2px solid; }
   #article table tr {
-    border-top: 1px solid #cccccc;
+    border-top: 2px solid;
     margin: 0;
-    padding: 0; }
+    padding: 0;
+    border: 2px solid; }
   #article table tr:nth-child(2n) {
     background-color: #f8f8f8; }
   #article table tr th {
     font-weight: bold;
-    border: 1px solid #cccccc;
+    border: 2px solid;
     text-align: left;
     margin: 0;
     padding: 6px 13px; }
   #article table tr td {
-    border: 1px solid #cccccc;
     text-align: left;
     margin: 0;
-    padding: 6px 13px; }
+    padding: 6px 13px;
+    border: 2px solid; }
   #article table tr th:first-child,
   #article table tr td:first-child {
     margin-top: 0; }
