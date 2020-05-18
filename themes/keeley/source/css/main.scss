@@ -132,6 +132,19 @@ img {
     max-width: 100%;
     transition: all .5s ease;
     &:hover {
-        transform:scale(1.4)
+        transform:scale(1.05)
     }
+}
+
+// page
+nav {
+    font-weight: 400;
+    font-size: 1.45em;
+}
+a.page-number {
+    padding: 0px 20px;
+}
+span.page-number.current {
+    color: #de0000;
+   
 }

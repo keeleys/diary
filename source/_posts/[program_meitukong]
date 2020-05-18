@@ -1,0 +1,16 @@
+[program:meitukong]
+command=gunicorn -w4 -b0.0.0.0:80 web:app    ; supervisor启动命令
+directory=/root/work/meitukong_flask                                              ; 项目的文件夹路径
+startsecs=0                                                                             ; 启动时间
+stopwaitsecs=0                                                                          ; 终止等待时间
+autostart=true                                                                         ; 是否自动启动
+autorestart=true                                                                       ; 是否自动重启
+stdout_logfile=/root/log/gunicorn.log                           ; log 日志
+stderr_logfile=/root/log/gunicorn.err
+
+[supervisord]
+loglevel=info
+
+
+/root/work/meitukong_flask/pachong.py
+/root/run/pachong.sh
