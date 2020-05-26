@@ -23,3 +23,10 @@ tags:
 * 根据配置设置一些参数,例如spring.beaninfo.ignore，创建`ConfigurableApplicationContext`
 * prepareContext里面构造BeanDefinitionLoader，执行它的load方法，最终执行到spring-context里面的`doRegisterBean`方法
 * refreshContext里面最终执行到 spring-context里面的 `refresh()`
+* 默认的`AutoConfigurationImportSelector`会把所有spring.factories定义的`EnableAutoConfiguration`类ImportSelector
+
+
+### tomcat内置容器的启动
+
+* 在run方法的refresh里面，`ServletWebServerApplicationContext`的onRefresh等重载方法加入了createWebServer，stopAndReleaseWebServer等方法来管理内置应用服务器。
+* ServletWebServerFactoryAutoConfiguration写在了spring-boot的ServletWebServerFactoryAutoConfiguration的`ServletWebServerFactoryConfiguration.EmbeddedTomcat`注册了bean；
