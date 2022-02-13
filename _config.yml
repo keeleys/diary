@@ -94,4 +94,8 @@ theme: keeley
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: ''
+  type: 'git'
+  repo: git@github.com:keeleys/diary.git
+  branch: gh-pages
+  name: keeley
+  email: keeley.jun@gmail.com
