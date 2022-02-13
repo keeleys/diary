@@ -1,0 +1,16 @@
+name: diary_build
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Build and Deploy
+      uses: renzhaosy/hexo-deploy-action@master
+      env:
+        PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUBLISH_REPOSITORY: keeleys/diary
+        BRANCH: gh-pages
+        PUBLISH_DIR: ./public
