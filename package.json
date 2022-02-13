@@ -22,7 +22,7 @@
     "hexo-renderer-scss": "^1.2.0",
     "hexo-renderer-stylus": "^1.1.0",
     "hexo-server": "^1.0.0",
-    "hexo-deployer-git": "2.1.0"
+    "hexo-deployer-git": "^3.0.0"
   },
   "devDependencies": {
     "hexo-directory-category": "^1.0.7"
