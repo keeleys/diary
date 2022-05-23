@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">MySQL存储过程笔记</h1>
+	<div id="post-detail">
+		<span id="post-date">2018 / 07 / 24</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">mysql</span>
+			
+				<span id="post-tag">database</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><blockquote>
+<blockquote>
+<p>注意每行sql前不能留空</p>
+</blockquote>
+</blockquote>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>显示数据库中所有的存储过程</p>
+<pre><code class="sql">show procedure status;</code></pre>
+<p>显示某个存储过程的详细信息(sp为存储过程名称)</p>
+<pre><code class="sql">show create procedure sp;</code></pre>
+<p>最简单的存储过程</p>
+<pre><code class="sql">drop procedure if exists sp//
+CREATE PROCEDURE sp() select 1 //
+--调用存储过程
+call sp()//</code></pre>
+<a id="more"></a>
+
+<p>带输入参数的存储过程</p>
+<pre><code class="sql">drop procedure if exists sp1 //
+create procedure sp1(in p int)
+    begin
+    --声明一个int类型的变量
+        declare v1 int;
+    --将参数传给声明的变量，此步骤多余，可不要
+        set v1 = p;
+        insert into test(id) values(v1);
+     end
+      //
+--调用这个存储过程
+call sp1(1)//
+--去数据库查看调用之后的结果
+select * from test//</code></pre>
+<p>带输出参数的存储过程</p>
+<pre><code class="sql">drop procedure if exists sp2 //
+create procedure sp2(out p int)
+   begin
+       select max(id) into p from test;
+   end
+   //
+--调用该存储过程，注意：输出参数必须是一个带@符号的变量
+call sp2(@pv)</code></pre>
+<p>带输入和输出参数的存储过程</p>
+<pre><code class="sql">drop procedure if exists sp3 //
+create procedure sp3(in p1 int , out p2 int)
+   begin
+      if p1 = 1 then
+   --用@符号加变量名的方式定义一个变量，与declare类似
+         set @v = 10;
+      else
+         set @v = 20;
+      end if;
+   --语句体内可以执行多条sql，但必须以分号分隔
+      insert into test(id) values(@v);
+      select max(id) into p2 from test;
+    end
+    //
+--调用该存储过程，注意：输入参数是一个值，而输出参数则必须是一个带@符号的变量
+call sp3(1,@ret)//
+select @ret//</code></pre>
+<p>既做输入又做输出参数的存储过程</p>
+<pre><code class="sql">drop procedure if exists sp4 //
+create procedure sp4(inout p4 int)
+   begin
+      if p4 = 4 then
+         set @pg = 400;
+      else
+         set @pg = 500;
+      end if;
+      select @pg;
+    end//
+call sp4(@pp)//
+--这里需要先设置一个已赋值的变量，然后再作为参数传入
+set @pp = 4//
+call sp4(@pp)//</code></pre>
+<p>带游标的存储过程</p>
+<pre><code class="sql">DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sss`()
+    COMMENT &#39;insert table&#39;
+BEGIN
+    DECLARE root INT;
+    DECLARE zid INT;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE rs CURSOR FOR select id,tid from demo;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN rs;
+     read_loop: LOOP
+        FETCH  NEXT from rs INTO root,zid;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        insert into temp(rootid,zid) value(root,zid);
+        END LOOP;
+    CLOSE rs;
+END;;
+DELIMITER ;</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

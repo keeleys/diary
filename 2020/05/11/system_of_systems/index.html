@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">第三方系统对接的几个考虑点</h1>
+	<div id="post-detail">
+		<span id="post-date">2020 / 05 / 11</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">设计相关</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<blockquote>
+<blockquote>
+<p>一些经验总结，先列个大纲，具体例子再补充。</p>
+</blockquote>
+</blockquote>
+<ol>
+<li>状态设计：登录状态公共管理，只有一处处理，减少重复的验证请求 （例如微信带token等，都是要全局缓存唯一的）</li>
+<li>异常设计：例如登录失效自动注销缓存，重复提交或者已经存在的异常等错误解析成不同错误code封装成异常抛出,异常越精细系统越健壮</li>
+<li>频次设计：第三方接口能承受的调用频次，在调用的时候做限流，数据同步方面设计的时候考虑到频次</li>
+<li>日志设计：调用前调用后的日志和参数都打印记录起来，方便排查第三方问题的时候能提供确实的参数复现。</li>
+<li>幕等设计：如果系统出错，重复调用第三方的时候，能保证一次调用和多次调用都是一样的结果。有唯一的业务编号和第三方业务编号设计。</li>
+<li>补偿设计：通过消息队列，分布式定时任务等，补偿失败的数据，重要的失败数据还需要落库保存人工处理</li>
+<li>网络设计：网络通畅要得到保证</li>
+</ol>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

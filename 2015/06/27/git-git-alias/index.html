@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">git 常用命令</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 06 / 27</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">git</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<p>#git 常用命令</p>
+<h2 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h2><pre><code>git config -l</code></pre><h2 id="添加别名配置"><a href="#添加别名配置" class="headerlink" title="添加别名配置"></a>添加别名配置</h2><pre><code>git config --global alias.ad &quot;add --all&quot;
+git config --global alias.cm &quot;commit -m &#39;commit&#39; &quot;&quot;
+git config --global alias.pb &quot;push origin master&quot; </code></pre><h2 id="配置用户名邮箱"><a href="#配置用户名邮箱" class="headerlink" title="配置用户名邮箱"></a>配置用户名邮箱</h2><pre><code>git config --global user.name &quot;xxx&quot;
+git config --global user.email &quot;xxx@gmail.com&quot;</code></pre><h2 id="生成ssh"><a href="#生成ssh" class="headerlink" title="生成ssh"></a>生成ssh</h2><pre><code>ssh-keygen -t rsa -C &quot;xxx@gmail.com&quot;</code></pre><a id="more"></a>
+<hr>
+<h2 id="撤消操作"><a href="#撤消操作" class="headerlink" title="撤消操作"></a>撤消操作</h2><h3 id="修改最后一次提交"><a href="#修改最后一次提交" class="headerlink" title="修改最后一次提交"></a>修改最后一次提交</h3><p>如果刚才提交时忘了暂存某些修改，可以先补上暂存操作，然后再运行 –amend 提交</p>
+<pre><code>$ git commit -m &#39;initial commit&#39;
+$ git add forgotten_file
+$ git commit --amend</code></pre><h3 id="取消已经暂存的文件"><a href="#取消已经暂存的文件" class="headerlink" title="取消已经暂存的文件"></a>取消已经暂存的文件</h3><p>假如已经commit了 还没有push 的时候 可以用</p>
+<ul>
+<li>所有文件回到上次提交的状态,<pre><code>$ git reset --hard HEAD</code></pre></li>
+<li>取消单个文件<pre><code>git reset HEAD &lt;file&gt;</code></pre><h3 id="取消对文件的修改"><a href="#取消对文件的修改" class="headerlink" title="取消对文件的修改"></a>取消对文件的修改</h3>对于已经commit过的文件，修改之后撤销它的修改<pre><code>git checkout -- filename </code></pre></li>
+</ul>
+<h2 id="查看某个文件的修改历史"><a href="#查看某个文件的修改历史" class="headerlink" title="查看某个文件的修改历史"></a>查看某个文件的修改历史</h2><pre><code>git log --pretty=oneline 文件名 # 显示修改历史
+git show 356f6def9d3fb7f3b9032ff5aa4b9110d4cca87e # 查看更改</code></pre><h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><pre><code>git checkout -b new_branch #创建并切换分支
+git branch #查看当前分支
+git checkout master #切换到master分支
+git merge new_branch #合并分支到当前分支
+git branch -d new_branch #删除分支
+</code></pre><h2 id="查看修改"><a href="#查看修改" class="headerlink" title="查看修改"></a>查看修改</h2><pre><code>git status #查看当前状态 
+git diff #对比修改</code></pre><h1 id="gitignore文件"><a href="#gitignore文件" class="headerlink" title=".gitignore文件"></a>.gitignore文件</h1><p>过滤不需要git托管的文件或目录</p>
+<pre><code>/target
+
+*.bak
+*.class
+*.tmp
+*.log
+/bin
+build.sh
+integration-repo
+build
+
+# IDEA metadata and output dirs
+*.iml
+*.ipr
+*.iws
+*.idea
+out
+*.db
+.svn
+.classpath
+.project
+.settings</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">做一个jsp自定义tag的bootstrap3公共分页</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 20</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">html</span>
+			
+				<span id="post-tag">jsp</span>
+			
+				<span id="post-tag">bootcss</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h2><p><img src="https://dn-tianjun.qbox.me/ttianjunQQ%E6%88%AA%E5%9B%BE20150720135230.png" alt="分页"></p>
+<h2 id="想法"><a href="#想法" class="headerlink" title="想法"></a>想法</h2><p>本来用模版分页更优雅的，但项目很多同事不熟悉，只好先做个jsp版本的。<br>方案就是写一个servlet的tag的分页tag实现，根据tag里面的参数拼凑html代码。<br>有几个关键参数，当前页，总页数，以及跳转链接<br>tag中获取当前页和总页数是从request中获取分页bean来获得的，有些耦合分页bean,但好处是前端分页标签可以不用传分页参数。<br>跳转链接这个实现，依赖前端的查询from，因为业务上，有分页的基本上都会有条件查询，所以直接用form提交了，点击分页跳转的时候会在form中插入当前页的数据到隐藏域供后端查询。</p>
+<a id="more"></a>
+
+<h2 id="自定义tag"><a href="#自定义tag" class="headerlink" title="自定义tag"></a>自定义tag</h2><ul>
+<li>继承<code>javax.servlet.jsp.tagext.Tag</code></li>
+<li>实现方法</li>
+</ul>
+<pre><code class="java">
+public class PageTag implements Tag {
+    private PageContext pageContext;
+     //当前页
+    private Integer pageNum;
+
+    //总页数
+    private Integer pages;
+
+    private String seachForm;
+
+    private String paramEncoding = &quot;UTF-8&quot;;
+
+    /**
+     * page bean的属性名
+     */
+    private String pageBeanName;
+
+
+
+    public String getPageBeanName() {
+        return pageBeanName;
+    }
+
+    public void setPageBeanName(String pageBeanName) {
+        this.pageBeanName = pageBeanName;
+    }
+
+    public Integer getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public Integer getPages() {
+        return pages;
+    }
+
+    public void setPages(Integer pages) {
+        this.pages = pages;
+    }
+
+    public String getSeachForm() {
+        return seachForm;
+    }
+
+    public void setSeachForm(String seachForm) {
+        this.seachForm = seachForm;
+    }
+
+    public String getParamEncoding() {
+        return paramEncoding;
+    }
+
+    public void setParamEncoding(String paramEncoding) {
+        this.paramEncoding = paramEncoding;
+    }
+
+
+    @Override
+    public void setPageContext(PageContext pc) {
+        pageContext = pc;
+    }
+
+
+    @Override
+    public void setParent(Tag t) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public Tag getParent() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void release() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public int doStartTag() throws JspException {//标签调用前执行的方法
+        if(pageBeanName==null)
+            pageBeanName=&quot;pagination&quot;;
+
+        Pagination pagination=(Pagination) pageContext.getRequest().getAttribute(pageBeanName);
+        if(pagination!=null){
+                pageNum = pagination.getPageNum();//当前页数
+                pages = pagination.getTotalPage();//总页数
+        }
+        return 0;
+    }
+
+    @Override
+    public int doEndTag() throws JspException {
+        JspWriter out = pageContext.getOut();
+
+        try {
+            out.write(buildPage());
+        } catch (IOException e) {
+            e.printStackTrace();
+             throw new RuntimeException(e);
+        }
+        return 0;
+    }
+    private String buildPage(){
+        if(pages==1){//如果只有一页 那么不显示分页
+            return &quot;&quot;;
+        }
+        int start=0,end=10;
+         if(pageNum&gt;=10||(pageNum&gt;5&amp;&amp;pages&gt;10))         
+                start=pageNum-5;
+         if(pages&gt;pageNum+5)
+                end=pageNum+5;
+            else
+                end=pages;
+
+        StringBuffer sb =new StringBuffer();
+        sb.append(&quot;&lt;nav class=\&quot;pull-right pull-right-1\&quot;&gt;&quot;);
+        sb.append(&quot;&lt;ul class=\&quot;pagination\&quot;&gt;&quot;);
+        if(pageNum&gt;1)
+            sb.append(&quot;&lt;li class=\&quot;previous\&quot;&gt;&lt;a href=\&quot;javascript:void(0)\&quot; onclick=&quot;+getPageMethod(pageNum-1)+&quot;&gt;上一页&lt;/a&gt;&lt;/li&gt;&quot;);
+        if(start&gt;0)
+            sb.append(&quot;&lt;li class=&#39;nomal&#39;  &gt;&lt;a href=&#39;javascript:void(0)&#39; onclick=&quot;+getPageMethod(1)+&quot; &gt;&quot;+1+&quot;&lt;/a&gt;&lt;/li&gt;&quot;);
+        for(int i=start;i&lt;end;i++){
+            if((i+1)==pageNum)
+                sb.append(&quot;&lt;li class=&#39;active&#39;&gt;&lt;a href=&#39;javascript:void(0)&#39; onclick=&quot;+getPageMethod(i+1)+&quot; &gt;&quot;+(i+1)+&quot;&lt;/a&gt;&lt;/li&gt;&quot;);
+            else
+                sb.append(&quot;&lt;li class=&#39;nomal&#39;&gt;&lt;a href=&#39;javascript:void(0)&#39; onclick=&quot;+getPageMethod(i+1)+&quot;&gt;&quot;+(i+1)+&quot;&lt;/a&gt;&lt;/li&gt;&quot;);
+        }
+        if(pages&gt;10&amp;&amp;pageNum&lt;pages-4)
+            sb.append(&quot;&lt;li class=&#39;nomal&#39;&gt;&lt;a href=&#39;javascript:void(0)&#39; onclick=&quot;+getPageMethod(pages)+&quot;&gt;&quot;+pages+&quot;&lt;/a&gt;&lt;/li&gt;&quot;);
+        if(pageNum!=pages&amp;&amp;pages!=0)
+            sb.append(&quot;&lt;li class=\&quot;next\&quot;&gt;&lt;a href=\&quot;javascript:void(0)\&quot; onclick=&quot;+getPageMethod(pageNum+1)+&quot;&gt;下一页&lt;/a&gt;&lt;/li&gt;&quot;);
+        sb.append(&quot;&lt;/ul&gt;&quot;);
+        sb.append(&quot;&lt;/nav&gt;&quot;);
+        return sb.toString();
+    }
+    private String  getPageMethod(int pageNum){
+        return &quot;\&quot;pageJunmp(&#39;&quot;+seachForm+&quot;&#39;,&quot;+pageNum+&quot;,&#39;&quot;+pageBeanName+&quot;&#39;)\&quot;&quot;;
+    }
+}</code></pre>
+<h2 id="page-tld文件"><a href="#page-tld文件" class="headerlink" title="page.tld文件"></a>page.tld文件</h2><p>在webapp/WEB-INF/tld下面新增page.tld，定义标签描述</p>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;taglib version=&quot;2.0&quot; xmlns=&quot;http://java.sun.com/xml/ns/j2ee&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/j2ee web-jsptaglibrary_2_0.xsd&quot;&gt;
+    &lt;description&gt;bootcss3 分页&lt;/description&gt;
+    &lt;tlib-version&gt;1.0&lt;/tlib-version&gt;
+    &lt;short-name&gt;page&lt;/short-name&gt;
+    &lt;uri&gt;http://xxx.com/tag/page&lt;/uri&gt;
+    &lt;tag&gt;
+        &lt;name&gt;pager&lt;/name&gt;
+        &lt;tag-class&gt;com.xxx.xxx.core.PageTag&lt;/tag-class&gt;
+        &lt;body-content&gt;empty&lt;/body-content&gt;
+        &lt;attribute&gt;
+            &lt;name&gt;seachForm&lt;/name&gt;
+            &lt;required&gt;true&lt;/required&gt;
+            &lt;rtexprvalue&gt;true&lt;/rtexprvalue&gt;
+        &lt;/attribute&gt;
+        &lt;attribute&gt;
+            &lt;name&gt;pageBeanName&lt;/name&gt;
+            &lt;required&gt;false&lt;/required&gt;
+            &lt;rtexprvalue&gt;true&lt;/rtexprvalue&gt;
+        &lt;/attribute&gt;
+        &lt;attribute&gt;
+            &lt;name&gt;paramEncoding&lt;/name&gt;
+            &lt;required&gt;false&lt;/required&gt;
+            &lt;rtexprvalue&gt;true&lt;/rtexprvalue&gt;
+        &lt;/attribute&gt;
+    &lt;/tag&gt;
+&lt;/taglib&gt;</code></pre>
+<h2 id="Action层"><a href="#Action层" class="headerlink" title="Action层"></a>Action层</h2><pre><code class="java">@Action(&quot;customerList&quot;)
+    public String customerList() {
+        //对应的struts2调用例子，struts2自动会把属性放到request作用域,分页会使用这个bean来获取分页信息.
+        pagination = customerService.selectAll(pagination, null);//pagination 是一个分页bean，自行实现..
+        return SUCCESS;
+    }</code></pre>
+<h2 id="html层"><a href="#html层" class="headerlink" title="html层"></a>html层</h2><h3 id="头部引用"><a href="#头部引用" class="headerlink" title="头部引用"></a>头部引用</h3><pre><code>&lt;%@taglib prefix=&quot;p&quot; uri=&quot;http://xxx.com/tag/page&quot; %&gt;</code></pre><h3 id="这个是tag里面写的需要调用的js方法-写到一个公共引用的地方"><a href="#这个是tag里面写的需要调用的js方法-写到一个公共引用的地方" class="headerlink" title="这个是tag里面写的需要调用的js方法,写到一个公共引用的地方"></a>这个是tag里面写的需要调用的js方法,写到一个公共引用的地方</h3><pre><code>function pageJunmp(form,pageNum,pageBeanName){
+    var inputName = pageBeanName+&quot;.pageNum&quot;;
+    form=$(&quot;#&quot;+form);
+    var input = &quot;&lt;input type=&#39;hidden&#39; id=&#39;pageNum&#39; value=&#39;&quot;+pageNum+&quot;&#39; name=&#39;&quot;+inputName+&quot;&#39;&gt;&quot;;
+    form.append(input);
+    form.submit();
+}    form.attr(&quot;method&quot;,&quot;post&quot;);
+</code></pre><h3 id="查询form"><a href="#查询form" class="headerlink" title="查询form"></a>查询form</h3><p>在要使用分页的地方，必须要一个查询的form，分页的时候会调用这个form，实现带条件跳转</p>
+<pre><code>&lt;form action=&quot;${ctx}/customer/customerList&quot; id=&quot;seachForm&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;account&quot;&gt;
+&lt;/form&gt;</code></pre><h3 id="在需要分页的地方调用"><a href="#在需要分页的地方调用" class="headerlink" title="在需要分页的地方调用"></a>在需要分页的地方调用</h3><pre><code>&lt;p:pager seachForm=&quot;seachForm&quot;/&gt;</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">maven 常用记录</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 11 / 27</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">maven</span>
+			
+				<span id="post-tag">使用手册</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="下载地址"><a href="#下载地址" class="headerlink" title="下载地址"></a>下载地址</h3><p><a href="http://maven.apache.org/download.cgi" target="_blank" rel="noopener">http://maven.apache.org/download.cgi</a></p>
+<h3 id="安装方法"><a href="#安装方法" class="headerlink" title="安装方法"></a>安装方法</h3><p><a href="http://maven.apache.org/install.html" target="_blank" rel="noopener">http://maven.apache.org/install.html</a></p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p><a href="http://maven.apache.org/settings.html" target="_blank" rel="noopener">http://maven.apache.org/settings.html</a></p>
+<a id="more"></a>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="创建一个空项目"><a href="#创建一个空项目" class="headerlink" title="创建一个空项目"></a>创建一个空项目</h3><pre><code>mvn archetype:generate -DgroupId=com.di.maven -DartifactId=hello-world -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false</code></pre><h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><pre><code>mvn clean 清空生成的文件
+mvn validate        验证工程是否正确，所有需要的资源是否可用
+mvn compile 编译源代码  
+mvn test 编译并测试。
+mvn verify 运行任何检查，验证包是否有效且达到质量标准
+mvn package 将已编译的源代码打包 (jar或者war)
+mvn install 把包安装在本地的repository中，可以被其他工程作为依赖来使用
+mvn deploy 在整合或者发布环境下执行，将最终版本的包拷贝到远程仓库，使得其他的开发者或者工程可以共享
+mvn package -DskipTests 跳过测试打包项目
+mvn dependency:tree -Ddetail=true</code></pre><h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><pre><code>&lt;project&gt; 根节点
+&lt;modelversion&gt; pom.xml 使用的对象模型版本
+&lt;groupId&gt; 创建项目的组织或团体的唯一 Id
+&lt;artifactId&gt; 项目唯一Id, 项目名
+&lt;packaging&gt; 打包扩展名(JAR、WAR、EAR)
+&lt;version&gt; 项目版本号
+&lt;name&gt; 显示名，用于生成文档
+&lt;url&gt; 组织站点，用于生成文档
+&lt;description&gt; 项目描述，用于生成文档
+&lt;dependency&gt;之&lt;scope&gt; 管理依赖部署</code></pre><h3 id="scope"><a href="#scope" class="headerlink" title="scope"></a>scope</h3><pre><code>compile 缺省值，用于所有阶段，随项目一起发布
+provided 期望JDK、容器或使用者提供此依赖。如servlet.jar
+runtime 只在运行时使用
+test 只在测试时使用，不随项目发布
+system 需显式提供本地jar，不在代码仓库中查找</code></pre><h2 id="指定编译的编码"><a href="#指定编译的编码" class="headerlink" title="指定编译的编码"></a>指定编译的编码</h2><pre><code>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-resources-plugin&lt;/artifactId&gt;
+    &lt;version&gt;2.4&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;encoding&gt;UTF-8&lt;/encoding&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;
+&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.1&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;source&gt;1.6&lt;/source&gt;
+        &lt;target&gt;1.6&lt;/target&gt;
+        &lt;encoding&gt;utf8&lt;/encoding&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre><h2 id="部署到远程仓库"><a href="#部署到远程仓库" class="headerlink" title="部署到远程仓库"></a>部署到远程仓库</h2><h3 id="setting文件位置"><a href="#setting文件位置" class="headerlink" title="setting文件位置"></a>setting文件位置</h3><p>settings.xml 的文件可能存在于这2个位子<br>Maven 的安装目录: $M2_HOME/conf/settings.xml<br>操作系统用户目录: ${user.home}/.m2/settings.xml</p>
+<p>pom添加</p>
+<pre><code>&lt;distributionManagement&gt;
+    &lt;repository&gt;
+        &lt;id&gt;releases&lt;/id&gt;
+        &lt;url&gt;https://test.91umall.com:1443/nexus/content/repositories/releases/&lt;/url&gt;
+    &lt;/repository&gt;
+    &lt;snapshotRepository&gt;
+        &lt;id&gt;snapshots&lt;/id&gt;
+        &lt;url&gt;https://test.91umall.com:1443/nexus/content/repositories/snapshots/&lt;/url&gt;
+    &lt;/snapshotRepository&gt;
+&lt;/distributionManagement&gt;</code></pre><p>setting添加</p>
+<pre><code>&lt;servers&gt;
+    &lt;server&gt;
+        &lt;id&gt;releases&lt;/id&gt;
+        &lt;username&gt;admin&lt;/username&gt;
+        &lt;password&gt;xxxx&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+        &lt;id&gt;snapshots&lt;/id&gt;
+        &lt;username&gt;admin&lt;/username&gt;
+        &lt;password&gt;xxxx&lt;/password&gt;
+    &lt;/server&gt;
+&lt;/servers&gt;</code></pre><h2 id="使用私服仓库"><a href="#使用私服仓库" class="headerlink" title="使用私服仓库"></a>使用私服仓库</h2><pre><code> &lt;profiles&gt;
+    &lt;profile&gt;
+      &lt;id&gt;uxun&lt;/id&gt;
+      &lt;repositories&gt;
+          &lt;repository&gt;
+              &lt;id&gt;uxun&lt;/id&gt;
+              &lt;url&gt;https://test.91umall.com:1443/nexus/content/groups/public/&lt;/url&gt;
+              &lt;layout&gt;default&lt;/layout&gt;
+              &lt;releases&gt;
+                &lt;enabled&gt;true&lt;/enabled&gt;
+              &lt;/releases&gt;
+              &lt;snapshots&gt;
+                &lt;enabled&gt;true&lt;/enabled&gt;
+              &lt;/snapshots&gt;
+          &lt;/repository&gt;
+      &lt;/repositories&gt;
+    &lt;/profile&gt;
+  &lt;/profiles&gt;
+
+  &lt;activeProfiles&gt;  
+    &lt;activeProfile&gt;uxun&lt;/activeProfile&gt;
+  &lt;/activeProfiles&gt;</code></pre><h2 id="部署到中央仓库"><a href="#部署到中央仓库" class="headerlink" title="部署到中央仓库"></a>部署到中央仓库</h2><p><a href="http://www.ttianjun.com/2015/11/10/centermaven/" target="_blank" rel="noopener">http://www.ttianjun.com/2015/11/10/centermaven/</a></p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

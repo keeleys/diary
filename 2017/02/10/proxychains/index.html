@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">shadowsocks 科学上网的终端控制</h1>
+	<div id="post-detail">
+		<span id="post-date">2017 / 02 / 10</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">util</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="shadowsocks-客户端"><a href="#shadowsocks-客户端" class="headerlink" title="shadowsocks 客户端"></a>shadowsocks 客户端</h2><p>客户端推荐使用<a href="https://github.com/shadowsocksr" target="_blank" rel="noopener">shadowsocksR</a>,配置很强大</p>
+<h2 id="终端"><a href="#终端" class="headerlink" title="终端"></a>终端</h2><p>网上那些 set http proxy啥的都不好用。所以最后还是用这个自动代理工具了，</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre><code>brew install proxychains-ng</code></pre><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>修改配置 参考路径<br>/usr/local/Cellar/proxychains-ng/4.12/etc/proxychains.conf</p>
+<p>这个端口跟你运行的shadowsocks配置的端口一致</p>
+<pre><code>[ProxyList]
+socks5  127.0.0.1 1080</code></pre><h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>然后</p>
+<pre><code>proxychains4 wget https://github.com/jeromelebel/MongoHub-Mac/archive/3.1.5b1.zip</code></pre><p>当然可以设置下别名</p>
+<pre><code>alias pc=&quot;proxychains4&quot;</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

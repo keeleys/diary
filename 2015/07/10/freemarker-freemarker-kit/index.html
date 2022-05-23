@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">用Freemarker生成静态HTML</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 10</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">freemarker</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><blockquote>
+<p>javaweb struts2 spring3 mybatis环境下配置</p>
+</blockquote>
+<h3 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h3><pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.freemarker&lt;/groupId&gt;
+    &lt;artifactId&gt;freemarker&lt;/artifactId&gt;
+    &lt;version&gt;2.3.19&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+<a id="more"></a>
+
+<h3 id="web-xml设置servlet监听"><a href="#web-xml设置servlet监听" class="headerlink" title="web.xml设置servlet监听"></a>web.xml设置servlet监听</h3><pre><code class="xml">&lt;listener&gt;
+    &lt;listener-class&gt;com.ttianjun.listener.ContextListener&lt;/listener-class&gt;
+&lt;/listener&gt;</code></pre>
+<p>对应的java类</p>
+<pre><code class="java">public class ContextListener implements ServletContextListener{
+    private static Log log = LogFactory.getLog(ContextListener.class);
+    private static ApplicationContext springContext = null;
+    private static ServletContext servletContext = null;
+    public static ApplicationContext getContext(){
+    return springContext;
+    }
+    @Override
+    public void contextInitialized(ServletContextEvent sce){
+        servletContext = sce.getServletContext();
+        //用servlet上下文初始化freemarker工具
+        FreeMarkerKit.init(servletContext);
+        //spring 上下文
+        springContext = WebApplicationContextUtils.getWebApplicationContext(servletContext); 
+        //web工程名
+        servletContext.setAttribute(&quot;ctx&quot;,  servletContext.getContextPath());    
+    }
+}</code></pre>
+<h2 id="freemarker工具类书写"><a href="#freemarker工具类书写" class="headerlink" title="freemarker工具类书写"></a>freemarker工具类书写</h2><pre><code class="java">public class FreeMarkerKit {
+    private static Log log = LogFactory.getLog(FreeMarkerKit.class);
+    private static Configuration cfg;
+    private static ServletContext servletContext;
+    public static void init(ServletContext servletContext){
+        FreeMarkerKit.servletContext = servletContext;
+        cfg = new Configuration();
+
+        // webapp/WEB-INF/templates 目录
+        cfg.setServletContextForTemplateLoading(servletContext, &quot;/WEB-INF/templates&quot;); 
+
+        cfg.setEncoding(Locale.getDefault(), &quot;utf-8&quot;);
+    }
+    public static void CreateHtml(String ftl,String htmlName,Map&lt;String,Object&gt; param) throws  Exception{
+
+        if(param==null) param = new HashMap&lt;String,Object&gt;();
+        param.put(&quot;ctx&quot;, servletContext.getAttribute(&quot;ctx&quot;).toString());
+
+        Template template = cfg.getTemplate(ftl);
+        template.setEncoding(&quot;utf-8&quot;);
+
+        // webapp/html 目录
+        String path = servletContext.getRealPath(&quot;/html&quot;); 
+        File file = new File(path , htmlName);
+
+        if(!file.exists())file.getParentFile().mkdir(); 
+
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), &quot;utf-8&quot;));
+        template.process(param, writer);
+        log.debug(&quot;生成静态文件:&quot;+file.getAbsolutePath());
+        writer.flush();
+        writer.close();
+
+    }
+}</code></pre>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>index.ftl</p>
+<pre><code>welcome ${name}</code></pre><p>调用</p>
+<pre><code class="java">Map&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+params.put(&quot;name&quot;,&quot;ttianjun&quot;)
+FreeMarkerKit.CreateHtml(&quot;index.ftl&quot;,&quot;index.html&quot;,params);</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

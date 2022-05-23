@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">阿里云oss上传文件和文件夹</h1>
+	<div id="post-detail">
+		<span id="post-date">2018 / 03 / 16</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">java</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><pre><code>endpoint // oss的上传服务器的配置
+accessKeyId // 阿里云的key
+accessKeySecret // 阿里云的
+bucketName // oss的空间</code></pre><h3 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h3><pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.aliyun.oss&lt;/groupId&gt;
+    &lt;artifactId&gt;aliyun-sdk-oss&lt;/artifactId&gt;
+    &lt;version&gt;2.8.3&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+<h3 id="编写工具类"><a href="#编写工具类" class="headerlink" title="编写工具类"></a>编写工具类</h3><pre><code class="java">package com.zxy.keeley.filetocdn.kit;
+
+import com.aliyun.oss.ClientException;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.OSSException;
+import com.aliyun.oss.model.CompleteMultipartUploadResult;
+import com.aliyun.oss.model.UploadFileRequest;
+import com.aliyun.oss.model.UploadFileResult;
+import com.zxy.keeley.filetocdn.config.Content;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.io.*;
+
+/**
+ *
+ * @author keeley
+ * @date 2018/2/7
+ */
+@Component
+public class OSSKit {
+    public static final Logger logger = LoggerFactory.getLogger(OSSKit.class);
+    public static final String separator = &quot;/&quot;;
+    /**
+     * 上传文件夹
+     * @param dir
+     * @param key
+     * @throws Exception
+     */
+    public void updateDirectory(String dir, String key) throws Exception{
+        if(StringUtils.isEmpty(dir) || StringUtils.isEmpty(key)) {
+            return ;
+        }
+        if(key.startsWith(separator)) {
+            key = key.substring(1);
+        }
+        File[] files = new File(dir).listFiles();
+        for(File a:files){
+            String fileName = a.getName();
+            if(a.isDirectory()){
+                updateDirectory(a.getAbsolutePath(), key +separator+ fileName);
+            } else {
+                uploadFile(a.getAbsolutePath(),key+separator+a.getName());
+            }
+        }
+
+    }
+
+    /**
+     *
+     * @param filePath
+     */
+    private void uploadFile(String filePath,String key) {
+        OSSClient client = null;
+        try {
+            client = new OSSClient(Content.ossEndpoint, Content.ossAccessKeyId, Content.ossAccessKeySecret);
+            // 上传文件流
+            InputStream inputStream = new FileInputStream(filePath);
+            client.putObject(Content.ossBucketName, key, inputStream);
+        } catch (FileNotFoundException e) {
+            logger.info(&quot;FileNotFoundException:&quot;,e);
+        } finally {
+            if (client != null) {
+                client.shutdown();
+            }
+        }
+    }
+
+    /**
+     * 普通上传
+     * @param filePath
+     */
+    public void uploadFile(String filePath) {
+        this.uploadFile(filePath, new File(filePath).getName());
+    }
+
+    /**
+     * 分段上传
+     * @param uploadFile
+     * @return
+     * @throws IOException
+     */
+    public String uploadFileMulti(String uploadFile, String key) throws IOException {
+        OSSClient client = null;
+        try {
+            if(key.startsWith(separator)) {
+                key = key.substring(1);
+            }
+            client = new OSSClient(Content.ossEndpoint, Content.ossAccessKeyId, Content.ossAccessKeySecret);
+            UploadFileRequest uploadFileRequest = new UploadFileRequest(Content.ossBucketName, key);
+
+            // 待上传的本地文件
+            uploadFileRequest.setUploadFile(uploadFile);
+
+            // 设置并发下载数，默认1
+            uploadFileRequest.setTaskNum(5);
+
+            // 设置分片大小，默认100KB
+            uploadFileRequest.setPartSize(1024 * 1024 * 10);
+
+            // 开启断点续传，默认关闭
+            uploadFileRequest.setEnableCheckpoint(true);
+
+            UploadFileResult uploadResult = client.uploadFile(uploadFileRequest);
+
+            CompleteMultipartUploadResult multipartUploadResult =  uploadResult.getMultipartUploadResult();
+
+            return multipartUploadResult.getETag();
+
+        } catch (OSSException oe) {
+            logger.error(&quot;OSSException&quot;,oe);
+        } catch (ClientException ce) {
+            logger.error(&quot;ClientException&quot;,ce);
+        } catch (Throwable throwable) {
+            logger.error(&quot;throwable&quot;, throwable);
+        } finally {
+            if (client != null) {
+                client.shutdown();
+            }
+        }
+        return null;
+    }
+}
+</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

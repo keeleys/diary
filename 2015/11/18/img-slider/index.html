@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">图片轮播nivo-slider插件</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 11 / 18</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">html</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="官网资料"><a href="#官网资料" class="headerlink" title="官网资料"></a>官网资料</h2><p><a href="http://demo.dev7studios.com/nivo-slider/" target="_blank" rel="noopener">演示地址</a><br><a href="https://github.com/gilbitron/Nivo-Slider" target="_blank" rel="noopener">github地址</a><br><a href="http://docs.dev7studios.com/jquery-plugins/nivo-slider" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code>&lt;script src=&quot;//cdn.bootcss.com/jquery/1.11.3/jquery.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;//cdn.bootcss.com/jquery-nivoslider/3.2/jquery.nivo.slider.js&quot;&gt;&lt;/script&gt;</code></pre><a id="more"></a>
+<pre><code class="html">&lt;div id=&quot;slider&quot; class=&quot;nivoSlider&quot; style=&quot;text-align: center&quot; &gt;
+    &lt;#if imgList??&gt;
+        &lt;#list imgList as imgBean&gt;
+            &lt;img src=&quot;${imgRoot}${imgBean.imgurl}&quot;&gt;
+        &lt;/#list&gt;
+    &lt;#else&gt;
+        &lt;img src=&quot;${root!}/image/banner.jpg&quot;&gt;
+    &lt;/#if&gt;
+&lt;/div&gt;</code></pre>
+<pre><code>$(window).load(function() {
+    $(&#39;#slider&#39;).nivoSlider({
+        slices: 15, // For slice animations
+        boxCols: 8, // For box animations
+        boxRows: 4, // For box animations
+        animSpeed: 500, // Slide transition speed
+        pauseTime: 3000, // How long each slide will show
+        directionNav:false,
+        effect:&#39;slideInLeft&#39;,
+        controlNav:false,
+        pauseOnHover:false // 悬浮是否停止
+    });
+});</code></pre><h2 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h2><p>effect: 设置幻灯变化效果，可以使用’random’, 或者指定效果如, ‘fold,fade,sliceDown’<br>slices: slice动画效果参数<br>boxCols: box动画效果参数<br>boxRows:box动画效果参数<br>animSpeed: 动画变化速度<br>pauseTime: 每个幻灯时间<br>startSlide: 起始幻灯<br>directionNav: 是否显示“上一个”和“下一个”导航<br>directionNavHide: 是否悬浮显示导航<br>controlNav: 是否显示导航控制<br>controlNavThumbs: 导航是否使用缩略图<br>controlNavThumbsFromRel: 是否让图片使用rel<br>controlNavThumbsSearch: 导航缩略图后缀<br>controlNavThumbsReplace: 导航缩略图替换<br>keyboardNav: 是否键盘导航<br>pauseOnHover: 悬浮是否停止<br>manualAdvance: 是否手动变化幻灯<br>captionOpacity: 标题透明度<br>prevText: 上一张文字设定<br>nextText: 下一张文字设定<br>randomStart: 是否随机开始<br>beforeChange: 函数，在幻灯变化前调用<br>afterChange:函数，在幻灯变化后调用<br>slideshowEnd:函数，在幻灯变化完成调用<br>lastSlide:函数，在最后一个幻灯变化完成调用<br>afterLoad: 函数，slider加载后调用</p>
+<h3 id="effect可配置的参数"><a href="#effect可配置的参数" class="headerlink" title="effect可配置的参数"></a>effect可配置的参数</h3><p>sliceDown<br>sliceDownLeft<br>sliceUp<br>sliceUpLeft<br>sliceUpDown<br>sliceUpDownLeft<br>fold<br>fade<br>random<br>slideInRight<br>slideInLeft<br>boxRandom<br>boxRain<br>boxRainReverse<br>boxRainGrow<br>boxRainGrowReverse</p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

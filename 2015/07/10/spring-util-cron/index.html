@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">Cron表达式 and Spring</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 10</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">spring</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>一个cron表达式有至少6个（也可能是7个）由空格分隔的时间元素。从左至右，这些元素的定义如下：<br>1．秒（0–59）<br>2．分钟（0–59）<br>3．小时（0–23）<br>4．月份中的日期（1–31）<br>5．月份（1–12或JAN–DEC）<br>6．星期中的日期（1–7或SUN–SAT）<br>7．年份（1970–2099）</p>
+<a id="more"></a>
+<h2 id="表达式意义"><a href="#表达式意义" class="headerlink" title="表达式意义"></a>表达式意义</h2><pre><code> 0 0 10,14,16 * * ?  每天上午10点，下午2点和下午4点   
+ 0 0,15,30,45 * 1-10 * ?  每月前10天每隔15分钟   
+ 30 0 0 1 1 ? 2012  在2012年1月1日午夜过30秒时   
+ 0 0 8-5 ? * MON-FRI  每个工作日的工作时间   
+ 0 1 0 1 1-12 ? 表示每月1号0点1分执行。  
+ 0 0 21 ? * 1 表示每个礼拜天21点0分执行。  
+ 0 0 0 * * ? 表示每天0点0分执行。  
+ 0 * 22 * * ? 表示每天22点开始每分钟  
+ 0 * 0-23 * * ? 表示每天每分钟  
+
+ 0 * 17 * * ?  每天的从 5:00 PM 至 5:59 PM 中的每分钟触发  
+ 0 0/5 23 * * ?  每天的从 11:00 PM 至 11:55 PM 中的每五分钟触发 
+ 0 0/5 15,18 * * ?  每天的从 3:00 至 3:55 PM 和 6:00 PM 至 6:55 PM 之中的每五分钟触发  
+ 0 0-5 5 * * ?   每天的从 5:00 AM 至 5:05 AM 中的每分钟触发  
+ 0 0 3 * * ?  每天的 3:00 AM
+ 0 15 10 ? * MON-FRI  在每个周一,二, 三和周四的 10:15 AM  
+ 0 15 10 15 * ? 每月15号的 10:15 AM  
+ 0 15 10 L * ? 每月最后一天的 10:15 AM 
+ 0 0 12 1/5 * ?  每月从第一天算起每五天的 12:00 PM (中午)  
+ 0 0 12 * * ?&quot; 每天中午12点触发   
+ 0 15 10 ? * *&quot; 每天上午10:15触发   
+ 0 15 10 * * ?&quot; 每天上午10:15触发   
+ 0 15 10 * * ? *&quot; 每天上午10:15触发   
+ 0 15 10 * * ? 2005&quot; 2005年的每天上午10:15触发   
+ 0 * 14 * * ?&quot; 在每天下午2点到下午2:59期间的每1分钟触发   
+ 0 0/5 14 * * ?&quot; 在每天下午2点到下午2:55期间的每5分钟触发   
+ 0 0/5 14,18 * * ?&quot; 在每天下午2点到2:55期间和下午6点到6:55期间的每5分钟触发   
+ 0 0-5 14 * * ?&quot; 在每天下午2点到下午2:05期间的每1分钟触发   
+ 0 10,44 14 ? 3 WED&quot; 每年三月的星期三的下午2:10和2:44触发   
+ 0 15 10 ? * MON-FRI&quot; 周一至周五的上午10:15触发   
+ 0 15 10 15 * ?&quot; 每月15日上午10:15触发   
+ 0 15 10 L * ?&quot; 每月最后一日的上午10:15触发   
+ 0 15 10 ? * 6L&quot; 每月的最后一个星期五上午10:15触发   
+ 0 15 10 ? * 6L 2002-2005&quot; 2002年至2005年的每月的最后一个星期五上午10:15触发   
+ 0 15 10 ? * 6#3&quot; 每月的第三个星期五上午10:15触发  </code></pre><h2 id="顺序和格式"><a href="#顺序和格式" class="headerlink" title="顺序和格式"></a>顺序和格式</h2><p>Cron-Expression”由6到7个用空格分开的字段组成的表达式这6或7个字段必须遵循下面的顺<br>序和格式：  </p>
+<table>
+<thead>
+<tr>
+<th align="center">Field Name</th>
+<th align="center">Allowed Values</th>
+<th align="center">Allowed Special Characters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Seconds</td>
+<td align="center">0-59</td>
+<td align="center">, - * /</td>
+</tr>
+<tr>
+<td align="center">Minutes</td>
+<td align="center">0-59</td>
+<td align="center">, - * /</td>
+</tr>
+<tr>
+<td align="center">Hours</td>
+<td align="center">0-23</td>
+<td align="center">, - * /</td>
+</tr>
+<tr>
+<td align="center">Day-of-month</td>
+<td align="center">1-31</td>
+<td align="center">, - * ? / L W C</td>
+</tr>
+<tr>
+<td align="center">Month</td>
+<td align="center">1-12 or JAN-DEC</td>
+<td align="center">, - * /</td>
+</tr>
+<tr>
+<td align="center">Day-of-Week</td>
+<td align="center">1-7 or SUN-SAT</td>
+<td align="center">, - * ? / L C #</td>
+</tr>
+<tr>
+<td align="center">Year (Optional)</td>
+<td align="center">empty, 1970-2099</td>
+<td align="center">, - * /</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>*</code>是一个通配符，表示任何值，用在Minutes字段中表示每分钟。  </li>
+<li><code>?</code>只可以用在day-of-month或者Day-of-Week字段中，用来表示不指定特殊的值。  </li>
+<li><code>-</code>用来表示一个范围，比如10-12用在Month中表示10到12月。  </li>
+<li><code>,</code>用来表示附加的值，比如MON,WED,FRI在day-of-week字段中表示礼拜一和礼拜三和礼拜五。  </li>
+<li><code>/</code>用来表示增量，比如0/15用在Minutes字段中表示从0分开始0和15和30和45分。  </li>
+<li><code>L</code>只可以用在day-of-month或者Day-of-Week字段中，如果用在Day-of-month中，表示某个月<br>的最后一天，1月则是表示31号，2月则表示28号（非闰年），如果用在Day-of-Week中表示礼<br>拜六（数字7）；但是如果L与数字组合在一起用在Day-of-month中，比如6L，则表示某个月<br>的最后一个礼拜六；  </li>
+</ul>
+<h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><h3 id="星号"><a href="#星号" class="headerlink" title="(*)星号"></a>(*)星号</h3><p>使用星号(*) 指示着你想在这个域上包含所有合法的值。<br>例如，在月份域上使用星号意味着每个月都会触发这个 trigger。 表达式样例：  </p>
+<pre><code>0 * 17 * * ?  </code></pre><h3 id="问号"><a href="#问号" class="headerlink" title="? 问号"></a>? 问号</h3><p>? 号只能用在日和周域上，但是不能在这两个域上同时使用。你可以认为 ? 字符是 “我并不关心在该域上是什么值。” 这不同于星号，星号是指示着该域上的每一个值。? 是说不为该域指定值。</p>
+<h3 id="逗号"><a href="#逗号" class="headerlink" title=", 逗号"></a>, 逗号</h3><p>逗号 (,) 是用来在给某个域上指定一个值列表的。例如，使用值 0,15,30,45 在秒域上意味着每15秒触发一个 trigger。  </p>
+<p>表达式样例： </p>
+<pre><code>0 0,15,30,45 * * * ?  </code></pre><h3 id="斜杠"><a href="#斜杠" class="headerlink" title="/斜杠"></a>/斜杠</h3><p>斜杠 (/) 是用于时间表的递增的。我们刚刚用了逗号来表示每15分钟的递增，但是我们也能写成这样 0/15。  </p>
+<p>表达式样例：  </p>
+<p><code>0/15 0/30 * * * ?</code></p>
+<p>意义：在整点和半点时每15秒触发 trigger。</p>
+<h3 id="中划线"><a href="#中划线" class="headerlink" title="- 中划线"></a>- 中划线</h3><p>中划线 (-) 用于指定一个范围。例如，在小时域上的 3-8 意味着 “3,4,5,6,7 和 8 点。”  域的值不允许回卷，所以像 50-10 这样的值是不允许的。  </p>
+<p>表达式样例：</p>
+<pre><code>0 45 3-8 ? * *</code></pre><p>意义：在上午的3点至上午的8点的45分时触发 trigger。</p>
+<h3 id="L-字母"><a href="#L-字母" class="headerlink" title="L 字母"></a>L 字母</h3><p>L 说明了某域上允许的最后一个值。它仅被日和周域支持。当用在日域上，表示的是在月域上指定的月份的最后一天。例如，当月域上指定了 JAN时，在日域上的 L 会促使 trigger 在1月31号被触发。假如月域上是 SEP，那么 L 会预示着在9月30号触发。换句话说，就是不管指定了哪个月，都是在相应月份的时最后一天触发 trigger。  </p>
+<p>表达式<br><code>0 0 8 L * ?</code><br>意义是在每个月最后一天的上午 8:00 触发 trigger。在月域上的 * 说明是 “每个月”。  </p>
+<h3 id="W-字母"><a href="#W-字母" class="headerlink" title="W 字母"></a>W 字母</h3><p><code>W</code> 字符代表着平日 (Mon-Fri)，并且仅能用于日域中。它用来指定离指定日的最近的一个平日。大部分的商业处理都是基于工作周的，所以 W 字符可能是非常重要的。例如，日域中的 15W 意味着 “离该月15号的最近一个平日。</p>
+<h3 id="井号"><a href="#井号" class="headerlink" title="(#)井号"></a>(#)井号</h3><p>(#)字符仅能用于周域中。它用于指定月份中的第几周的哪一天。例如，如果你指定周域的值为 6#3，它意思是某月的第三个周五 (6=星期五，#3意味着月份中的第三周)。</p>
+<h2 id="spring的配置"><a href="#spring的配置" class="headerlink" title="spring的配置"></a>spring的配置</h2><h3 id="xml"><a href="#xml" class="headerlink" title="xml"></a>xml</h3><pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+    xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot; xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+    xmlns:task=&quot;http://www.springframework.org/schema/task&quot;
+    xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/task  http://www.springframework.org/schema/task/spring-task-3.0.xsd&quot;
+    &gt;
+
+    &lt;bean id=&quot;htmlTask&quot; class=&quot;com.xxx.task.xxxTask&quot; autowire=&quot;byType&quot;/&gt; 
+        &lt;task:scheduled-tasks&gt;  
+            &lt;task:scheduled ref=&quot;htmlTask&quot;  method=&quot;process&quot; cron=&quot;*/20 * * * * ?&quot; /&gt;  
+        &lt;/task:scheduled-tasks&gt;
+&lt;/beans&gt;</code></pre>
+<h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><pre><code class="java">public class xxxTask {
+
+    public void process(){
+        // do something...
+    }
+
+}</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

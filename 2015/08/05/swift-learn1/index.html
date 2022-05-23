@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">swift语法概览</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 08 / 05</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">swift</span>
+			
+				<span id="post-tag">ios</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><p><a href="http://www.cnblogs.com/kenshincui/p/4717450.html" target="_blank" rel="noopener">博客园优秀文章</a></p>
+<p>##简介语法</p>
+<p>Playground代码。</p>
+<pre><code class="swift">
+//: Playground - noun: a place where people can play
+
+import UIKit
+
+//1.初始
+println(&quot;hello world&quot;)
+
+//2.常量与变量
+var a = &quot;我是变量&quot;
+let b = &quot;我是常亮&quot;
+
+//3.指明类型
+let letInteger :int_fast32_t = 70;
+let letDouble :Double = 70.00
+let letString :NSString = &quot;hello&quot;
+
+//4.转换字符串:String()或\()
+let myString = &quot;myInt is&quot;
+let myInt = 94
+let myString2 = myString+String(myInt)
+let myString3 = &quot;myInt is\(myInt)&quot;
+
+//5.数组创建与调用
+var array = [&quot;one&quot;,&quot;two&quot;,&quot;three&quot;]
+var getTwo = array[1]
+
+//6.数据字典
+var dictionary = [&quot;oneName&quot;:&quot;I am one value &quot;,&quot;twoName&quot;:&quot;I am two value&quot;]
+var getTwoValue = dictionary[&quot;twoName&quot;]
+
+//7.for 语句
+for item in array{
+println(item)
+}
+
+//8.函数
+func getUserName(loginName:String)-&gt;String{
+return &quot;\(loginName) love Tian&quot;
+}
+
+println(getUserName(&quot;tt&quot;))
+
+//9.枚举
+enum Week{
+case 星期一
+case 星期二
+case 星期三
+case 星期四
+case 星期五
+case 星期六
+case 星期日
+}
+
+//switch
+var today = &quot;星期一&quot;
+switch today{
+case &quot;星期一&quot; :
+println(&quot;1&quot;);
+case &quot;星期二&quot;:
+println(&quot;123&quot;)
+default:
+println(&quot;tian&quot;)
+}
+
+//11.类
+class Person:NSObject{
+var userName:String;
+var userAge = 0;
+override init() {
+userName=&quot;TianJun&quot;;
+}
+}
+var p = Person();
+p.userAge</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

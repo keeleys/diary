@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">Tengine 的安装以及Tengine + Lua + GraphicsMagick 实现图片裁剪缩放</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 08 / 29</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">nginx</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="测试安装Tengine"><a href="#测试安装Tengine" class="headerlink" title="测试安装Tengine"></a>测试安装Tengine</h2><p>下载<code>tengine</code></p>
+<pre><code>wget http://tengine.taobao.org/download/tengine-2.1.1.tar.gz </code></pre><p>解压到当前目录</p>
+<pre><code>tar -zxvf tengine-2.1.1.tar.gz</code></pre><p>进入tengine-2.1.1目录 分别运行</p>
+<pre><code>$ ./configure
+$ make
+$ sudo make install
+
+//Tengine默认将安装在/usr/local/nginx目录。你可以用&#39;--prefix&#39;来指定你想要的安装目录。</code></pre><p>进入/usr/local/nginx 目录 运行下面命令来显示所有编译的模块以及tenginx版本</p>
+<pre><code>./sbin/nginx -m</code></pre><p>将nginx 添加到环境变量，然后重新ssh登录</p>
+<pre><code>vi /etc/profile
+//末尾添加
+export NGINX_HOME=/usr/local/nginx
+export PATH=$NGINX_HOME/sbin:$PATH
+</code></pre><p>启动nginx 停止nginx</p>
+<pre><code>sudo /usr/local/nginx/sbin/nginx
+nginx -s stop
+nginx -s reload //修改配置后重启</code></pre><p>查看端口占用 默认用的5012</p>
+<pre><code>netstat -anop|grep 5012
+</code></pre><a id="more"></a>
+<h2 id="Tengine-Lua-GraphicsMagick-实现图片自动裁剪-缩放"><a href="#Tengine-Lua-GraphicsMagick-实现图片自动裁剪-缩放" class="headerlink" title="Tengine + Lua + GraphicsMagick 实现图片自动裁剪/缩放"></a>Tengine + Lua + GraphicsMagick 实现图片自动裁剪/缩放</h2><h3 id="所有步骤用的root用户操作-教程的centos版本"><a href="#所有步骤用的root用户操作-教程的centos版本" class="headerlink" title="所有步骤用的root用户操作,教程的centos版本"></a>所有步骤用的<code>root</code>用户操作,教程的centos版本</h3><pre><code>--显示版本
+rpm -q centos-release 
+
+centos-release-6-3.el6.centos.9.x86_64</code></pre><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="http://my.oschina.net/eduosi/blog/169606" target="_blank" rel="noopener">http://my.oschina.net/eduosi/blog/169606</a></li>
+</ul>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><h4 id="readline-amp-readline-devel（Lua-所需）"><a href="#readline-amp-readline-devel（Lua-所需）" class="headerlink" title="readline&amp;readline-devel（Lua 所需）"></a>readline&amp;readline-devel（Lua 所需）</h4><pre><code>yum install -y readline
+yum install -y readline-devel/</code></pre><pre><code>yum -y install pcre-devel openssl openssl-devel</code></pre><h4 id="Lua"><a href="#Lua" class="headerlink" title="Lua"></a>Lua</h4><pre><code>下载 Lua
+wget http://www.lua.org/ftp/lua-5.3.1.tar.gz
+tar -zxvf lua-5.3.1.tar.gz
+//进入 Lua 源码目录
+make linux
+make install</code></pre><h4 id="LuaJIT"><a href="#LuaJIT" class="headerlink" title="LuaJIT"></a>LuaJIT</h4><pre><code>//下载
+wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+tar -zxvf LuaJIT-2.0.4.tar.gz
+//安装
+make
+make install
+</code></pre><h4 id="Tengine"><a href="#Tengine" class="headerlink" title="Tengine"></a>Tengine</h4><pre><code>//下载解压
+wget http://tengine.taobao.org/download/tengine-2.1.1.tar.gz
+tar -zxvf tengine-2.1.1.tar.gz
+//安装
+
+$ ./configure --prefix=/usr/local/Tengine --dso-path=/usr/local/Tengine/modules --with-http_realip_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_concat_module --with-http_lua_module --http-proxy-temp-path=/var/tmp/Tengine/proxy_temp --http-fastcgi-temp-path=/var/tmp/Tengine/fastcgi_temp --http-uwsgi-temp-path=/var/tmp/Tengine/uwsgi_temp --http-scgi-temp-path=/var/tmp/Tengine/cgi_temp --http-client-body-temp-path=/var/tmp/Tengine/client_body_temp --http-log-path=/var/log/Tengine/access.log --error-log-path=/var/log/Tengine/error.log
+
+$ make
+$ make install
+</code></pre><h4 id="libjpeg、libjpeg-devel"><a href="#libjpeg、libjpeg-devel" class="headerlink" title="libjpeg、libjpeg-devel"></a>libjpeg、libjpeg-devel</h4><pre><code>yum install -y libjpeg
+yum install -y libjpeg-devel</code></pre><h4 id="libpng、libpng-devel"><a href="#libpng、libpng-devel" class="headerlink" title="libpng、libpng-devel"></a>libpng、libpng-devel</h4><pre><code>yum install -y libpng
+yum install -y libpng-devel</code></pre><h4 id="giflib、giflib-devel"><a href="#giflib、giflib-devel" class="headerlink" title="giflib、giflib-devel"></a>giflib、giflib-devel</h4><pre><code>yum install -y giflib
+yum install -y giflib-devel</code></pre><h4 id="freetype、freetype-devel"><a href="#freetype、freetype-devel" class="headerlink" title="freetype、freetype-devel"></a>freetype、freetype-devel</h4><pre><code>yum install -y freetype
+yum install -y freetype-devel</code></pre><h4 id="GraphicsMagick"><a href="#GraphicsMagick" class="headerlink" title="GraphicsMagick"></a>GraphicsMagick</h4><pre><code>// 下载安装 编译
+wget http://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/1.3.21/GraphicsMagick-1.3.21.tar.gz/download
+tar -zxvf GraphicsMagick-1.3.21.tar.gz
+cd GraphicsMagick-1.3.21
+./configure --prefix=/usr/local/GraphicsMagick --enable-shared
+make
+make install
+//测试下
+/usr/local/GraphicsMagick/bin/gm version</code></pre><h3 id="相关文件"><a href="#相关文件" class="headerlink" title="相关文件"></a>相关文件</h3><h4 id="nginx配置"><a href="#nginx配置" class="headerlink" title="nginx配置"></a>nginx配置</h4><pre><code>
+#user  nobody;
+worker_processes  4;
+
+error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;
+                      &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;
+                      &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;
+
+    access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    gzip  on;
+
+    gzip_min_length 1k;
+    gzip_buffers 5 12k;
+    gzip_http_version 1.0;
+    gzip_comp_level 2;
+    gzip_vary on;
+    gzip_types text/plain text/css text/xml application/xml application/atom+xml application/rss+xml application/xhtml+xml application/xml-dtd image/gif image/jpeg image/png ima
+ge/x-icon image/bmp image/x-ms-bmp text/javascript application/x-javascript;
+    server {
+        listen       81;
+        server_name  localhost;
+        #charset koi8-r;
+
+        access_log  logs/host.access.log main;
+
+        location / {
+             root   /home/keeley/document;
+             index  index.html index.htm;
+         }
+         location ~* ^(.+\.(jpg|jpeg|gif|png))_(\d+)x(\d+)\.(jpg|jpeg|gif|png)$ {
+                root /home/keeley/document;    # 这里必须设置，否则根目录，即 $document_root 会是 Nginx 默认的 Nginx Root/html，在 Lua 中会得不到期望的值
+                if (!-f $request_filename) {    # 如果文件不存在时才需要裁剪
+                        add_header X-Powered-By &#39;Lua GraphicsMagick&#39;;    # 此 HTTP Header 无实际意义，用于测试
+                        add_header file-path $request_filename;    # 此 HTTP Header 无实际意义，用于测试
+                        lua_code_cache off; # 在编写外部 Lua 脚本时，设置为 off Nginx 不会缓存 Lua，方便调试
+                        set $request_filepath /home/keeley/document/$1;    # 设置原始图片路径，如：/document_root/1.gif
+                        set $width $3;    # 设置裁剪/缩放的宽度
+                        set $height $4;    # 设置裁剪/缩放的高度
+                        set $ext $5;    # 图片文件格式后缀
+                        content_by_lua_file /home/keeley/document/ImageResizer.lua;    # 加载外部 Lua 文件
+                }
+        }
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache&#39;s document root
+        # concurs with nginx&#39;s one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+    }
+
+
+    # another virtual host using mix of IP-, name-, and port-based configuration
+    #
+    #server {
+    #    listen       8000;
+    #    listen       somename:8080;
+    #    server_name  somename  alias  another.alias;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+
+
+    # HTTPS server
+    #
+    #server {
+    #    listen       443 ssl;
+    #    server_name  localhost;
+
+    #    ssl_certificate      cert.pem;
+    #    ssl_certificate_key  cert.key;
+
+    #    ssl_session_cache    shared:SSL:1m;
+    #    ssl_session_timeout  5m;
+
+    #    ssl_ciphers  HIGH:!aNULL:!MD5;
+    #    ssl_prefer_server_ciphers  on;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+
+    include vhosts/*.conf;
+}</code></pre><h4 id="ImageResizer-lua-脚本"><a href="#ImageResizer-lua-脚本" class="headerlink" title="ImageResizer.lua 脚本"></a>ImageResizer.lua 脚本</h4><pre><code>local command = &quot;/usr/local/GraphicsMagick/bin/gm convert &quot; .. ngx.var.request_filepath .. &quot; -resize &quot; .. ngx.var.width .. &quot;x&quot; .. ngx.var.height .. &quot; +profile \&quot;*\&quot; &quot; .. ngx.var.request_filepath .. &quot;_&quot; .. ngx.var.width .. &quot;x&quot; .. ngx.var.height .. &quot;.&quot; .. ngx.var.ext;
+os.execute(command);   
+ngx.exec(ngx.var.request_uri);</code></pre><h4 id="测试电脑的部分history"><a href="#测试电脑的部分history" class="headerlink" title="测试电脑的部分history"></a>测试电脑的部分history</h4><pre><code> 1017  history 
+ 1018  vi /usr/local/nginx/conf/nginx.conf
+ 1019  nginx -s reload
+ 1020  vi /usr/local/nginx/conf/nginx.conf
+ 1021  nginx -s reload
+ 1022  vi /usr/local/nginx/conf/nginx.conf
+ 1023  nginx -s reload
+ 1024  vi /usr/local/nginx/conf/nginx.conf
+ 1025  nginx -s reload
+ 1026  vi /usr/local/nginx/conf/nginx.conf
+ 1027  nginx -s reload
+ 1028  cd /usr/local/nginx/logs/
+ 1029  ll
+ 1030  vi /usr/local/nginx/conf/nginx.conf
+ 1031  cd /usr/local/nginx/logs/
+ 1032  nginx -s reload
+ 1033  /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+ 1034  ll
+ 1035  nginx -s reload
+ 1036  vi /usr/local/nginx/conf/nginx.conf
+ 1037  nginx -s reload
+ 1038  vi /usr/local/nginx/conf/nginx.conf
+ 1039  nginx -s reload
+ 1040  tail -f /usr/local/nginx/logs/access.log 
+ 1041  ping www.ttianjun.com
+ 1042  rpm -q centos-release
+ 1043  ll
+ 1044  nginx -v
+ 1045  nginx -m
+ 1046  nginx -M
+ 1047  nginx -V
+ 1048  ps -ef |grep nginx
+ 1049  cd /usr/local/nginx
+ 1050  ll
+ 1051  ls 
+ 1052  history 
+ 1053  vi /usr/local/nginx/conf/nginx.conf
+ 1054  ll
+ 1055  cd html/
+ 1056  ll
+ 1057  cd ..
+ 1058  cd ../
+ 1059  nginx -s reload
+ 1060  vi /usr/local/nginx/conf/nginx.conf
+ 1061  nginx -s reload
+ 1062  nginx -s stop
+ 1063  ps -ef |grep nginx
+ 1064  sudo /usr/local/nginx/sbin/nginx
+ 1065  netstat -ano|grep 5012
+ 1066  ll
+ 1067  history 
+ 1068  vi /usr/local/nginx/conf/nginx.conf
+ 1069  nginx -s reload
+ 1070  netstat -anp
+ 1071  netstat -anp | grep 5012
+ 1072  netstat -anop|grep 5012
+ 1073  vi /usr/local/nginx/conf/nginx.conf
+ 1074  nginx -s reload
+ 1075  iptables -L
+ 1076  lsof -i:80
+ 1077  lsof -i:5012
+ 1078  /etc/init.d/iptables status
+ 1079  tcping
+ 1080  ll
+ 1081  history 
+ 1082  vi /usr/local/nginx/conf/nginx.conf
+ 1083  nginx -s reload
+ 1084  ll
+ 1085  pwd
+ 1086  cd nginx
+ 1087  ll
+ 1088  cd /home/keeley/
+ 1089  wget http://www.lua.org/ftp/lua-5.3.1.tar.gz
+ 1090  ll
+ 1091  wget http://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/1.3.21/GraphicsMagick-1.3.21.tar.gz/download
+ 1092  ll
+ 1093  yum
+ 1094  yum install readline
+ 1095  ll
+ 1096  yum install readline-devel
+ 1097  tar -zxvf lua-5.3.1.tar.gz 
+ 1098  ll
+ 1099  cd lua-5.3.1
+ 1100  ll
+ 1101  mark
+ 1102  make
+ 1103  make linux
+ 1104  ll
+ 1105  make install
+ 1106  ll
+ 1107  cd ../
+ 1108  ll
+ 1109  wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+ 1110  tar -zxvf LuaJIT-2.0.4.tar.gz 
+ 1111  ll
+ 1112  cd LuaJIT-2.0.4
+ 1113  ll
+ 1114  make
+ 1115  make install
+ 1116  yum install libjpeg
+ 1117  yum install libjpeg-devel
+ 1118  yum install libpng
+ 1119  yum install libpng-devel
+ 1120  yum install giflib
+ 1121  yum install giflib-devel
+ 1122  yum install freetype
+ 1123  yum install freetype-devel
+ 1124  cd ../
+ 1125  ll
+ 1126  tar -cxvf GraphicsMagick-1.3.21.tar.gz 
+ 1127  tar -zxvf GraphicsMagick-1.3.21.tar.gz 
+ 1128  ll
+ 1129  cd GraphicsMagick-1.3.21
+ 1130  ./configure --prefix=/usr/local/GraphicsMagick --enable-shared
+ 1131  make
+ 1132  make install
+ 1133  /usr/local/GraphicsMagick/bin/gm version
+ 1134  vi /usr/local/nginx/conf/nginx.conf
+ 1135  cd ../
+ 1136  ll
+ 1137  mkdir document
+ 1138  ll
+ 1139  cd document/
+ 1140  vi ImageResizer.lua
+ 1141  nginx -s reload
+ 1142  cd ../tengine-2.1.1
+ 1143  ./configure  --dso-path=/usr/local/Tengine/modules --with-http_realip_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_concat_module --with-http_lua_module --with-openssl=/usr/local/src/openssl-1.0.1e --with-zlib=/usr/local/src/zlib-1.2.8 --http-proxy-temp-path=/var/tmp/Tengine/proxy_temp --http-fastcgi-temp-path=/var/tmp/Tengine/fastcgi_temp --http-uwsgi-temp-path=/var/tmp/Tengine/uwsgi_temp --http-scgi-temp-path=/var/tmp/Tengine/cgi_temp --http-client-body-temp-path=/var/tmp/Tengine/client_body_temp --http-log-path=/var/log/Tengine/access.log --error-log-path=/var/log/Tengine/error.log
+ 1144  mark
+ 1145  make
+ 1146  yum openssl
+ 1147  cd ../
+ 1148  wget https://www.openssl.org/source/openssl-1.0.1p.tar.gz
+ 1149  l
+ 1150  ll
+ 1151  tar zxvf openssl-1.0.1p.tar.gz 
+ 1152  ll
+ 1153  make openssl-1.0.1p/
+ 1154  cd openssl-1.0.1p
+ 1155  make
+ 1156  cd ../
+ 1157  wget https://www.openssl.org/source/old/1.0.1/openssl-1.0.1e.tar.gz
+ 1158  tar -zxvf openssl-1.0.1e.tar.gz 
+ 1159  cd openssl-1.0.1e
+ 1160  make
+ 1161  ./config
+ 1162  make
+ 1163  cd ../tengine-2.1.1
+ 1164  ./configure --prefix=/usr/local/Tengine --dso-path=/usr/local/Tengine/modules --with-http_realip_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_concat_module --with-http_lua_module  --with-zlib=/usr/local/src/zlib-1.2.8 --http-proxy-temp-path=/var/tmp/Tengine/proxy_temp --http-fastcgi-temp-path=/var/tmp/Tengine/fastcgi_temp --http-uwsgi-temp-path=/var/tmp/Tengine/uwsgi_temp --http-scgi-temp-path=/var/tmp/Tengine/cgi_temp --http-client-body-temp-path=/var/tmp/Tengine/client_body_temp --http-log-path=/var/log/Tengine/access.log --error-log-path=/var/log/Tengine/error.log
+ 1165  make
+ 1166  ./configure --prefix=/usr/local/Tengine --dso-path=/usr/local/Tengine/modules --with-http_realip_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_concat_module --with-http_lua_module   --http-proxy-temp-path=/var/tmp/Tengine/proxy_temp --http-fastcgi-temp-path=/var/tmp/Tengine/fastcgi_temp --http-uwsgi-temp-path=/var/tmp/Tengine/uwsgi_temp --http-scgi-temp-path=/var/tmp/Tengine/cgi_temp --http-client-body-temp-path=/var/tmp/Tengine/client_body_temp --http-log-path=/var/log/Tengine/access.log --error-log-path=/var/log/Tengine/error.log
+ 1167  make
+ 1168  make install
+ 1169  cd /usr/local/tenginx
+ 1170  cd /usr/local/Tengine/
+ 1171  cp /usr/local/nginx/conf/nginx.conf /usr/local/Tengine/conf/
+ 1172  sudo sbin/nginx 
+ 1173  ln -s /usr/local/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2
+ 1174  sudo sbin/nginx 
+ 1175  mkdir /var/tmp/Tengine
+ 1176  mkdir /var/tmp/Tengine/client_body_temp
+ 1177  sudo sbin/nginx 
+ 1178  nginx -s stop
+ 1179  netstat -anop|grep 81
+ 1180  kill 27281
+ 1181  netstat -anop|grep 81
+ 1182  sudo sbin/nginx 
+ 1183  ll
+ 1184  cd /home/keeley/document/
+ 1185  ll
+ 1186  ab -n 100 -c 1 http://192.168.100.64:81/QQphoto.jpeg
+ 1187  ll
+ 1188  vi ImageResizer.lua 
+ 1189  tail -100  /usr/local/Tengine/logs/error.log 
+ 1190  tail -100  /usr/local/Tengine/logs/access.log 
+ 1191  vi /usr/local/Tengine/conf/nginx.conf
+ 1192  tail -100  /usr/local/Tengine/logs/error.log 
+ 1193  /usr/local/GraphicsMagick/bin/gm
+ 1194  /usr/local/GraphicsMagick/bin/gm -v
+ 1195  /usr/local/GraphicsMagick/bin/gm -help
+ 1196  /usr/local/GraphicsMagick/bin/gm -version
+ 1197  tail -100  /usr/local/Tengine/logs/error.log 
+ 1198  vi /home/keeley/document/ImageResizer.lua 
+ 1199  /usr/local/Tengine/sbin/nginx -s reload
+ 1200  tail -100  /usr/local/Tengine/logs/error.log 
+ 1201  ll
+ 1202  chmod -R 777
+ 1203  chmod -R 777 .
+ 1204  dir
+ 1205  pwd
+ 1206  ll
+ 1207  history 
+[root@slave3 document]# vi /usr/local/Tengine/conf/nginx.conf
+</code></pre><h2 id="测试-以及访问例子"><a href="#测试-以及访问例子" class="headerlink" title="测试 以及访问例子"></a>测试 以及访问例子</h2><ul>
+<li>丢了个文件到 <code>QQphoto.jpeg</code> , <code>/home/keeley/document</code> 里面做测试</li>
+<li>访问原图片 <code>http://192.168.xxx.xxx:81/QQphoto.jpeg</code></li>
+<li>访问小图片<code>http://192.168.xxx.xxx:81/QQphoto.jpeg_250x250.jpg</code><br><img src="https://dn-tianjun.qbox.me/ttianjunQQ%E6%88%AA%E5%9B%BE20150901162352.png" alt="1"></li>
+<li>服务器如果发现没有会自动生成图片，然后下次就直接调用缓存获取了。<br><img src="https://dn-tianjun.qbox.me/ttianjunQQ%E6%88%AA%E5%9B%BE20150901162850.png" alt="2"></li>
+</ul>
+<h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><blockquote>
+<p>1 找了很久发现5012总是出502错误，后来把5012端口改了 就能成功访问了。改成了81</p>
+</blockquote>
+<blockquote>
+<p>2 Tengine跟攻略不同的是去掉了安装参数 <code>--with-openssl=/usr/local/src/openssl-1.0.1e</code>,<code>--with-zlib=/usr/local/src/zlib-1.2.8</code>,这里本来想安装openssl的 无奈一直出错就放弃了，观察了下后续也没用到这2个，就直接去掉了这2个参数</p>
+</blockquote>
+<blockquote>
+<p>3 启动tengine同样出现了64位找不到jit的错误，使用了软连接</p>
+</blockquote>
+<pre><code>ln -s /usr/local/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2</code></pre><blockquote>
+<p>4  ImageResizer.lua 脚本，原版本//注释，然后执行切图的时候总是出错，后来去掉了就好了。</p>
+</blockquote>
+<blockquote>
+<p>5 自己的图片目录/home/keeley/document 没有权限也会报错。后面赋权 chmod -R 777 . 就好了，能正常切图了。</p>
+</blockquote>
+<blockquote>
+<p>6 测试发现的规律，会按等比例缩放，不会严格按照你设置的宽高，先从宽度开始，满足了符合的宽度，如果缩放之后高度也在设置的高度之内，就按缩放的高度算。如果缩放之后高度大于了设置的高度，就按高度算。所以实际是根据比例缩放，只有一边匹配，另一边少于设定值，如果完全。</p>
+</blockquote>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

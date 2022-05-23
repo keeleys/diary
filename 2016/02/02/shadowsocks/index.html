@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">Ubuntu安装Shadowsocks</h1>
+	<div id="post-detail">
+		<span id="post-date">2016 / 02 / 02</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">linux</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="ubunts版本"><a href="#ubunts版本" class="headerlink" title="ubunts版本"></a>ubunts版本</h2><pre><code class="bash">▶ cat /etc/issue
+Ubuntu 14.04.1 LTS \n \l</code></pre>
+<a id="more"></a>
+<h2 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h2><ul>
+<li><p>安装pip</p>
+<pre><code class="bash">wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py</code></pre>
+</li>
+<li><p>用pip安装 shadowsocks</p>
+<pre><code class="bash">pip install shadowsocks
+</code></pre>
+</li>
+</ul>
+<pre><code>
+* 创建配置文件
+```bash
+cd ~
+vi shadowsocks.json</code></pre><ul>
+<li>编写内容<pre><code class="js"></code></pre>
+</li>
+</ul>
+<p>{<br>    “server”:”0.0.0.0”,<br>    “server_port”:8388, // 配置访问的端口<br>    “local_port”:1080,<br>    “password”:”you_password”, // 配置你自己的密码<br>    “timeout”:600,<br>    “method”:”aes-256-cfb”<br>}</p>
+<pre><code>
+## 以服务方式运行Shadowsocks
+```bash
+# 启动方法
+▶ ssserver -c shadowsocks.json -d start
+INFO: loading config from shadowsocks.json
+2016-02-02 03:24:38 INFO     loading libcrypto from libcrypto.so.1.0.0
+started
+
+#停止方法
+ssserver -c shadowsocks.json -d stop
+</code></pre><h2 id="客户端方法和教程"><a href="#客户端方法和教程" class="headerlink" title="客户端方法和教程"></a>客户端方法和教程</h2><p>客户端配置好<code>服务器地址</code>,<code>端口</code>和<code>密码</code>和<code>加密方式</code>就能连接了<br>客户端工具下载<a href="http://www.ishadowsocks.net/" target="_blank" rel="noopener">http://www.ishadowsocks.net/</a></p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">lodop web打印控件</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 05 / 24</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">打印</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h3 id="1-lodop资料"><a href="#1-lodop资料" class="headerlink" title="1. lodop资料"></a>1. lodop资料</h3><ol>
+<li><a href="http://www.lodop.net/" target="_blank" rel="noopener" title="lodop 官网">lodop官网</a></li>
+<li><a href="http://www.lodop.net/demo.html" target="_blank" rel="noopener" title="使用说明及样例">使用样例</a></li>
+<li><a href="http://www.lodop.net/uploads/file/Lodop6.1NoteBook.zip" target="_blank" rel="noopener">使用手册</a></li>
+<li><a href="http://blog.sina.com.cn/s/blog_721e77e50100nfzs.html" target="_blank" rel="noopener">收费购买</a></li>
+</ol>
+<a id="more"></a>
+
+<h3 id="2-项目中的实际用法"><a href="#2-项目中的实际用法" class="headerlink" title="2.项目中的实际用法"></a>2.项目中的实际用法</h3><ul>
+<li><p>例子页面</p>
+<pre><code class="jsp">&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=utf-8&quot;
+  pageEncoding=&quot;utf-8&quot;%&gt;
+ &lt;%@taglib uri=&quot;/struts-tags&quot;  prefix=&quot;s&quot;%&gt;
+&lt;%
+String path = request.getContextPath();
+String basePath = request.getScheme()+&quot;://&quot;+request.getServerName()+&quot;:&quot;+request.getServerPort()+path+&quot;/&quot;;
+%&gt;
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;base href=&quot;&lt;%=basePath%&gt;&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
+&lt;title&gt;打印面单&lt;/title&gt;
+&lt;script language=&quot;javascript&quot; src=&quot;js/LodopFuncs.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; src=&quot;js/jquery.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; src=&quot;js/plane.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;button id=&quot;printCt&quot; onclick=&quot;plane.print(0);&quot;&gt;打印预览 &lt;/button&gt;
+  &lt;button id=&quot;printRm&quot; onclick=&quot;plane.print(1);&quot;&gt; 打印维护&lt;/button&gt;
+  &lt;div style=&quot;width:100%&quot;&gt;
+      &lt;object id=&quot;LODOP_X&quot; classid=&quot;clsid:2105C259-1E0C-4534-8141-A753534CB4CA&quot; width=&#39;680&#39; height=&#39;700&#39;&gt; 
+      &lt;embed id=&quot;LODOP_EM&quot; TYPE=&quot;application/x-print-lodop&quot; width=&#39;680 &#39;height=&#39;650&#39;  PLUGINSPAGE=&quot;install_lodop32.exe&quot;&gt;&lt;/embed&gt;
+      &lt;/object&gt;
+  &lt;/div&gt;
+
+  &lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt; 
+  var orderJson = &#39;${orderListJson}&#39;;//后端request代入返回的json字符
+  var orderData =(new Function(&quot;&quot;,&quot;return &quot;+orderJson))();//把字符转换成json对象
+  window.onload = function(){  
+      plane.createYtRm().print(1);//页面加载完成指挥 设置圆通热敏 然后开启打印设置
+  };
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</li>
+<li><p>planejs</p>
+<pre><code class="js">//打印类
+//全局变量,打印的控制对象
+var LODOP;
+function plane(){
+}
+//圆通传统的打印方法
+plane.prototype.createYtCt =function(){
+     LODOP=getLodop(document.getElementById(&#39;LODOP_X&#39;),document.getElementById(&#39;LODOP_EM&#39;));  //获取打印对象，就是页面的object
+      LODOP.PRINT_INIT(&quot;打印圆通传统面单&quot;);//打印队列的任务名字
+      LODOP.SET_PRINT_STYLEA(&#39;All&#39;,&#39;Deleted&#39;,1);//清除所有的打印元素
+
+      //orderData 前端的json对象
+      for(var index in orderData){
+          var order = orderData[index];
+          LODOP.NEWPAGEA();//强制分页
+
+          //下面就是布局了 可以在控件的设计打印页面做好布局 然后再复制进来 替换一下变量。
+          //ADD_PRINT_TEXT添加文本
+          LODOP.ADD_PRINT_TEXT(89,113,75,20,order.sender_name);
+          LODOP.ADD_PRINT_TEXT(209,157,168,26,order.sender_mobile);
+          LODOP.ADD_PRINT_TEXT(177,90,236,25,order.sender_address);
+          LODOP.ADD_PRINT_TEXT(103,456,75,20,order.receiver_name);
+          LODOP.ADD_PRINT_TEXT(179,409,244,25,order.receiver_address);
+          LODOP.ADD_PRINT_TEXT(209,498,171,26,order.receiver_phone);
+
+          //LODOP.ADD_PRINT_TEXT(272,71,164,40,&quot;内件品名&quot;);
+          //LODOP.ADD_PRINT_TEXT(272,270,100,20,&quot;内件数量&quot;);
+          LODOP.ADD_PRINT_TEXT(157,454,80,20,order.receiver_prov);
+          LODOP.ADD_PRINT_TEXT(157,565,54,20,order.receiver_city);
+          LODOP.ADD_PRINT_TEXT(157,652,54,20,order.receiver_area);
+          LODOP.ADD_PRINT_BARCODE(31,400,214,60,&quot;Code39&quot;,order.tms_billcode);
+          LODOP.SET_PRINT_STYLE(&quot;FontSize&quot;,&quot;18&quot;);
+          LODOP.ADD_PRINT_TEXT(395,221,138,30,order.tms_billcode);
+
+          LODOP. SET_PRINT_PAGESIZE (0, 0, 0,&quot;A4&quot;);//设置纸张为A4（按操作系统定义的A4尺寸），纵向打印
+          LODOP.SET_SHOW_MODE(&quot;PREVIEW_IN_BROWSE&quot;,1); //预览界面内嵌到页面内
+          LODOP.SET_SHOW_MODE(&quot;SETUP_IN_BROWSE&quot;,1);//打印维护界面是否内嵌到网页内部。
+          LODOP.SET_SHOW_MODE(&quot;DESIGN_IN_BROWSE&quot;,1);//在设计模式是否嵌入到网页内部
+          LODOP.SET_SHOW_MODE(&quot;SETUP_ENABLESS&quot;,&quot;11111111000000&quot;);//隐藏关闭(叉)按钮
+          LODOP.ADD_PRINT_SETUP_BKIMG(&quot;&lt;img border=&#39;0&#39; src=&#39;images/print/ytkd2010b.jpg&#39;&gt;&quot;);//设置背景图
+          LODOP.SET_SHOW_MODE(&quot;BKIMG_IN_PREVIEW&quot;,true); //打印预览时包含背景图
+          LODOP.SET_SHOW_MODE(&quot;HIDE_QBUTTIN_PREVIEW&quot;,true);//隐藏预览窗口的关闭按钮
+      //    LODOP.SET_PREVIEW_WINDOW(1,2,0,0,0,&quot;&quot;);
+      }
+      return this;
+  };
+
+  plane.prototype.createYtRm =function(){
+         LODOP=getLodop(document.getElementById(&#39;LODOP_X&#39;),document.getElementById(&#39;LODOP_EM&#39;));  
+          LODOP.PRINT_INITA(&quot;打印圆通热敏面单2&quot;);
+          LODOP.SET_PRINT_STYLEA(&#39;All&#39;,&#39;Deleted&#39;,1);
+          LODOP. SET_PRINT_PAGESIZE (1,1000,1500,&quot;&quot;);//设置纸张大小 10mm*15mm 纵向打印
+          for(var index in orderData){
+              var order = orderData[index];
+              LODOP.NEWPAGEA();
+
+              var pname=&#39;&#39;;
+              for(orderitem in order.orderItemsList){
+                  var item = order.orderItemsList[orderitem];
+                  pname+=item.item_name;
+              }
+              //设计页面 有点长。
+              LODOP.SET_PRINT_STYLE(&quot;FontSize&quot;,10);
+              LODOP.ADD_PRINT_RECT(2,16,362,26,0,1);
+              LODOP.ADD_PRINT_TEXT(4,151,218,20,&quot;上联:此联由圆通速递留存&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;FontSize&quot;,11);
+              LODOP.SET_PRINT_STYLEA(0,&quot;Bold&quot;,1);
+              LODOP.ADD_PRINT_LINE(30,223,67,224,0,1);
+              LODOP.ADD_PRINT_BARCODE(33,20,147,35,&quot;128Auto&quot;,order.tms_billcode);
+              LODOP.ADD_PRINT_LINE(69,9,70,374,0,1);
+              LODOP.ADD_PRINT_TEXT(71,10,26,70,&quot;收 件 人&quot;);
+              LODOP.ADD_PRINT_TEXTA(&quot;address&quot;,76,52,307,35,order.receiver_prov+order.receiver_city+order.receiver_area+order.receiver_address);
+              LODOP.ADD_PRINT_TEXT(116,50,52,25,&quot;邮编:&quot;);
+              LODOP.ADD_PRINT_TEXT(116,200,56,25,&quot;电话:&quot;);
+              LODOP.ADD_PRINT_LINE(304,42,70,43,0,1);
+              LODOP.ADD_PRINT_TEXT(457,45,167,20,&quot;订单号:&quot;+order.order_code);
+              LODOP.ADD_PRINT_TEXT(147,47,177,20,&quot;订单号:&quot;+order.order_code);
+              LODOP.ADD_PRINT_TEXT(116,124,52,25,order.receiver_postcode);
+              LODOP.ADD_PRINT_TEXT(116,258,90,25,order.receiver_phone);
+              LODOP.ADD_PRINT_LINE(145,0,144,375,0,1);
+              LODOP.ADD_PRINT_TEXT(480,45,166,20,&quot;发件人:&quot;+order.sender_name);
+              LODOP.ADD_PRINT_TEXT(144,228,107,20,&quot;收件人签名&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;Bold&quot;,1);
+              LODOP.ADD_PRINT_TEXT(175,50,167,20,&quot;发货单号:&quot;+order.tms_billcode?order.tms_billcode:&#39;&#39;);
+              LODOP.ADD_PRINT_TEXT(161,229,81,20,&quot;证件号&quot;);
+              LODOP.ADD_PRINT_LINE(173,46,172,226,0,1);
+              LODOP.ADD_PRINT_LINE(305,226,145,227,0,1);
+              LODOP.ADD_PRINT_LINE(198,42,197,222,0,1);
+              LODOP.ADD_PRINT_TEXT(174,280,95,20,&quot;年   月   日&quot;);
+              LODOP.ADD_PRINT_TEXT(186,10,26,73,&quot;详 细 内 容&quot;);
+              LODOP.ADD_PRINT_TEXT(280,46,75,20,&quot;数量：&quot;);
+              LODOP.ADD_PRINT_TEXT(203,48,166,62,&quot;内容品名:&quot;+pname);
+              LODOP.ADD_PRINT_TEXT(281,137,75,20,&quot;重量：&quot;);
+              LODOP.ADD_PRINT_LINE(276,44,275,224,0,1);
+              LODOP.ADD_PRINT_LINE(194,225,193,375,0,1);
+              LODOP.ADD_PRINT_TEXT(245,232,141,56,&quot;圆通速递将快件送达收件人地址，经收件人或收件人(寄件人)允许...(省略)&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;FontSize&quot;,9);
+              LODOP.ADD_PRINT_LINE(306,5,305,377,0,1);
+              LODOP.ADD_PRINT_LINE(243,226,242,371,0,1);
+              LODOP.ADD_PRINT_TEXT(194,225,133,20,&quot;代收人姓名(签字):&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;Bold&quot;,1);
+              LODOP.ADD_PRINT_TEXT(211,229,81,20,&quot;证件号&quot;);
+              LODOP.ADD_PRINT_TEXT(222,280,95,20,&quot;年   月   日&quot;);
+              LODOP.ADD_PRINT_RECT(308,16,362,26,0,1);
+              LODOP.ADD_PRINT_TEXT(311,144,225,20,&quot;下联:此联由收件人留存&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;FontSize&quot;,11);
+              LODOP.SET_PRINT_STYLEA(0,&quot;Bold&quot;,1);
+              LODOP.ADD_PRINT_IMAGE(338,30,263,46,&quot;&lt;img src=&#39;images/print/yt_logo.png&#39;/&gt;&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;Stretch&quot;,2);
+              LODOP.ADD_PRINT_LINE(385,7,384,374,0,1);
+              LODOP.ADD_PRINT_TEXT(390,10,26,58,&quot;收 件 人&quot;);
+              LODOP.ADD_PRINT_TEXT(474,11,26,71,&quot;详细内容&quot;);
+              LODOP.ADD_PRINT_TEXTA(&quot;address&quot;,388,48,307,35,order.receiver_prov+order.receiver_city+order.receiver_area+order.receiver_address);
+              LODOP.ADD_PRINT_LINE(563,43,383,44,0,1);
+              LODOP.ADD_PRINT_TEXT(426,54,52,25,&quot;邮编:&quot;);
+              LODOP.ADD_PRINT_TEXT(426,125,52,25,order.receiver_postcode);
+              LODOP.ADD_PRINT_TEXT(425,193,56,25,&quot;电话:&quot;);
+              LODOP.ADD_PRINT_TEXT(426,262,90,25,order.receiver_phone);
+              LODOP.ADD_PRINT_LINE(456,1,455,373,0,1);
+              LODOP.ADD_PRINT_TEXT(502,45,161,58,&quot;发件地址:&quot;+order.sender_prov+order.sender_city+order.sender_area+order.sender_address);
+              LODOP.ADD_PRINT_TEXT(546,57,159,20,&quot;电话: &quot;+order.sender_mobile);
+              LODOP.ADD_PRINT_LINE(480,43,479,215,0,1);
+              LODOP.ADD_PRINT_LINE(570,217,455,218,0,1);
+              LODOP.ADD_PRINT_TEXT(460,225,141,56,&quot;此运单仅供圆通速递签约客户使用，相关责任义务以双方合作合同为...(省略)&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;FontSize&quot;,9);
+              LODOP.ADD_PRINT_IMAGE(512,219,158,84,&quot;&lt;img src=&#39;images/print/zy_logo.jpg&#39;/&gt;&quot;);
+              LODOP.SET_PRINT_STYLEA(0,&quot;Stretch&quot;,2);
+              LODOP.ADD_PRINT_RECT(1,1,378,566,0,1);
+              LODOP.ADD_PRINT_LINE(502,43,501,218,0,1);
+
+              LODOP.SET_SHOW_MODE(&quot;PREVIEW_IN_BROWSE&quot;,1); //预览界面内嵌到页面内
+              LODOP.SET_SHOW_MODE(&quot;SETUP_IN_BROWSE&quot;,1);//打印维护界面是否内嵌到网页内部。
+              LODOP.SET_SHOW_MODE(&quot;DESIGN_IN_BROWSE&quot;,1);
+              LODOP.SET_SHOW_MODE(&quot;BKIMG_IN_PREVIEW&quot;,true);
+              LODOP.SET_SHOW_MODE(&quot;HIDE_QBUTTIN_PREVIEW&quot;,true);
+          }
+          return this;
+      };
+      plane.prototype.print=function(type){
+          if(type==0)
+              LODOP.PREVIEW();//预览界面
+          else if(type==1)
+              LODOP.PRINT_SETUP();        //设置界面
+          else if(type==2)
+              LODOP.PRINT_DESIGN();    //设计界面
+      }
+      var plane = new plane();</code></pre>
+</li>
+</ul>
+<p>主要是引入下面的object插件,<code>PLUGINSPAGE=&quot;install_lodop32.exe&quot;</code>代表如果没有安装插件，那么会从这个路径下载.</p>
+<pre><code class="html">&lt;object id=&quot;LODOP_X&quot; classid=&quot;clsid:2105C259-1E0C-4534-8141-A753534CB4CA&quot; width=&#39;680&#39; height=&#39;700&#39;&gt; 
+    &lt;embed id=&quot;LODOP_EM&quot; TYPE=&quot;application/x-print-lodop&quot; width=&#39;680 &#39;height=&#39;650&#39;  PLUGINSPAGE=&quot;install_lodop32.exe&quot;&gt;&lt;/embed&gt;
+&lt;/object&gt;</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

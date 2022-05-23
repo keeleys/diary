@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">github协作开发流程</h1>
+	<div id="post-detail">
+		<span id="post-date">2016 / 06 / 30</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">github</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="Pull-Request流程"><a href="#Pull-Request流程" class="headerlink" title="Pull Request流程"></a>Pull Request流程</h2><ol>
+<li>首先fork我的项目</li>
+<li>把fork过去的项目也就是你的项目clone到你的本地</li>
+<li>运行 git remote add upstream  <a href="mailto:git@github.com">git@github.com</a>:xxx/xxx 库添加为远端库</li>
+<li>运行 git pull upstream master 拉取并合并到本地</li>
+<li>编写内容</li>
+<li>commit后push到自己的库（git push origin master）</li>
+<li>登录Github在你首页可以看到一个 pull request 按钮，点击它，填写一些说明信息，然后提交即可。</li>
+</ol>
+<p>1<del>3是初始化操作，执行一次即可。在翻译前必须执行第4步同步我的库（这样避免冲突），然后执行5</del>7既可。</p>
+<h2 id="关于gpg"><a href="#关于gpg" class="headerlink" title="关于gpg"></a>关于gpg</h2><ol>
+<li><p>生成gpg(略过)</p>
+</li>
+<li><p>Telling Git about your GPG key</p>
+<pre><code>gpg --list-secret-keys --keyid-format LONG
+git config --global user.signingkey xxxxxxxxxx(查询到的code)</code></pre></li>
+<li><p>signing-commits-using-gpg</p>
+<pre><code>git config commit.gpgsign true
+git config --global commit.gpgsign true</code></pre></li>
+</ol>
+<p><a href="https://help.github.com/articles/signing-commits-using-gpg/" target="_blank" rel="noopener">signing-commits-using-gpg</a></p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

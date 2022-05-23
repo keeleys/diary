@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">npm发布</h1>
+	<div id="post-detail">
+		<span id="post-date">2017 / 02 / 09</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">前端</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="发布自己写的模块到npm"><a href="#发布自己写的模块到npm" class="headerlink" title="发布自己写的模块到npm"></a>发布自己写的模块到npm</h2><ol>
+<li><p>先生成一个npm项目</p>
+<pre><code class="js">yarn init 或者 npm init</code></pre>
+</li>
+<li><p>写主要js啥的 然后在<code>package.json</code>的<code>main</code>属性表明入口js位子。</p>
+</li>
+<li><p>到 <code>https://www.npmjs.com/</code> 注册自己的账号</p>
+</li>
+<li><p>运行 <code>npm adduser</code> 命令,把自己注册填写的账号密码邮箱输入下咯</p>
+</li>
+<li><p>运行 <code>npm publish</code> 就发布了</p>
+</li>
+<li><p>如果修改了需要继续发布，请修改下package里面的版本号 </p>
+</li>
+<li><p>根项目里面可以写readme.md npm的项目主页就能看到描述了</p>
+</li>
+<li><p><code>package.json</code> 的<code>repository</code> 里面可以写上该项目的git托管地址</p>
+</li>
+</ol>
+<h2 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h2><ul>
+<li><p>npm</p>
+<pre><code>npm install -g cnpm --registry=https://registry.npm.taobao.org</code></pre></li>
+<li><p>yarn</p>
+<pre><code>yarn config set registry &#39;https://registry.npm.taobao.org&#39;</code></pre></li>
+</ul>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

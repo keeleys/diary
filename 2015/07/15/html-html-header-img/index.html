@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">网站头像上传剪辑</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 15</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">flash</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="使用的flash-插件"><a href="#使用的flash-插件" class="headerlink" title="使用的flash 插件"></a>使用的flash 插件</h2><p>##界面预览<br><img src="https://dn-tianjun.qbox.me/ttianjun_header_upload.png" alt="界面预览"></p>
+<a id="more"></a>
+<h2 id="页面使用"><a href="#页面使用" class="headerlink" title="页面使用"></a>页面使用</h2><ol>
+<li>引用js</li>
+</ol>
+<pre><code class="html">&lt;script src=&quot;${ctx}/js/swfobject.js&quot;&gt;&lt;/script&gt;</code></pre>
+<ol start="2">
+<li>构建展示的div</li>
+</ol>
+<pre><code class="html">&lt;div style=&quot;width:750px;height:550px;margin:40px auto 0; padding:10px;border:solid 1px #EFEFEF;&quot;&gt;
+        &lt;div id=&quot;altContent&quot;&gt;
+            &lt;h1&gt;AvatarUpload&lt;/h1&gt;
+            &lt;p&gt;&lt;a href=&quot;http://www.adobe.com/go/getflashplayer&quot;&gt;Get Adobe Flash player&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;</code></pre>
+<ol start="3">
+<li>配置js参数</li>
+</ol>
+<pre><code class="html">&lt;script type=&quot;text/javascript&quot;&gt;
+        var headimg =&quot;${session.session_customer.customerImg}&quot;;
+        if(headimg==&quot;&quot;)//判断用户是否有头像 有的话就用 没有用默认头像
+            headimg = &quot;${ctx}/images/avatar.png&quot;;
+        else
+            headimg=&#39;${upload}/&#39;+headimg;
+        var flashvars = {
+            js_handler:&quot;jsfun&quot;, // 全局的回调函数，提供给flash在后续情况下调用
+            swfID:&quot;avatarEdit&quot;, // 当前flash文件的id，方便区分多个相同组件
+            picSize:&quot;5242880&quot;, //选择本机图片允许的最大值单位为字节；比如5M 该值为：5242880
+            sourceAvatar:headimg, //默认头像的url地址
+            avatarLabel:&quot;头像预览，请注意清晰度&quot;, // 右侧头像预览区的label；
+            avatarAPI:&quot;${ctx}/customer/customer!saveHead&quot;, // 保存头像的接口地址
+            //sourcePicAPI:&quot;${ctx}/customer/customer!saveHead&quot;, 保存头像原图的接口地址  如果不想使用“保存原图”这个功能，可以不设置该值
+            //sourceLabel: 复选框 &quot;是否保存原图&quot;的文案；
+            avatarSize:&quot;126,126&quot;, //生成的头像尺寸，默认是：&quot;180,180|50,50|30,30&quot;; &quot;|&quot; 区分头像尺寸的个数；最多3个尺寸
+            avatarSizeLabel:&quot;用户头像&quot; //各个尺寸头像预览的文本简介；默认值：&quot;大头像|中头像|小头像&quot;;
+        };
+        var params = {
+            menu: &quot;false&quot;,
+            scale: &quot;noScale&quot;,
+            allowFullscreen: &quot;true&quot;,
+            allowScriptAccess: &quot;always&quot;,
+            bgcolor: &quot;&quot;,
+            wmode: &quot;transparent&quot; // can cause issues with FP settings &amp; webcam
+        };
+        var attributes = {
+            id:&quot;AvatarUpload&quot;
+        };
+        swfobject.embedSWF(
+            &quot;${ctx}/js/headimg/avatarUpload.swf&quot;, //下载下来的swf文件地址
+            &quot;altContent&quot;, &quot;100%&quot;, &quot;100%&quot;, &quot;10.0.0&quot;, 
+            &quot;${ctx}/js/headimg/expressInstall.swf&quot;, 
+            flashvars, params, attributes);
+
+        function jsfun(obj)
+        {
+            if(obj.type == &quot;avatarSuccess&quot;) { // 上传头像成功
+                bootbox.alert(&quot;头像上传成功&quot;,function(){ //bootbox提示插件
+                    location.reload();
+                });
+            }
+            if(obj.type == &quot;avatarError&quot;) { //上传头像失败
+                bootbox.alert(&quot;头像上传失败&quot;);
+            }
+            console.log(obj);
+        }
+    &lt;/script&gt;</code></pre>
+<h2 id="java服务器后端处理"><a href="#java服务器后端处理" class="headerlink" title="java服务器后端处理"></a>java服务器后端处理</h2><p>插件文档不是很全 没有提供后端文档,<br>通过chrome浏览器抓取网页请求，发现图片保存的时候 请求的数据是用post的<code>body流发</code>送的图片的流数据。</p>
+<p><img src="https://dn-tianjun.qbox.me/ttianjunQQ%E6%88%AA%E5%9B%BE20150715143501.png" alt="请求数据"></p>
+<p>那么就简单了 通过java把request流转写入成图片,相关伪代码</p>
+<pre><code class="java">
+File file = new File(filePath+NoKit.randomTimeNo()+&quot;.jpg&quot;);//创建一个File保证将要写入的图片文件 ,filePath 配置的目录
+if(!file.getParentFile().exists()) //如果目录不存在 新建目录
+    file.mkdirs();
+ImageIO.write(ImageIO.read(request.getInputStream()), &quot;jpg&quot;, file); //将流文件通过ImageIO写入到文件
+
+Map&lt;String,Object&gt; param = new HashMap&lt;String,Object&gt;();
+param.put(&quot;code&quot;, &quot;200&quot;);
+param.put(&quot;pic&quot;, file.getName());
+outputJson(param); //返回json到前端 通知前端上传成功
+</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">从lambda中获取Field</h1>
+	<div id="post-detail">
+		<span id="post-date">2020 / 05 / 11</span>
+		<span id="post-tags">
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="记录下自己封装的金蝶api操作类"><a href="#记录下自己封装的金蝶api操作类" class="headerlink" title="记录下自己封装的金蝶api操作类"></a>记录下自己封装的金蝶api操作类</h2><h3 id="金蝶查询分析"><a href="#金蝶查询分析" class="headerlink" title="金蝶查询分析"></a>金蝶查询分析</h3><pre><code class="json">
+// 这里是金蝶查询的 json对象，可以看到查询列需要自己一个个指定，返回的时候按查询的字段顺序返回一个二维数组
+// 查询和返回都类似的用数组结构，没有用对象化抽象的话调用会写的很丑。要一个个字段的去写，去对应，然后自己实现转换
+{
+    &quot;FieldKeys&quot;: &quot;FID,FRECEIVEBILLENTRY_FENTRYID,FBILLTYPEID.FNAME,FBILLNO,FDATE,FSALEERID.FNAME,FSALEERID.FNUMBER,FRECACCOUNTNAME,FACCOUNTID.FNUMBER,FRECAMOUNTFOR,FPURPOSEID.FNUMBER,FBLEND,FDOCUMENTSTATUS,FREMARK,FCREATEDATE,FMODIFYDATE,FAPPROVEDATE,FSETTLETYPEID.FNUMBER,FSETTLETYPEID.FNAME,FWRITTENOFFAMOUNTFOR_D,FCONTACTUNIT.FNUMBER,FCONTACTUNIT.FName,FCOMMENT,FPAYUNIT.FName,FPAYUNIT.FNUMBER,FWRITTENOFFSTATUS,FTHIRDBILLNO,FRECAMOUNTFOR_E,F_ora_Assistant.FNUMBER&quot;,
+    &quot;FilterString&quot;: &quot; FDOCUMENTSTATUS = &#39;C&#39; and FBILLNO = &#39;abc&#39; &quot;,
+    &quot;FormId&quot;: &quot;AR_RECEIVEBILL&quot;,
+    &quot;Limit&quot;: 20,
+    &quot;OrderString&quot;: &quot;FCREATEDATE ASC&quot;,
+    &quot;StartRow&quot;: 0,
+    &quot;TopRowCount&quot;: null
+}</code></pre>
+<h3 id="添加查询条件类-ErpQueryCondition-java"><a href="#添加查询条件类-ErpQueryCondition-java" class="headerlink" title="添加查询条件类 ErpQueryCondition.java"></a>添加查询条件类 ErpQueryCondition.java</h3><blockquote>
+<blockquote>
+<p>这个类是用来拼装查询条件的</p>
+</blockquote>
+</blockquote>
+<pre><code class="java">public class ErpQueryCondition&lt;T&gt; {
+    public static final String AND = &quot;and&quot;;
+    public static final String OR = &quot;or&quot;;
+    private final List&lt;String&gt; queryList;
+
+    public ErpQueryCondition() {
+        queryList  = new ArrayList&lt;&gt;();
+    }
+    public ErpQueryCondition&lt;T&gt; or(Function&lt;ErpQueryCondition&lt;T&gt;, ErpQueryCondition&lt;T&gt;&gt; func){
+        ErpQueryCondition&lt;T&gt; erpQueryCondition = new ErpQueryCondition&lt;&gt;();
+        String subStr = func.apply(erpQueryCondition).getQueryString();
+        queryList.add(OR + &quot; (&quot;+subStr+&quot;)&quot;);
+        return this;
+    }
+    public ErpQueryCondition&lt;T&gt; and(Function&lt;ErpQueryCondition&lt;T&gt;, ErpQueryCondition&lt;T&gt;&gt; func){
+        ErpQueryCondition&lt;T&gt; erpQueryCondition = new ErpQueryCondition&lt;&gt;();
+        String subStr = func.apply(erpQueryCondition).getQueryString();
+        queryList.add(AND + &quot;(&quot;+subStr+&quot;)&quot;);
+        return this;
+    }
+
+    public ErpQueryCondition&lt;T&gt; eq(boolean condition, SFunction&lt;T,Object&gt; func, Object value) {
+        return this.operator(condition,&quot;=&quot;,func,value);
+    }
+    public ErpQueryCondition&lt;T&gt; eq(SFunction&lt;T,Object&gt; func, Object val) {
+        return eq(true, func,  val);
+    }
+
+    public ErpQueryCondition&lt;T&gt; lt(boolean condition, SFunction&lt;T,Object&gt; func, Object value) {
+        return this.operator(condition,&quot;&lt;&quot;,func,value);
+    }
+    public ErpQueryCondition&lt;T&gt; lt(SFunction&lt;T,Object&gt; func, Object val) {
+        return lt(true, func,  val);
+    }
+    public ErpQueryCondition&lt;T&gt; le(boolean condition, SFunction&lt;T,Object&gt; func, Object value) {
+        return this.operator(condition,&quot;&lt;=&quot;,func,value);
+    }
+    public ErpQueryCondition&lt;T&gt; le(SFunction&lt;T,Object&gt; func, Object val) {
+        return le(true, func,  val);
+    }
+
+    public ErpQueryCondition&lt;T&gt; gt(boolean condition, SFunction&lt;T,Object&gt; func, Object value) {
+        return this.operator(condition,&quot;&gt;&quot;,func,value);
+    }
+    public ErpQueryCondition&lt;T&gt; gt(SFunction&lt;T,Object&gt; func, Object val) {
+        return gt(true, func,  val);
+    }
+
+    public ErpQueryCondition&lt;T&gt; ge(boolean condition, SFunction&lt;T,Object&gt; func, Object value) {
+        return this.operator(condition,&quot;&gt;=&quot;,func,value);
+    }
+    public ErpQueryCondition&lt;T&gt; ge(SFunction&lt;T,Object&gt; func, Object val) {
+        return ge(true, func,  val);
+    }
+
+    public ErpQueryCondition&lt;T&gt; in(boolean condition, SFunction&lt;T,Object&gt; func, Collection&lt;String&gt; list) {
+        if(condition &amp;&amp; list!=null &amp;&amp; !list.isEmpty()) {
+            Collection&lt;String&gt; convertList = list.stream().map(it -&gt; &quot;\\&#39;&quot; + it.toString() + &quot;\\&#39;&quot;).collect(Collectors.toList());
+            String listStr = &quot;(&quot; + StringUtils.join(convertList, &quot;,&quot;) + &quot;)&quot;;
+            return this.operator(condition, &quot;in&quot;, func, listStr);
+        }
+        return this;
+    }
+    public ErpQueryCondition&lt;T&gt; in(SFunction&lt;T,Object&gt; func, Collection&lt;String&gt; list) {
+        return in(true, func,  list);
+    }
+
+    public ErpQueryCondition&lt;T&gt; ne(boolean condition, SFunction&lt;T,Object&gt; func, Object value) {
+        return this.operator(condition,&quot;!=&quot;,func,value);
+    }
+    public ErpQueryCondition&lt;T&gt; ne(SFunction&lt;T,Object&gt; func, Object val) {
+        return ne(true, func,  val);
+    }
+
+    private ErpQueryCondition&lt;T&gt; operator(boolean condition, String optStr, SFunction&lt;T,Object&gt; func, Object value) {
+        if(!condition){
+            return this;
+        }
+        // 要处理的字符串,待优化成注册类型转行服务。
+        String handlerStr;
+        if(value instanceof Date){
+            handlerStr = DateFormatUtils.format((Date)value, &quot;yyyy-MM-dd HH:mm:ss&quot;);
+        }else{
+            handlerStr = value.toString();
+        }
+        String fieldName = SerializedUtil.getErpFiledValue(func);
+        queryList.add(StrUtil.format(&quot;{} {} {} &#39;{}&#39; &quot;,AND, fieldName,optStr,handlerStr));
+        return this;
+    }
+    public String getQueryString(){
+        String result =StrUtil.join(&quot;&quot;,queryList);
+        // 去掉第一个 and
+        if(StrUtil.isNotEmpty(result)){
+            return StrUtil.subSuf(result,AND.length());
+        }
+        return result;
+    }
+
+}</code></pre>
+<h3 id="ErpConvert-java"><a href="#ErpConvert-java" class="headerlink" title="ErpConvert.java"></a>ErpConvert.java</h3><blockquote>
+<p>这个类是用来转换查询和返回结果的</p>
+</blockquote>
+<pre><code class="java">public class ErpConvert&lt;T&gt; {
+
+    public static final String STR_SPILT = &quot;,&quot;;
+    private List&lt;String&gt; erpQueryStrList;
+    private Map&lt;String,String&gt; erpValueMap;
+    private final Class&lt;T&gt; zClass;
+    public ErpConvert(Class&lt;T&gt; zClass) {
+        this.zClass = zClass;
+        this.erpQueryStrList = new ArrayList&lt;&gt;();
+    }
+    public static &lt;Z&gt; ErpConvert &lt;Z&gt; newErp(Class&lt;Z&gt; classZ){
+        return new ErpConvert&lt;&gt;(classZ);
+    }
+
+    public String getQueryString(){
+        erpQueryStrList = new ArrayList&lt;&gt;();
+        for(Field f: ReflectUtil.getFields(this.zClass)){
+            this.handlerField(f, erpName-&gt;erpQueryStrList.add(erpName));
+        }
+        return String.join(STR_SPILT, erpQueryStrList);
+    }
+
+    public String getFormId(){
+        ErpForm erpForm = this.zClass.getAnnotation(ErpForm.class);
+        if(erpForm != null){
+            return erpForm.value();
+        }
+        return null;
+    }
+
+    public ErpConvert&lt;T&gt; setResult(List&lt;String&gt; erpResultStrList){
+        if(erpResultStrList.size() != erpQueryStrList.size()){
+            throw new ErpException(&quot;查询和返回的字段数量不一致&quot;);
+        }
+        this.erpValueMap = new HashMap&lt;&gt;();
+        for(int i = 0; i&lt;erpResultStrList.size(); i++){
+            erpValueMap.put(erpQueryStrList.get(i),erpResultStrList.get(i));
+        }
+        return this;
+    }
+
+
+    public ErpConvert&lt;T&gt; setResultErp(List&lt;Object&gt; list){
+        List&lt;String&gt; strList =list.stream().map(it-&gt; Optional.ofNullable(it).map(Object::toString).orElse(&quot;&quot;)).collect(Collectors.toList());
+        return this.setResult(strList);
+    }
+
+    /**
+     * 通过response返回的字符串 获取list返回结果
+     * @param responseString
+     * @return
+     */
+    public List&lt;T&gt; getList(String responseString){
+        List&lt;List&lt;String&gt;&gt; receiveBillResult= JsonUtil.fromJson(responseString, new TypeReference&lt;List&lt;List&lt;String&gt;&gt;&gt;(){});
+        return receiveBillResult.stream().map(it-&gt;this.setResult(it).getValue()).collect(Collectors.toList());
+    }
+
+    public T getValue(){
+        T resultObj;
+        try {
+            resultObj = ReflectUtil.newInstance(this.zClass);
+        } catch (Exception e) {
+            throw new BusinessException(this.zClass.getName()+&quot;反射对象失败&quot;);
+        }
+        if(erpValueMap.isEmpty()){
+            throw new ErpException(&quot;清先设置erp的返回值&quot;);
+        }
+        for(Field f : ReflectUtil.getFields(this.zClass)){
+            this.handlerField(f, erpName-&gt; setFieldValue(resultObj,f,erpName));
+        }
+        return resultObj;
+    }
+
+    /**
+     * 支持三种注解查询
+     * @param field 要设置的字段
+     * @param consumer 处理方法
+     */
+    private void handlerField(Field field, Consumer&lt;String&gt; consumer){
+        ErpField erpField = field.getAnnotation(ErpField.class);
+        if(erpField != null){
+            consumer.accept(erpField.value());
+            return;
+        }
+        JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
+        if(jsonProperty!=null){
+            consumer.accept(jsonProperty.value());
+            return;
+        }
+        JSONField jsonField = field.getAnnotation(JSONField.class);
+        if(jsonField!=null){
+            consumer.accept(jsonField.name());
+        }
+    }
+
+    private void setFieldValue(Object object, Field f, String erpName){
+        f.setAccessible(true);
+        SimpleDateFormat sdf = new SimpleDateFormat(&quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss&quot;);
+
+        try {
+           String value =  erpValueMap.get(erpName);
+           if(value == null){
+               f.set(object, null);
+           }else if(f.getType().equals(Date.class)){
+               f.set(object, StringUtil.isEmpty(value) ? null:sdf.parse(value));
+           }else if(f.getType().equals(BigDecimal.class)){
+               f.set(object, StringUtil.isEmpty(value) ? BigDecimal.ZERO:new BigDecimal(value));
+           }else if(f.getType().equals(Long.class)){
+               f.set(object, StringUtil.isEmpty(value) ? 0L:new BigDecimal(value).longValue());
+           }else if(f.getType().equals(Integer.class)){
+               f.set(object, StringUtil.isEmpty(value) ? 0:new BigDecimal(value).intValue());
+           }else{
+               f.set(object, value.contains(&quot;.0&quot;) ? MathUtils.subZeroAndDot(value):value);
+           }
+        } catch (IllegalAccessException | ParseException e) {
+            throw new ErpException(f.getName()+&quot;[&quot;+erpName+&quot;]设置失败，&quot;+e.getMessage());
+        }
+    }
+
+}</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

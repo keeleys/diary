@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">python 练习</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 11 / 12</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">python</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="map-和reduce-函数"><a href="#map-和reduce-函数" class="headerlink" title="map()和reduce()函数"></a>map()和reduce()函数</h2><ul>
+<li>第一题<pre><code class="python">&#39;&#39;&#39;
+利用map()函数，把用户输入的不规范的英文名字，变为首字母大写，其他小写的规范名字。
+输入：[&#39;adam&#39;, &#39;LISA&#39;, &#39;barT&#39;]，输出：[&#39;Adam&#39;, &#39;Lisa&#39;, &#39;Bart&#39;]：
+&#39;&#39;&#39;
+</code></pre>
+</li>
+</ul>
+<p>def normalize(name):<br>    return name[0].upper() +name[1:].lower()</p>
+<p>L1 = [‘adam’, ‘LISA’, ‘barT’]<br>L2 = list(map(normalize, L1))<br>print(L2)</p>
+<pre><code>&lt;!-- more --&gt;
+*  第二题
+```python
+&#39;&#39;&#39;
+Python提供的sum()函数可以接受一个list并求和，请编写一个prod()函数，可以接受一个list并利用reduce()求积：
+&#39;&#39;&#39;
+
+from functools import reduce
+
+def prod(L):
+    return reduce(lambda x,y: x*y,L)
+
+print(&#39;3 * 5 * 7 * 9 =&#39;, prod([3, 5, 7, 9]))</code></pre><ul>
+<li>第三题<pre><code>&#39;&#39;&#39;
+利用map和reduce编写一个str2float函数，把字符串&#39;123.456&#39;转换成浮点数123.456：
+解题思路 分2部分 小数点之前的 每位＊10 ，小数点之后的，倒序每位／10
+&#39;&#39;&#39;
+from functools import reduce
+
+</code></pre></li>
+</ul>
+<p>def str2float(s):<br>    arr = s.split(“.”)<br>    first_num = reduce(lambda x,y:x*10+y , map(int,arr[0]))<br>    if len(arr) &gt; 1:<br>        first_num += reduce(lambda x, y : x/10+y, map(int, (“0”+arr[1])[::-1]))<br>    return first_num<br>print(‘str2float(&#39;123.456&#39;) =’, str2float(‘123.456’))<br>print(‘str2float(&#39;123.45678&#39;) =’, str2float(‘123.45678’))<br>print(‘str2float(&#39;12345678&#39;) =’, str2float(‘12345678’))</p>
+<pre><code>
+## python2.7 爬虫
+### 抓取json数据
+```python
+import urllib
+import urllib2
+cookies = &quot;lzstat_uv=36646143701674066401|3239393; JSESSIONID=AA3A6FEE4AF7E7878218583316BBC9B4; l=Ap6eJnEdnxIiW7Ybwfnsex2lbj7gDmLb; visitState=pc; CNZZDATA30063739=cnzz_eid%3D2009472116-1453958417-%26ntime%3D1453982370; CNZZDATA30073553=cnzz_eid%3D51683217-1453956930-%26ntime%3D1453981617; lzstat_ss=978823405_1_1454014976_3239393; MIIEE_JTOKEN=02978316089138388698541186051443227222067695111036&quot;;
+url = &quot;http://www.miiee.com/interface/dresslist.htm?_=04511898399796337&quot;;
+values = {&#39;n&#39; : &#39;1&#39;,    
+          &#39;p&#39; : &#39;1&#39;,     
+          &#39;jtoken&#39; : &#39;02978316089138388698541186051443227222067695111036&#39; }    
+headers = { &#39;Cookie&#39; : cookies }
+data = urllib.urlencode(values) 
+req = urllib2.Request(url, data,headers)
+response = urllib2.urlopen(req) 
+the_page = response.read();
+print the_page
+print response.info()
+print response.geturl()</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

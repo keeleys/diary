@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">vuejs学习</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 08</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">js</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h2><p><img src="https://dn-tianjun.qbox.me/ttianjunQQ%E6%88%AA%E5%9B%BE20150715145355.png" alt="123"></p>
+<h2 id="官网文档"><a href="#官网文档" class="headerlink" title="官网文档"></a>官网文档</h2><p><a href="http://cn.vuejs.org/guide/index.html" target="_blank" rel="noopener">http://cn.vuejs.org/guide/index.html</a></p>
+<h2 id="例子-ajax获取数据-加载列表"><a href="#例子-ajax获取数据-加载列表" class="headerlink" title="例子 ajax获取数据 加载列表"></a>例子 ajax获取数据 加载列表</h2><pre><code class="html">&lt;div class=&quot;content&quot; id=&quot;content&quot;&gt;
+    &lt;span v-text=&quot;currentUrl&quot;&gt;&lt;/span&gt;
+    &lt;ul class=&quot;img_listbox co&quot;&gt;
+        &lt;li v-repeat=&quot;items&quot; &gt;
+            &lt;a href=&quot;javascript:;&quot; onclick=&quot;prewImage(&#39;{{imgUrl}}&#39;)&quot;&gt;
+            &lt;img v-attr=&quot;src:&#39;${imgRoot}&#39;+imgUrl&quot;/&gt;
+            &lt;/a&gt;
+            &lt;p&gt;&lt;span v-text=&quot;upTime&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+            &lt;p&gt;&lt;a class=&quot;btn btn-success&quot; style=&quot;display: inline;padding: 6px 12px;&quot; role=&quot;button&quot; href=&quot;${root}/user/qrcode?imgID={{imgID}}&quot;&gt;打印&lt;/a&gt;&lt;/p&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;a class=&quot;more&quot; href=&quot;javascript:;&quot; onclick=&quot;loadDate()&quot; v-show=&quot;moreflag&quot;&gt;查看更多&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+<pre><code class="html">&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/vue/0.12.16/vue.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+var pageNum = 1;
+var vm = new Vue({
+  el: &#39;#content&#39;,
+  data: {
+     items: [],
+     moreflag:true
+  },
+ compiled:loadDate
+});
+function loadDate(){
+    $.post(root+&quot;/user/imglistJson/&quot;+pageNum,function(data){
+        if(data.list.length==0){
+            vm.moreflag=false;
+            return;
+        }
+        vm.items=vm.items.concat(data.list);
+        pageNum++;
+    },&quot;json&quot;)
+}
+&lt;/script&gt;</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

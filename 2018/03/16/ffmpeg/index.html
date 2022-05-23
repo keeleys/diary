@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">音视频开发相关的一些东西</h1>
+	<div id="post-detail">
+		<span id="post-date">2018 / 03 / 16</span>
+		<span id="post-tags">
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="视频转换ffmpeg"><a href="#视频转换ffmpeg" class="headerlink" title="视频转换ffmpeg"></a>视频转换ffmpeg</h2><h3 id="转码"><a href="#转码" class="headerlink" title="转码"></a>转码</h3><pre><code class="s">ffmpeg -y -i file -c:v libx264 -c:a aac -pix_fmt yuv420p -preset fast -max_muxing_queue_size 1024 newFile</code></pre>
+<h3 id="改变分辨率"><a href="#改变分辨率" class="headerlink" title="改变分辨率"></a>改变分辨率</h3><ul>
+<li>ntsc 720x480</li>
+<li>hd720 1280x720</li>
+<li>hd1080 1920x1080</li>
+</ul>
+<pre><code class="s">ffmpeg -y -i 7minutes_trans_480.mp4 -s 320:240 -c:a copy 7minutes_240.mp4
+
+ffmpeg -i 7minutes_trans_480.mp4 -vf scale=320:240 -c:a copy 7minutes_240.mp4</code></pre>
+<h3 id="水印"><a href="#水印" class="headerlink" title="水印"></a>水印</h3><ul>
+<li>左上角 overlay参数为 overlay=0:0</li>
+<li>右上角为 overlay= main_w-overlay_w:0</li>
+<li>右下角为 overlay= main_w-overlay_w:main_h-overlay_h</li>
+<li>左下角为 overlay=0: main_h-overlay_h</li>
+</ul>
+<pre><code class="s">ffmpeg -i demo.avi -i watermark.png -filter_complex &quot;overlay=main_w-overlay_w-10:10&quot; -y keeley.mp4</code></pre>
+<h3 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h3><h4 id="查询旋转"><a href="#查询旋转" class="headerlink" title="查询旋转"></a>查询旋转</h4><pre><code class="s">ffmpeg -i IMG_1821.MOV 2&gt;&amp;1 | grep rotate</code></pre>
+<h4 id="旋转-1"><a href="#旋转-1" class="headerlink" title="旋转"></a>旋转</h4><h5 id="编码旋转"><a href="#编码旋转" class="headerlink" title="编码旋转"></a>编码旋转</h5><pre><code class="s">rem For the transpose parameter you can pass:
+
+rem 0 = 90逆时针并且垂直翻转(default)
+rem 1 = 90顺时针
+rem 2 = 90度逆时针
+rem 3 = 90顺时针并且垂直翻转
+
+rem To rotate 180 degrees, instead use &quot;transpose=2,transpose=2&quot;
+
+rem Using -codec:a copy will simply copy the audio instead of reencoding it.
+
+ffmpeg -i in.mp4 -vf &quot;transpose=1&quot; -codec:a copy out.mp4</code></pre>
+<h5 id="不编码旋转"><a href="#不编码旋转" class="headerlink" title="不编码旋转"></a>不编码旋转</h5><pre><code class="s">ffmpeg -i IMG_1821.MOV -metadata:s:v rotate=&quot;0&quot; -codec copy output.mp4</code></pre>
+<h3 id="提取缩略图"><a href="#提取缩略图" class="headerlink" title="提取缩略图"></a>提取缩略图</h3><pre><code>ffmpeg -y -i WeChatSight1.mp4 -vf fps=1/1 -vsync vfr -vframes 8 -c:v mjpeg WeChatSight1_mp4_%d.jpg
+ffmpeg -skip_frame nokey -i &quot;keeley-0807.mp4&quot; -vsync 0 -vframes 9 -c:v mjpeg keeley-0807/thumb_%d.jpg</code></pre><h3 id="合成缩略图"><a href="#合成缩略图" class="headerlink" title="合成缩略图"></a>合成缩略图</h3><pre><code>ffmpeg -y -i temp.mp4 -vf &quot;fps=1/2,scale=iw/4:-1,tile=10x10&quot; -an %d.png</code></pre><p><a href="http://einverne.github.io/post/2015/12/ffmpeg-first.html" target="_blank" rel="noopener">http://einverne.github.io/post/2015/12/ffmpeg-first.html</a><br><a href="https://lars.st0ne.at/blog/html5+video+in+IE11+-+size+does+matter" target="_blank" rel="noopener">https://lars.st0ne.at/blog/html5+video+in+IE11+-+size+does+matter</a><br><a href="https://trac.ffmpeg.org/wiki/Encode/H.264" target="_blank" rel="noopener">https://trac.ffmpeg.org/wiki/Encode/H.264</a><br><a href="http://www.cnblogs.com/tinywan/p/6404411.html" target="_blank" rel="noopener">http://www.cnblogs.com/tinywan/p/6404411.html</a><br><a href="http://www.cnblogs.com/tinywan/p/7877738.html" target="_blank" rel="noopener">http://www.cnblogs.com/tinywan/p/7877738.html</a><br><a href="http://blog.csdn.net/leixiaohua1020/article/category/1360795" target="_blank" rel="noopener">http://blog.csdn.net/leixiaohua1020/article/category/1360795</a><br><a href="https://www.jianshu.com/p/053665062f22" target="_blank" rel="noopener">https://www.jianshu.com/p/053665062f22</a><br><a href="https://support.google.com/youtube/answer/2853702?hl=zh-Hans" target="_blank" rel="noopener">https://support.google.com/youtube/answer/2853702?hl=zh-Hans</a><br>```</p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

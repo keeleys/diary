@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">libre-office安装</h1>
+	<div id="post-detail">
+		<span id="post-date">2018 / 09 / 10</span>
+		<span id="post-tags">
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="step1-检查版本-目前是用redhat为例"><a href="#step1-检查版本-目前是用redhat为例" class="headerlink" title="step1 (检查版本,目前是用redhat为例)"></a>step1 (检查版本,目前是用redhat为例)</h2><pre><code>[root@test9 ~]# cat /proc/version
+Linux version 3.10.0-327.36.2.el7.x86_64 (builder@kbuilder.dev.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-4) (GCC) ) #1 SMP Mon Oct 10 23:08:37 UTC 2016
+
+https://www.tecmint.com/install-libreoffice-on-rhel-centos-fedora-debian-ubuntu-linux-mint/</code></pre><h2 id="step2-下载LibreOffice4-3版本"><a href="#step2-下载LibreOffice4-3版本" class="headerlink" title="step2(下载LibreOffice4.3版本)"></a>step2(下载LibreOffice4.3版本)</h2><pre><code>wget https://downloadarchive.documentfoundation.org/libreoffice/old/4.3.7.2/rpm/x86_64/LibreOffice_4.3.7.2_Linux_x86-64_rpm.tar.gz</code></pre><h2 id="step3-解压-安装LibreOffice"><a href="#step3-解压-安装LibreOffice" class="headerlink" title="step3(解压 安装LibreOffice)"></a>step3(解压 安装LibreOffice)</h2><pre><code>$ tar -xzvf libreoffice*.tar.gz
+$ cd libreoffice*/RPMS
+$ sudo rpm -i *.rpm</code></pre><h2 id="step4-安装unoconv"><a href="#step4-安装unoconv" class="headerlink" title="step4 (安装unoconv)"></a>step4 (安装unoconv)</h2><pre><code>// 安装主体程序
+yum install unoconv
+// unoconv noarch 0.6-7.el7
+
+// 安装语言包 (否则会乱码)
+sudo yum install wqy-microhei-fonts wqy-zenhei-fonts</code></pre><h2 id="step6-开始使用咯"><a href="#step6-开始使用咯" class="headerlink" title="step6 (开始使用咯..)"></a>step6 (开始使用咯..)</h2><pre><code>unoconv -f pdf -o test2.pdf 123.txt</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

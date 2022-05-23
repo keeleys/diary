@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">springboot中tomcat内置容器的启动</h1>
+	<div id="post-detail">
+		<span id="post-date">2020 / 05 / 11</span>
+		<span id="post-tags">
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h3 id="一-SpringApplication启动"><a href="#一-SpringApplication启动" class="headerlink" title="一 SpringApplication启动"></a>一 SpringApplication启动</h3><blockquote>
+<p>这里只是简短介绍，源码就不贴了，一大块。</p>
+</blockquote>
+<ol>
+<li>构造SpringApplication</li>
+</ol>
+<blockquote>
+<p>初始化一些类型和main方法，启动参数，启动的时候会搜索<code>MATE-INF/spring.factories</code>下面的配置</p>
+</blockquote>
+
+
+
+<ol start="2">
+<li>SpringApplication.run</li>
+</ol>
+<blockquote>
+<p>核心regist,refresh是spring加载Bean的过程，留着后面spring-context分析。</p>
+</blockquote>
+<ul>
+<li>根据执行过程，<code>触发context监听对应的生命周期方法</code></li>
+<li>根据配置设置一些参数,例如spring.beaninfo.ignore，创建<code>ConfigurableApplicationContext</code></li>
+<li>prepareContext里面构造BeanDefinitionLoader，执行它的load方法，最终执行到spring-context里面的<code>doRegisterBean</code>方法</li>
+<li>refreshContext里面最终执行到 spring-context里面的 <code>refresh()</code></li>
+<li>默认的<code>AutoConfigurationImportSelector</code>会把所有spring.factories定义的<code>EnableAutoConfiguration</code>类ImportSelector</li>
+</ul>
+<h3 id="tomcat内置容器的启动"><a href="#tomcat内置容器的启动" class="headerlink" title="tomcat内置容器的启动"></a>tomcat内置容器的启动</h3><ul>
+<li>在run方法的refresh里面，<code>ServletWebServerApplicationContext</code>的onRefresh等重载方法加入了createWebServer，stopAndReleaseWebServer等方法来管理内置应用服务器。</li>
+<li>ServletWebServerFactoryAutoConfiguration写在了spring-boot的ServletWebServerFactoryAutoConfiguration的<code>ServletWebServerFactoryConfiguration.EmbeddedTomcat</code>注册了bean；</li>
+</ul>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

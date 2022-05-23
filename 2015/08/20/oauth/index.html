@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">接入第三方登录-百度社会化服务</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 08 / 20</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">html</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><ul>
+<li><a href="http://developer.baidu.com/wiki/index.php?title=docs/social/guide/web_login" target="_blank" rel="noopener">网站社会化登陆，开发指南</a></li>
+<li><a href="http://developer.baidu.com/wiki/index.php?title=docs/social/oauth" target="_blank" rel="noopener">授权方式介绍</a></li>
+</ul>
+<a id="more"></a>
+
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><ul>
+<li><p>用百度ID登录开发者平台<br><img src="https://dn-tianjun.qbox.me/oauthQQ%E6%88%AA%E5%9B%BE20150625204734.png" alt=""><br><img src="https://dn-tianjun.qbox.me/oauthQQ%E6%88%AA%E5%9B%BE20150625205036.png" alt=""></p>
+</li>
+<li><p>新建应用 在应用设置里面设置社会化服务的回调地址<br><img src="https://dn-tianjun.qbox.me/oauthQQ%E6%88%AA%E5%9B%BE20150625205311.png" alt=""></p>
+</li>
+<li><p>在社会化服务里面设置PC端JS组件设置<br><img src="https://dn-tianjun.qbox.me/oauthQQ%E6%88%AA%E5%9B%BE20150625205701.png" alt=""></p>
+</li>
+<li><p>copyjs到登录页面。编写第三方验证成功之后的回调逻辑。</p>
+</li>
+</ul>
+<p>##回调逻辑</p>
+<ol>
+<li><p>你点击第三方登录图标的时候，是会发起一个请求<code>authorize</code>,获取<code>Authorization Code</code>,<a href="http://developer.baidu.com/wiki/index.php?title=docs/social/oauth" target="_blank" rel="noopener">授权方式介绍</a>这里面的第一步的请求。</p>
+<p> 1.1 参数说明</p>
+<pre><code>client_id：必须参数，注册应用时获得的API Key。
+response_type：必须参数，此值固定为“code”。
+media_type：必须参数，需要登录的社会化平台标识，具体参数定义可以参考“《支持的社会化平台》”一节。
+redirect_uri：必须参数，授权后要社会化服务回跳的URI，即接收Authorization Code的URI。对于无Web Server的应用，其值可以是“oob”，此时用户同意授权后，授权服务会将Authorization 
+Code直接拼接在响应页面的URL参数中。如果redirect_uri不为&quot;oob&quot;，则redirect_uri指向的页面必须与开发者在“社会化登录服务”中所填写的&quot;社会化服务回跳地址&quot;相匹配。
+state：非必须参数，用于保持请求和回调的状态，授权服务器在回调时（重定向用户浏览器到“redirect_uri”时），会在Query Parameter中原样回传该参数。建议开发者利用state参数来防止CSRF攻击。
+display：非必须参数，登录和授权页面的展现样式，默认为”page”，具体参数定义可以参考“《授权页面样式》”一节。
+client_type：非必须参数，用来标识请求来源于哪一个客户端。如果在请求中传递了该参数，则可以在开发者中心应用管理中查看到相关统计数据。client_type的值可为“ios”、”android”、”web”中的任意一种。</code></pre></li>
+<li><p>请求会回调你在百度开发者和代码参数里面设置的那个<code>redirect_uri</code>地址</p>
+</li>
+<li><p>在<code>redirect_uri</code>的服务端捕获code参数，然后发送<code>token</code>登录请求.<a href="http://developer.baidu.com/wiki/index.php?title=docs/social/oauth" target="_blank" rel="noopener">授权方式介绍</a>这里面的第二步的请求。</p>
+</li>
+<li><p>请求参数</p>
+<pre><code>grant_type：必须参数，此值固定为“authorization_code”；
+code：必须参数，通过上面第一步所获得的Authorization Code；
+client_id：必须参数，应用的API Key；
+client_secret：必须参数，&#39;应用的Secret Key；
+redirect_uri：必须参数，该值必须与获取Authorization Code时传递的“redirect_uri”保持一致。</code></pre></li>
+<li><p>返回参数</p>
+<pre><code>access_token：要获取的Access Token；
+expires_in：Access Token的有效期，以秒为单位；
+media_type：用户登录的社会化平台标识；
+media_uid：用户在“media_type”代表的社会化平台上的唯一uid/openid；
+social_uid：用户在百度社会化服务当中分配的唯一用户id；
+name：用户名；
+session_key：基于http调用Social API时所需要的Session Key，其有效期与Access Token一致；
+session_secret：基于http调用Social API时计算参数签名用的签名密钥。</code></pre><p> 5.1 media_type说明</p>
+<pre><code>* baidu：百度。
+* sinaweibo：新浪微博。
+* qqdenglu：QQ账号登录。
+* qqweibo：腾讯微博。
+* renren：人人网。
+* kaixin：开心网。</code></pre></li>
+<li><p>得到唯一的 <code>social_uid</code> id之后，关联到用户表做好绑定关系。</p>
+</li>
+</ol>
+<h3 id="隐式登录设计"><a href="#隐式登录设计" class="headerlink" title="隐式登录设计"></a>隐式登录设计</h3><p> 对原有用户表的一个扩充，加入了一个第三方登录绑定表(用户表ID，平台类别，平台主键，平台用户名，访问授权码)等。<br> 当登录的时候 首先查询平台主键是否有关联用户表ID<br> 如果有 查询出用户表ID 然后调用正常的登录方法,<br> 如果没有，就新增用户，<br> 然后继续调用正常的登录方法</p>
+<h2 id="官网例子"><a href="#官网例子" class="headerlink" title="官网例子"></a>官网例子</h2><pre><code class="html">&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+    &lt;H1&gt;欢迎光临&lt;/H1&gt;
+    &lt;div&gt;
+    请您使用第三方平台账号登陆：
+    &lt;span id=&quot;login&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; id=&quot;bd_soc_login_boot&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot;&gt;
+    (function(){
+        var t = new Date().getTime(),
+            script = document.getElementById(&quot;bd_soc_login_boot&quot;),
+            redirect_uri = encodeURIComponent(&quot;http://test.duapp.com/social/oauth/callback&quot;),
+            domid = &quot;login&quot;,
+            src = &quot;http://openapi.baidu.com/social/oauth/2.0/connect/login?redirect_uri=&quot; + redirect_uri + &quot;&amp;domid=&quot; + domid + &quot;&amp;client_type=web&amp;response_type=code&amp;media_types=sinaweibo%2Cqqdenglu%2Cbaidu%2Cqqweibo%2Ckaixin&amp;size=-1&amp;button_type=2&amp;client_id=NKqWqr6T7NbDv8vkoKMBEmbu&amp;view=embedded&amp;t=&quot; + t;
+        script.src = src;
+    })();
+    &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">收集整理的一些java工具类</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 10 / 21</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">java</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<p><a href="https://github.com/keeleys/common-kit" target="_blank" rel="noopener">项目地址</a></p>
+<h2 id="基础工具类"><a href="#基础工具类" class="headerlink" title="基础工具类"></a>基础工具类</h2><p><code>GenerateSequenceUtil</code> 根据时间生成唯一标识，每秒钟9999内唯一</p>
+<p><code>Lists</code> 生成list map, 泛型复杂的时候比较好用</p>
+<p><code>PathKit</code> 获取文件路径的工具类，提取自jfinal</p>
+<p><code>PropKit</code>,<code>Prop</code> 读取配置文件的工具类，2个组合使用。</p>
+<pre><code>//可以加载多个 但第二个文件开始需要每次都use例如
+public static final Prop weixinProp = PropKit.use(&quot;weixin.txt&quot;);
+public static final String APPID =weixinProp.get(&quot;appid&quot;);
+public static final String SECRET =weixinProp.get(&quot;secret&quot;);</code></pre><p><code>ClassSearcher</code>  类搜索,jar包搜索,注解反射用</p>
+<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2><p><code>PoiExporter</code> Excel导出的工具类 </p>
+<p><code>ImageMarkLogoUtil</code> 图片水印工具类 </p>
+<p><code>ImageKit</code> 图片裁剪,缩放,拼贴</p>
+<h2 id="网络操作"><a href="#网络操作" class="headerlink" title="网络操作"></a>网络操作</h2><p><code>HttpKit</code> http访问类，get,post请求</p>
+<h2 id="json-xml解析"><a href="#json-xml解析" class="headerlink" title="json xml解析"></a>json xml解析</h2><p><code>JsonUtil</code>,<code>XmlUtils</code>,<code>XJDataNode</code> 三个组合 通用解析.</p>
+<h2 id="文件加密"><a href="#文件加密" class="headerlink" title="文件加密"></a>文件加密</h2><p><code>Base64Utils</code>,<code>MD5Util</code> base64,md5加密<br><code>DecriptUtil</code> SHA1加密(如微信)</p>
+<p><code>StrKit</code> 字符串工具类 ,判断空，首字母小写，等</p>
+<h2 id="微信开发工具类"><a href="#微信开发工具类" class="headerlink" title="微信开发工具类"></a>微信开发工具类</h2><p><code>WeixinManager</code> 获取token jsapi签名等<br><code>CacheKit</code> ehcache 工具类</p>
+<h2 id="测试工具类"><a href="#测试工具类" class="headerlink" title="测试工具类"></a>测试工具类</h2><p><code>BaseTest</code> webapp环境的注解测试父类,依托spring-test</p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

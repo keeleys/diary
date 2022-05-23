@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">使用beetl生成mybatis的mapping文件</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 20</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">beetl</span>
+			
+				<span id="post-tag">mybatis</span>
+			
+				<span id="post-tag">注解</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="使用前因"><a href="#使用前因" class="headerlink" title="使用前因"></a>使用前因</h2><p>由于项目历史原因，数据库字段都是中文命名的，所以做了这个小工具，还很多不完善的地方，比如说注解类略多，生成方法较少，处理类型单一等。</p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p><img src="https://dn-tianjun.qbox.me/ttianjunQQ%E6%88%AA%E5%9B%BE20150720145701.png" alt="项目结构"></p>
+<a id="more"></a>
+
+<h2 id="beetl-模版"><a href="#beetl-模版" class="headerlink" title="beetl 模版"></a>beetl 模版</h2><p>号称最快的模版，用起来也比较方便，可以自定义模版语法的“界限”。<br><a href="http://ibeetl.com:8080/beetlonline/" target="_blank" rel="noopener">官网在线体验</a></p>
+<h2 id="实体和table映射关系"><a href="#实体和table映射关系" class="headerlink" title="实体和table映射关系"></a>实体和table映射关系</h2><blockquote>
+<p>由于都是中文，中文到英文的映射没有什么具体规则好自动实现，也不太想用拼音，然后在用的过程中写javabean的时候都要写注释标明这行对应的数据库哪个字段，后来想想何不让注解更有意义点呢，然后就用了注解实现.</p>
+</blockquote>
+<h3 id="数据库表名"><a href="#数据库表名" class="headerlink" title="数据库表名"></a>数据库表名</h3><pre><code>/**
+ * 表名
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface KTable {
+    String value();
+}
+</code></pre><h3 id="表主键"><a href="#表主键" class="headerlink" title="表主键"></a>表主键</h3><pre><code>@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface KId {
+    String value() default &quot;&quot;;
+}</code></pre><h3 id="表字段"><a href="#表字段" class="headerlink" title="表字段"></a>表字段</h3><pre><code>/**
+ * 数据库属性对应列
+ */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface KField {
+    String value() default &quot;&quot;;
+}</code></pre><h3 id="表查询"><a href="#表查询" class="headerlink" title="表查询"></a>表查询</h3><pre><code>/**
+ * 界面查询列
+ * Created by TianJun on 2015-05-29.
+ */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface KParam {
+    String value() default &quot;&quot;;
+}</code></pre><h2 id="beetl配置"><a href="#beetl配置" class="headerlink" title="beetl配置"></a>beetl配置</h2><h3 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h3><pre><code> &lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.beetl&lt;/groupId&gt;
+        &lt;artifactId&gt;beetl-core&lt;/artifactId&gt;
+        &lt;version&gt;2.2.2&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre><h3 id="beetl-properties"><a href="#beetl-properties" class="headerlink" title="beetl.properties"></a>beetl.properties</h3><p>beetl配置文件,默认从classpath读取,放到resources根目录,内容如下</p>
+<pre><code>-- 设置起始结束标签 默认是 &lt;% 和 %&gt;
+DELIMITER_STATEMENT_START=@
+DELIMITER_STATEMENT_END=</code></pre><h3 id="定义要生成的模版"><a href="#定义要生成的模版" class="headerlink" title="定义要生成的模版"></a>定义要生成的模版</h3><p>直接把map.xml文件复制下来改改，把可以动态的改成动态,只做了单表的update,select,insert操作和resultMap对应操作.</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot; &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot; &gt;
+&lt;mapper namespace=&quot;${className}Dao&quot; &gt;
+&lt;resultMap type=&quot;${className}&quot; id=&quot;resultMap&quot;&gt;
+    @if(!isEmpty(tableId)){
+    &lt;id property=&quot;${tableId.field}&quot; column=&quot;${tableId.column}&quot; jdbcType=&quot;VARCHAR&quot; /&gt;
+    @}
+    @for(user in fields){
+    &lt;result property=&quot;${user.key}&quot; column=&quot;${user.value}&quot; jdbcType=&quot;VARCHAR&quot; /&gt;
+    @}
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;list&quot; resultMap=&quot;resultMap&quot;&gt;
+    select * from ${tableName} where 1=1
+    @for(p in params){
+    @if(strutil.endWith(p.key,&quot;Date&quot;)||strutil.endWith(p.key,&quot;Time&quot;)){
+    &lt;if test=&quot;beginTime!=null and beginTime!=&#39;&#39;&quot;&gt;
+        and to_char(${p.value},&#39;yyyy-MM-dd hh24:mi:ss&#39;) &lt;![CDATA[ &gt;= ]]&gt;  #{beginTime}
+    &lt;/if&gt;
+    &lt;if test=&quot;endTime!=null and endTime!=&#39;&#39;&quot;&gt;
+        and to_char(${p.value},&#39;yyyy-MM-dd hh24:mi:ss&#39;) &lt;![CDATA[ &lt;= ]]&gt;  #{endTime}
+    &lt;/if&gt;
+    @}else{
+    &lt;if test=&quot;${p.key}!=null and ${p.key}!=&#39;&#39;&quot;&gt;and ${p.value} = #{${p.key}}&lt;/if&gt;
+    @}
+    @}
+&lt;/select&gt;
+
+&lt;insert id=&quot;insert&quot; parameterType=&quot;${className}&quot;&gt;
+    insert into ${tableName}
+    &lt;trim prefix=&quot;(&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+        @if(!isEmpty(tableId)){
+        ${tableId.column},
+        @}
+        @for(field in fields){
+        &lt;if test=&quot;${field.key}!=null and ${field.key}!=&#39;&#39;&quot;&gt;${field.value},&lt;/if&gt;
+        @}
+    &lt;/trim&gt;
+    &lt;trim prefix=&quot;values(&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+        @if(!isEmpty(tableId)){
+        #{${tableId.field}},
+        @}
+        @for(field in fields){
+        @if(strutil.endWith(field.key,&quot;Date&quot;)||strutil.endWith(field.key,&quot;Time&quot;)){
+        &lt;if test=&quot;${field.key}!=null and ${field.key}!=&#39;&#39;&quot;&gt;to_date(#{${field.key}},&#39;yyyy-mm-dd hh24:mi:ss&#39;), &lt;/if&gt;
+        @}else{
+        &lt;if test=&quot;${field.key}!=null and ${field.key}!=&#39;&#39;&quot;&gt; #{${field.key}},&lt;/if&gt;
+        @}
+        @}
+    &lt;/trim&gt;
+&lt;/insert&gt;
+
+&lt;update id=&quot;update&quot;&gt;
+    update  ${tableName} set
+    &lt;trim   suffixOverrides=&quot;,&quot; &gt;
+        @for(field in fields){
+        @if(strutil.endWith(field.key,&quot;Date&quot;)||strutil.endWith(field.key,&quot;Time&quot;)){
+       &lt;if test=&quot;${field.key}!=null and ${field.key}!=&#39;&#39;&quot;&gt; ${field.value}=to_date(#{${field.key}},&#39;yyyy-mm-dd hh24:mi:ss&#39;),&lt;/if&gt;
+        @}else{
+       &lt;if test=&quot;${field.key}!=null and ${field.key}!=&#39;&#39;&quot;&gt; ${field.value}=#{${field.key}},&lt;/if&gt;
+        @}
+        @}
+    &lt;/trim&gt;
+    where ${tableId.column!id} = #{${tableId.field!}}
+&lt;/update&gt;
+&lt;/mapper&gt;</code></pre><h2 id="生成工具类"><a href="#生成工具类" class="headerlink" title="生成工具类"></a>生成工具类</h2><h3 id="MyBatisUtil-java"><a href="#MyBatisUtil-java" class="headerlink" title="MyBatisUtil.java"></a>MyBatisUtil.java</h3><pre><code class="java">package com.ttianjun.mybatis;
+
+import com.ttianjun.mybatis.test.*;
+import org.beetl.core.Configuration;
+import org.beetl.core.GroupTemplate;
+import org.beetl.core.Template;
+import org.beetl.core.resource.ClasspathResourceLoader;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Created by wodetianjun on 15/5/27.
+ */
+public class MyBatisUtil {
+    public static void main(String [] args) throws IOException {
+        String xml=MyBatisUtil.createXml(Message.class);
+        System.out.println(xml);//直接把结果打印到控制台了，可以改成输入到文件或者网页.
+    }
+
+    public static String createXml(Class c) throws IOException {
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
+        Configuration cfg = Configuration.defaultConfiguration();
+        GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);//从classpath资源加载器获取beetl配置文件
+        Template t = gt.getTemplate(&quot;/template.txt&quot;); //获取模版
+
+        String tableName = c.getSimpleName(); //如果类上没有@KTable注解 默认的名字就是类名
+        KTable table = (KTable) c.getAnnotation(KTable.class);
+        if(table!=null) tableName = table.value();
+
+        Map&lt;String,String&gt; idBean = buildId(c);
+        t.binding(&quot;className&quot;, c.getCanonicalName()); //t.binding 给模版绑定数据来源
+        t.binding(&quot;fields&quot;, buildFields(c));
+        t.binding(&quot;params&quot;, buildParam(c));
+        t.binding(&quot;tableName&quot;,tableName);
+        t.binding(&quot;tableId&quot;,buildId(c));
+        return t.render(); //生成输入
+    }
+    //生成id的map  设想的ID只有一个 还不支持多列ID
+    private static Map&lt;String,String&gt; buildId(Class bean){
+        Map&lt;String,String&gt; map = new LinkedHashMap&lt;String, String&gt;();
+        Field[] fields=bean.getDeclaredFields(); 获取所有字段
+        for(Field field : fields){
+            String key = field.getName();
+            KId id=field.getAnnotation(KId.class);//判断字段是否有这个注解
+            if(id!=null) {
+                String fieldName = field.getName();
+                String value = id.value().isEmpty() ? fieldName : id.value();
+                map.put(&quot;field&quot;, fieldName);
+                map.put(&quot;column&quot;, value);
+                return map;
+            }
+        }
+
+    }
+    private static Map&lt;String,String&gt; buildFields(Class bean){
+        Map&lt;String,String&gt; map = new LinkedHashMap&lt;String, String&gt;();
+        Field[] fields=bean.getDeclaredFields();
+        for(Field field : fields){
+            String key = field.getName();
+            KField commit=field.getAnnotation(KField.class);
+            if(commit!=null) {
+                String value = commit.value().isEmpty() ? field.getName() : commit.value();
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+    private static Map&lt;String,String&gt; buildParam(Class bean){
+        Map&lt;String,String&gt; map = new LinkedHashMap&lt;String, String&gt;();
+        Field[] fields=bean.getDeclaredFields();
+        for(Field field : fields){
+            String key = field.getName();
+            KParam commit=field.getAnnotation(KParam.class);
+            if(commit!=null) {
+                String value = commit.value().isEmpty() ? field.getName() : commit.value();
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+}
+</code></pre>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="写一个bean-用到上面的注解"><a href="#写一个bean-用到上面的注解" class="headerlink" title="写一个bean 用到上面的注解"></a>写一个bean 用到上面的注解</h3><pre><code>public class PrepaidDetail {
+    @KId(&quot;记录编号&quot;)
+    private String recordNo;//记录编号
+
+    @KField(&quot;客户编号&quot;)
+    private String custNo;//客户编号
+    @KField(&quot;来源&quot;)
+    private String source;//来源
+    @KField(&quot;金额&quot;)
+    private String amount;//金额
+    @KField(&quot;使用的转运商单号&quot;)
+    private String transNo;//使用的转运商单号
+
+    @KParam(&quot;操作时间&quot;)
+    @KField(&quot;操作时间&quot;)
+    private String optTime;//操作时间
+    @KField(&quot;币种&quot;)
+    private String moneyType;//币种
+    @KField(&quot;备注&quot;)
+    private String remark;//备注
+    @KParam(&quot;有效标识&quot;)
+    @KField(&quot;有效标识&quot;)
+    private String invalid;//有效标识;
+    @KField(&quot;支付交易号&quot;)
+    private String tradeCode;//支付交易号
+}
+</code></pre><h3 id="生成"><a href="#生成" class="headerlink" title="生成"></a>生成</h3><pre><code> String xml=MyBatisUtil.createXml(PrepaidDetail.class); //传入对应的class生成</code></pre><h2 id="github"><a href="#github" class="headerlink" title="github"></a>github</h2><ul>
+<li>github地址 <a href="https://github.com/keeleys/mybatis_template" target="_blank" rel="noopener">https://github.com/keeleys/mybatis_template</a></li>
+</ul>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

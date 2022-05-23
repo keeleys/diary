@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">nginx学习</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 06 / 30</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">nginx</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="官网资料"><a href="#官网资料" class="headerlink" title="官网资料"></a>官网资料</h2><h3 id="下载地址"><a href="#下载地址" class="headerlink" title="下载地址"></a>下载地址</h3><p><a href="http://nginx.org/" target="_blank" rel="noopener">http://nginx.org/</a></p>
+<h3 id="wiki"><a href="#wiki" class="headerlink" title="wiki"></a>wiki</h3><p><a href="https://www.nginx.com/resources/wiki/start/" target="_blank" rel="noopener">https://www.nginx.com/resources/wiki/start/</a></p>
+<a id="more"></a>
+
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>直接运行 <code>nginx.exe</code> 或者cmd 执行 <code>start nginx</code>以守护进程方式启动</p>
+<ol>
+<li><p>有可能一闪而过 那么需要查看<code>logs/error.log</code>, 查看错误日志，一般为端口冲突</p>
+</li>
+<li><p>打开<code>conf/nginx.conf</code> ,找到如下代码,修改端口为81或者其他,再次运行</p>
+<pre><code class="conf">server {
+#监听81端口 localhost:81
+listen       81;
+server_name  localhost;
+
+#charset koi8-r;
+
+#access_log  logs/host.access.log  main;
+
+location / {
+   root   html;
+   index  index.html index.htm;
+}
+...
+}</code></pre>
+</li>
+</ol>
+<h2 id="一些命令-在nginx根目录-cmd执行"><a href="#一些命令-在nginx根目录-cmd执行" class="headerlink" title="一些命令 在nginx根目录 cmd执行"></a>一些命令 在nginx根目录 cmd执行</h2><ol>
+<li>基本<pre><code>nginx -V //查看NGINX版本和配置文件路径
+nginx -s stop          // 停止nginx
+nginx -s reload       // 重新加载配置文件
+nginx -s quit
+nginx -c ~/Desktop/nginx.conf //指定配置文件启动
+nginx -t //测试配置文件的正确性</code></pre></li>
+</ol>
+<h2 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h2><h3 id="基础模式"><a href="#基础模式" class="headerlink" title="基础模式"></a>基础模式</h3><pre><code class="conf">server {
+    #监听80端口 localhost:80
+    listen       80;
+    #nginx会匹配请求头中的host和server_name
+    server_name  localhost;
+    #charset koi8-r;
+    #access_log  logs/host.access.log  main;
+    location / {
+        proxy_pass http://localhost:9080;
+    }</code></pre>
+<h3 id="反向负载均衡"><a href="#反向负载均衡" class="headerlink" title="反向负载均衡"></a>反向负载均衡</h3><pre><code class="conf">#真实转发的地址
+upstream real_path{
+    server localhost:9080 weight=1 max_fails=2 fail_timeout=30s;
+    server localhost:7080 weight=1 max_fails=2 fail_timeout=30s;
+}
+server {
+    #监听80端口 localhost:80
+    listen       80;
+    server_name  localhost;
+    #charset koi8-r;
+    #access_log  logs/host.access.log  main;
+    location / {
+        proxy_pass http://real_path;
+    }
+}   </code></pre>
+<h2 id="nginx站点"><a href="#nginx站点" class="headerlink" title="nginx站点"></a>nginx站点</h2><h3 id="在一个server块中配置多个站点"><a href="#在一个server块中配置多个站点" class="headerlink" title="在一个server块中配置多个站点"></a>在一个server块中配置多个站点</h3><pre><code class="conf">server
+{
+  listen 80;
+  server_name ~^(.+)?\.howtocn\.org$;
+  set $www_root $1; //正则匹配到的站点前缀储存起来，避免多个正则冲突
+  index index.html;
+  if ($host = ttianjun.com){ //重定向
+  rewrite ^ http://www.ttianjun.com permanent;
+  }
+  root /data/wwwsite/ttianjun.com/$www_root/;
+}</code></pre>
+<p>站点的目录结构应该如下</p>
+<pre><code>/data/wwwsite/ttianjun.com/www/
+/data/wwwsite/ttianjun.com/nginx/</code></pre><p>这样访问<code>www.ttianjun.com</code>时root目录为/data/wwwsite/ttianjun.com/www/，<br>nginx.ttianjun.com时为/data/wwwsite/ttianjun.com/nginx/</p>
+<h2 id="nginx完整配置"><a href="#nginx完整配置" class="headerlink" title="nginx完整配置"></a>nginx完整配置</h2><p>参考官网<a href="https://www.nginx.com/resources/wiki/start/topics/examples/full/" target="_blank" rel="noopener">https://www.nginx.com/resources/wiki/start/topics/examples/full/</a></p>
+<pre><code class="conf">user       www www;  ## Default: nobody
+worker_processes  5;  ## Default: 1
+error_log  logs/error.log;
+pid        logs/nginx.pid;
+worker_rlimit_nofile 8192;
+
+events {
+  worker_connections  4096;  ## Default: 1024
+}
+
+http {
+  include    conf/mime.types;
+  include    /etc/nginx/proxy.conf;
+  include    /etc/nginx/fastcgi.conf;
+  index    index.html index.htm index.php;
+
+  default_type application/octet-stream;
+  log_format   main &#39;$remote_addr - $remote_user [$time_local]  $status &#39;
+    &#39;&quot;$request&quot; $body_bytes_sent &quot;$http_referer&quot; &#39;
+    &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;
+  access_log   logs/access.log  main;
+  sendfile     on;
+  tcp_nopush   on;
+  server_names_hash_bucket_size 128; # this seems to be required for some vhosts
+
+  server { # php/fastcgi
+    listen       80;
+    server_name  domain1.com www.domain1.com;
+    access_log   logs/domain1.access.log  main;
+    root         html;
+
+    location ~ \.php$ {
+      fastcgi_pass   127.0.0.1:1025;
+    }
+  }
+
+  server { # simple reverse-proxy
+    listen       80;
+    server_name  domain2.com www.domain2.com;
+    access_log   logs/domain2.access.log  main;
+
+    # serve static files
+    location ~ ^/(images|javascript|js|css|flash|media|static)/  {
+      root    /var/www/virtual/big.server.com/htdocs; # 直接从这个目录拿
+      expires 30d;
+    }
+
+    # pass requests for dynamic content to rails/turbogears/zope, et al
+    location / {
+      proxy_pass      http://127.0.0.1:8080;
+    }
+  }
+
+  upstream big_server_com {
+    server 127.0.0.3:8000 weight=5;
+    server 127.0.0.3:8001 weight=5;
+    server 192.168.0.1:8000;
+    server 192.168.0.1:8001;
+  }
+
+  server { # simple load balancing
+    listen          80;
+    server_name     big.server.com;
+    access_log      logs/big.server.access.log main;
+
+    location / {
+      proxy_pass      http://big_server_com;
+    }
+  }
+}
+</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

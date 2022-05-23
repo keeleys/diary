@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">docker 运行php</h1>
+	<div id="post-detail">
+		<span id="post-date">2016 / 05 / 17</span>
+		<span id="post-tags">
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h1 id="showdoc-docker"><a href="#showdoc-docker" class="headerlink" title="showdoc_docker"></a>showdoc_docker</h1><blockquote>
+<p>通过搭建这个演示PHP环境的docker方式.</p>
+</blockquote>
+<p>github地址: <a href="https://github.com/keeleys/showdoc_docker" target="_blank" rel="noopener">https://github.com/keeleys/showdoc_docker</a></p>
+<a id="more"></a>
+<h2 id="showdoc介绍"><a href="#showdoc介绍" class="headerlink" title="showdoc介绍"></a>showdoc介绍</h2><blockquote>
+<p>写api文档不错的工具,还可以搭建在公司自己的服务器</p>
+</blockquote>
+<ul>
+<li><a href="http://blog.star7th.com/2016/05/2007.html" target="_blank" rel="noopener">作者的教程</a></li>
+<li><a href="http://doc.star7th.com/index.php?s=/2&page_id=9" target="_blank" rel="noopener">demo演示</a></li>
+</ul>
+<h2 id="docker化"><a href="#docker化" class="headerlink" title="docker化"></a>docker化</h2><p>由于本人不是php开发 所以就用docker搭建了运行showdoc的环境。</p>
+<p>首先去<a href="https://dashboard.daocloud.io/packages/8ae9639b-9fce-491a-890f-ffac6404dc70" target="_blank" rel="noopener">https://dashboard.daocloud.io/packages/8ae9639b-9fce-491a-890f-ffac6404dc70</a><br>这个地址查看php的docker的用法，然后做自己的Dockfile文件。</p>
+<pre><code class="bash">FROM php:5.6-apache
+COPY showdoc/ /var/www/html/
+
+RUN apt-get update &amp;&amp; apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libmcrypt-dev \
+        libpng12-dev \
+    &amp;&amp; docker-php-ext-install -j$(nproc) gd
+
+RUN chmod 777 Application/Runtime \
+  &amp;&amp; chmod 777 Public/Uploads \
+  &amp;&amp; chmod 777 Sqlite \
+  &amp;&amp; chmod 777 Sqlite/showdoc.db.php
+CMD [&quot;apache2-foreground&quot;]</code></pre>
+<h2 id="创建和运行镜像"><a href="#创建和运行镜像" class="headerlink" title="创建和运行镜像"></a>创建和运行镜像</h2><p>创建镜像  </p>
+<pre><code class="bash">docker build -t showdoc .</code></pre>
+<p>然后运行</p>
+<pre><code class="bash">docker run -d --name showdoc -p 83:80 showdoc</code></pre>
+<p>然后浏览器访问(<strong>这里是mac版本的演示，所以地址是192.168.99.100</strong>)</p>
+<pre><code class="bash">http://192.168.99.100:83</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">dubbo介绍和集成例子</h1>
+	<div id="post-detail">
+		<span id="post-date">2016 / 01 / 14</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">rpc</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="dubbo介绍"><a href="#dubbo介绍" class="headerlink" title="dubbo介绍"></a>dubbo介绍</h2><blockquote>
+<p>DUBBO是一个分布式服务框架，致力于提供高性能和透明化的RPC远程服务调用方案，是阿里巴巴SOA服务化治理方案的核心框架</p>
+</blockquote>
+<p> 一句话概括，就是将服务层抽出来，拆成一个个单独的服务，然后通过远程调用供前置使用层调用。通过dubbo封装之后，调用远程方法和调用本地方法一样的方便</p>
+<a id="more"></a>
+
+<ul>
+<li><p>官网<a href="http://dubbo.io" target="_blank" rel="noopener">http://dubbo.io</a></p>
+</li>
+<li><p>架构图<br><img src="http://dubbo.io/dubbo-architecture.jpg-version=1&modificationDate=1330892870000.jpg" alt="http://dubbo.io/dubbo-architecture.jpg-version=1&amp;modificationDate=1330892870000.jpg"></p>
+</li>
+</ul>
+<h2 id="集成步骤-依托spring集成"><a href="#集成步骤-依托spring集成" class="headerlink" title="集成步骤(依托spring集成)"></a>集成步骤(依托spring集成)</h2><ul>
+<li>下载<a href="http://mirrors.hust.edu.cn/apache/zookeeper/" target="_blank" rel="noopener">注册中心zookeeper</a>，解压，然后运行bin/zkService，供提供者和使用者发布服务</li>
+<li>下载<a href="https://github.com/keeleys/dubbo-demo/tree/master/file" target="_blank" rel="noopener">dubbo-admin</a>,服务调度和管理中心，能查看和管理服务(非必需),(默认登陆的账号密码root,<code>root</code>) </li>
+<li>编写提供服务的api 和 api可能用到的实体</li>
+<li>编写服务，并运行服务</li>
+<li>编写调用着，选择服务，然后调用</li>
+</ul>
+<h2 id="github-例子项目"><a href="#github-例子项目" class="headerlink" title="github 例子项目"></a>github 例子项目</h2><p><a href="https://github.com/keeleys/dubbo-demo" target="_blank" rel="noopener">https://github.com/keeleys/dubbo-demo</a></p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

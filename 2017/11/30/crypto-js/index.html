@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">crypto,js，java加密解密</h1>
+	<div id="post-detail">
+		<span id="post-date">2017 / 11 / 30</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">crypto</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<p>aes128模式，js加密，java解密的例子</p>
+<a id="more"></a>
+
+<h2 id="js"><a href="#js" class="headerlink" title="js"></a>js</h2><pre><code class="js">&#39;use strict&#39;;
+var CryptoJS = require(&quot;crypto-js&quot;);
+
+// Encrypt
+var word = &#39;hello world&#39;;
+var key = &#39;d8cg8gVakEq9Agup&#39;
+console.log(word);
+
+key = CryptoJS.enc.Utf8.parse(key);
+word = CryptoJS.enc.Utf8.parse(word);
+
+var encrypted = CryptoJS.AES.encrypt(word, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});
+console.log(encrypted.toString());
+
+var decryptedData = CryptoJS.AES.decrypt(encrypted.toString(), key, {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7
+});
+var decryptedStr = decryptedData.toString(CryptoJS.enc.Utf8);
+console.log(decryptedStr);
+</code></pre>
+<h2 id="java"><a href="#java" class="headerlink" title="java"></a>java</h2><pre><code class="java">
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+
+public class Encrypt {
+    final static String ALGORITHMSTR = &quot;AES/ECB/PKCS5Padding&quot;;
+
+    /**
+     */
+
+    /*******************************************************************
+     * 使用AES-128-CBC加密模式，key需要为16位。
+     * */
+
+    public static String Decrypt(String sSrc, String decryptKey) throws Exception {
+        try {
+            byte[] encryptBytes = new BASE64Decoder().decodeBuffer(sSrc);
+            Cipher cipher = Cipher.getInstance(ALGORITHMSTR);
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptKey.getBytes(), &quot;AES&quot;));
+            byte[] decryptBytes = cipher.doFinal(encryptBytes);
+            return new String(decryptBytes);
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(&quot;sSrc=&quot;+sSrc+&quot;,key=&quot;+decryptKey);
+        }
+    }
+
+    /**
+     * AES加密为base 64 code
+     * @param content 待加密的内容
+     * @param encryptKey 加密密钥
+     * @return 加密后的base 64 code
+     * @throws Exception
+     */
+    public static String aesEncrypt(String content, String encryptKey) throws Exception {
+        return new BASE64Encoder().encode(aesEncryptToBytes(content, encryptKey));
+    }
+    private static byte[] aesEncryptToBytes(String content, String encryptKey) throws Exception {
+        KeyGenerator kgen = KeyGenerator.getInstance(&quot;AES&quot;);
+        kgen.init(128);
+        Cipher cipher = Cipher.getInstance(ALGORITHMSTR);
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(), &quot;AES&quot;));
+
+        return cipher.doFinal(content.getBytes(&quot;utf-8&quot;));
+    }
+}
+
+</code></pre>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li>待补充</li>
+</ul>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

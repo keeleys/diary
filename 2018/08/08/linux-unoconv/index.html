@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">linux上部署文档转换的服务</h1>
+	<div id="post-detail">
+		<span id="post-date">2018 / 08 / 08</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">linux</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>unoconv，全称为 Universal Office Converter ，是一个命令行工具，可在linux平台,对LibreOffice/OpenOffice 支持的任意文件格式之间进行转换</p>
+<a id="more"></a>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>一般使用这个会需要配置很多运行环境,为了快速开发网上找了一个部署好环境的docker镜像.转换的事情直接docker做好了,我们只需要加工一下,处理消息的传入传出和错误处理就好了</p>
+<p><a href="https://hub.docker.com/r/zrrrzzt/docker-unoconv-webservice/" target="_blank" rel="noopener">https://hub.docker.com/r/zrrrzzt/docker-unoconv-webservice/</a><br><a href="https://github.com/keeleys/docker-unocnv" target="_blank" rel="noopener">https://github.com/keeleys/docker-unocnv</a></p>
+<p>docker run -d -p 80:3000 –name unoconv docker-unoconv-webservice</p>
+<h2 id="具体使用"><a href="#具体使用" class="headerlink" title="具体使用"></a>具体使用</h2><p>该docker版本的unoconv是已服务的方式进行部署的,我们用的时候,需要将待转换的文旦上传到转换服务,转换服务成功之后返回pdf流,然后我们将pdf流输出成未见.</p>
+<pre><code class="s">
+curl --form &quot;file=@/Users/keeley/Downloads/BP神经网络详解-最好的版本.ppt&quot; http://localhost:3500/unoconv/pdf &gt; &quot;BP神经网络详解-最好的版本.ppt.pdf&quot;</code></pre>
+<h2 id="java中的使用"><a href="#java中的使用" class="headerlink" title="java中的使用"></a>java中的使用</h2><blockquote>
+<blockquote>
+<p>将该文档转换直接集成到原来的mp4/ZIP转换项目去了</p>
+</blockquote>
+</blockquote>
+<ul>
+<li>sass端上传文档 ,发送上传消息</li>
+<li>file-message-listener接收到消息,将office文件传递给文档转换服务进行转换,</li>
+<li>判断是否返回200,有就是成功,并将输出流转换成pdf存放,没有就是失败,返回错误</li>
+</ul>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="处理的代码"><a href="#处理的代码" class="headerlink" title="处理的代码"></a>处理的代码</h3><pre><code class="java">public class HttpKit {
+    public static boolean postFile(String filePath, String url) throws IOException {
+        File file = new File(filePath);
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpResponse response = null;
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create();
+            mEntityBuilder.addBinaryBody(&quot;file&quot;, file);
+            httpPost.setEntity(mEntityBuilder.build());
+            response = httpclient.execute(httpPost);
+
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                // 消耗掉response
+                File destFile = new File(file.getPath()+&quot;.pdf&quot;);
+                FileUtils.copyInputStreamToFile(resEntity.getContent(), destFile);
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            HttpClientUtils.closeQuietly(httpclient);
+            HttpClientUtils.closeQuietly(response);
+        }
+        return false;
+    }
+}
+</code></pre>
+<h3 id="接受处理的代码-FileBackListener"><a href="#接受处理的代码-FileBackListener" class="headerlink" title="接受处理的代码(FileBackListener)"></a>接受处理的代码(FileBackListener)</h3><p>将转换过的代码存成新的attachment记录,和原来逻辑保持一致</p>
+<pre><code class="java">private void pdfProcess(String fileId, String filePath) {
+    Attachment attachment = fileService.get(fileId).orElse(null);
+
+    Attachment attachment1 = new Attachment();
+    attachment1.forInsert();
+    attachment1.setPath(filePath);
+    attachment1.setContentType(&quot;application/octet-stream&quot;);
+    attachment1.setExtention(&quot;pdf&quot;);
+    attachment1.setFilename(attachment.getFilename());
+    attachment1.setSize(attachment.getSize());
+    fileService.insert(attachment1);
+
+    fileService.update(fileId, Optional.of(attachment1.getId()), Optional.of(successStatus));
+}</code></pre>
+<h3 id="tips"><a href="#tips" class="headerlink" title="tips"></a>tips</h3><ol>
+<li>txt格式乱码问题(处理方案是将txt的文本正确读取出来,然后转成docx在进行转换)</li>
+</ol>
+<pre><code class="java">package com.zxy.fastdfs.convert.util;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+
+import java.io.*;
+
+public class TextUtil {
+    private static String codeString(String fileName) throws IOException {
+        BufferedInputStream bin = new BufferedInputStream(new FileInputStream(fileName));
+        int p = (bin.read() &lt;&lt; 8) + bin.read();
+        bin.close();
+        String code;
+
+        switch (p) {
+            case 0xefbb:
+                code = &quot;UTF-8&quot;;
+                break;
+            case 0xfffe:
+                code = &quot;Unicode&quot;;
+                break;
+            case 0xfeff:
+                code = &quot;UTF-16BE&quot;;
+                break;
+            default:
+                code = &quot;GBK&quot;;
+        }
+
+        return code;
+    }
+
+    public static boolean parseTextToDocx(String source, String desc) throws IOException {
+        FileOutputStream out = null;
+        try {
+            String str = FileUtils.readFileToString(new File(source), codeString(source));
+            System.out.println(str);
+            XWPFDocument document = new XWPFDocument();
+            out = new FileOutputStream(new File(desc));
+            XWPFParagraph paragraph = document.createParagraph();
+            XWPFRun run = paragraph.createRun();
+            run.setText(str);
+            document.write(out);
+            return true;
+        } catch (Exception e){
+            return false;
+        }finally {
+            if(out!=null){
+                out.close();
+            }
+        }
+    }
+}</code></pre>
+<h3 id="软件下载"><a href="#软件下载" class="headerlink" title="软件下载"></a>软件下载</h3><ul>
+<li><a href="https://downloadarchive.documentfoundation.org/libreoffice/old/4.3.7.2/mac/x86_64/LibreOffice_4.3.7.2_MacOS_x86-64.dmg" target="_blank" rel="noopener">libreoffice</a></li>
+</ul>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

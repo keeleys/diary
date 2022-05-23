@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">阿里云主机安装myslq5.5和tomcat 7</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 09 / 15</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">linux</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><blockquote>
+<p>先连接到内网跳板机器，然后通过内网跳板机连接阿里云</p>
+</blockquote>
+<h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><pre><code>rpm -q centos-release 
+#centos-release-6-3.el6.centos.9.x86_64
+
+cat /etc/issue
+</code></pre><h3 id="查看mysql-是否安装"><a href="#查看mysql-是否安装" class="headerlink" title="查看mysql 是否安装"></a>查看mysql 是否安装</h3><pre><code>rpm -qa | grep mysql</code></pre><h3 id="卸载旧版本的mysql"><a href="#卸载旧版本的mysql" class="headerlink" title="卸载旧版本的mysql"></a>卸载旧版本的mysql</h3><pre><code>sudo yum -y remove mysql-xx-xx</code></pre><h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="连接跳板机"><a href="#连接跳板机" class="headerlink" title="连接跳板机"></a>连接跳板机</h3><pre><code>ssh jfy@test.xxx.com -p 6021</code></pre><h3 id="下载mysql到当前目录"><a href="#下载mysql到当前目录" class="headerlink" title="下载mysql到当前目录"></a>下载mysql到当前目录</h3><p>目前5.5的最新版5.5.45，官网地址 <a href="http://dev.mysql.com/downloads/mysql/#downloads" target="_blank" rel="noopener">http://dev.mysql.com/downloads/mysql/#downloads</a></p>
+<pre><code>wget -c http://dev.mysql.com/get/Downloads/MySQL-5.5/MySQL-server-5.5.45-1.el6.x86_64.rpm
+wget -c http://dev.mysql.com/get/Downloads/MySQL-5.5/MySQL-client-5.5.45-1.el6.x86_64.rpm
+wget -c http://dev.mysql.com/get/Downloads/MySQL-5.5/MySQL-devel-5.5.45-1.el6.x86_64.rpm</code></pre><h3 id="传输到阿里云服务器"><a href="#传输到阿里云服务器" class="headerlink" title="传输到阿里云服务器"></a>传输到阿里云服务器</h3><pre><code>scp -r . root@10.xxx.xxx.xxx:/home</code></pre><h3 id="连接阿里云服务器"><a href="#连接阿里云服务器" class="headerlink" title="连接阿里云服务器"></a>连接阿里云服务器</h3><pre><code>ssh jfy@10.xxx.xx.xx-p 22</code></pre><h3 id="用rpm命令安装"><a href="#用rpm命令安装" class="headerlink" title="用rpm命令安装"></a>用rpm命令安装</h3><pre><code>rpm -ivh MySQL-server-5.5.45-1.el6.x86_64.rpm
+rpm -ivh MySQL-client-5.5.45-1.el6.x86_64.rpm
+rpm -ivh MySQL-devel-5.5.45-1.el6.x86_64.rpm</code></pre><h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><pre><code>/usr/bin/mysqladmin -u root password &#39;123456&#39;</code></pre><h3 id="启动-停止mysql"><a href="#启动-停止mysql" class="headerlink" title="启动 停止mysql"></a>启动 停止mysql</h3><pre><code>service mysql start
+service mysql stop</code></pre><h3 id="登陆mysql"><a href="#登陆mysql" class="headerlink" title="登陆mysql"></a>登陆mysql</h3><pre><code>mysql -u root -p</code></pre><h3 id="查看mysql安装目录"><a href="#查看mysql安装目录" class="headerlink" title="查看mysql安装目录"></a>查看mysql安装目录</h3><pre><code>whereis mysql</code></pre><h3 id="下载tomcat7"><a href="#下载tomcat7" class="headerlink" title="下载tomcat7"></a>下载tomcat7</h3><blockquote>
+<p>地址<a href="http://tomcat.apache.org/download-70.cgi" target="_blank" rel="noopener">http://tomcat.apache.org/download-70.cgi</a></p>
+</blockquote>
+<pre><code>wget -c http://mirrors.hust.edu.cn/apache/tomcat/tomcat-7/v7.0.64/bin/apache-tomcat-7.0.64.tar.gz</code></pre><h3 id="解压-然后根据bin目录下面的命令运行服务"><a href="#解压-然后根据bin目录下面的命令运行服务" class="headerlink" title="解压 然后根据bin目录下面的命令运行服务"></a>解压 然后根据bin目录下面的命令运行服务</h3><pre><code>tar -zxvf apache-tomcat-7.0.64.tar.gz
+</code></pre><h2 id="假如是el5的服务器"><a href="#假如是el5的服务器" class="headerlink" title="假如是el5的服务器"></a>假如是el5的服务器</h2><pre><code>下载这3个安装
+http://cdn.mysql.com//Downloads/MySQL-5.5/MySQL-server-5.5.46-1.rhel5.x86_64.rpm
+http://cdn.mysql.com//Downloads/MySQL-5.5/MySQL-client-5.5.46-1.rhel5.x86_64.rpm
+http://cdn.mysql.com//Downloads/MySQL-5.5/MySQL-devel-5.5.46-1.rhel5.x86_64.rpm</code></pre><h3 id="mysql-远程连接"><a href="#mysql-远程连接" class="headerlink" title="mysql 远程连接"></a>mysql 远程连接</h3><pre><code>update user set host=&#39;%&#39; where user=&#39;root&#39; and host=&#39;localhost&#39;;
+flush privileges;        #刷新权限表，使配置生效</code></pre><p>如果您想关闭远程连接，恢复mysql的默认设置（只能本地连接），您可以通过以下步骤操作：</p>
+<pre><code>use mysql                #打开mysql数据库
+
+#将host设置为localhost表示只能本地连接mysql
+
+update user set host=&#39;localhost&#39; where user=&#39;root&#39;;
+
+flush privileges;        #刷新权限表，使配置生效</code></pre><p>您也可以添加一个用户名为yuancheng，密码为123456，权限为%（表示任意ip都能连接）的远程连接用户。命令参考如下：</p>
+<pre><code>grant all on *.* to &#39;yuancheng&#39;@&#39;%&#39; identified by &#39;123456&#39;;
+
+flush privileges;</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

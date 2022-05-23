@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">多远程服务的.ssh配置</h1>
+	<div id="post-detail">
+		<span id="post-date">2016 / 06 / 30</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">linux</span>
+			
+				<span id="post-tag">mac</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="ssh-config"><a href="#ssh-config" class="headerlink" title="~/.ssh/config"></a>~/.ssh/config</h2><pre><code>Host 192.168.1.198
+  Port 10022
+
+Host github.com
+  HostName github.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/id_rsa
+
+Host sitec.github.com
+  HostName github.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/sitec</code></pre><h2 id="使用例子"><a href="#使用例子" class="headerlink" title="使用例子"></a>使用例子</h2><p>第一个host的远程地址对应</p>
+<pre><code>git clone git@github.com:keeleys/flask_funny.git</code></pre><p>第二个host的远程地址对应</p>
+<pre><code>git clone git@sitec.github.com:keeleys/flask_funny.git</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

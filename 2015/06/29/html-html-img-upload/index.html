@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">图片上传显示预览</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 06 / 29</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">html</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><a id="more"></a>
+<pre><code class="js">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;http://libs.baidu.com/jquery/1.10.2/jquery.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot;&gt;
+    $(function(){
+        $(&quot;.file&quot;).change(function(){
+            var fileImg = $(&quot;.fileImg&quot;);
+            var explorer = navigator.userAgent;
+            var imgSrc = $(this)[0].value;
+            if (explorer.indexOf(&#39;MSIE&#39;) &gt;= 0) {
+                if (!/\.(jpg|jpeg|png|JPG|PNG|JPEG)$/.test(imgSrc)) {
+                    imgSrc = &quot;&quot;;
+                    fileImg.attr(&quot;src&quot;,&quot;/img/default.png&quot;);
+                    return false;
+                }else{
+                    fileImg.attr(&quot;src&quot;,imgSrc);
+                }
+            }else{
+                if (!/\.(jpg|jpeg|png|JPG|PNG|JPEG)$/.test(imgSrc)) {
+                    imgSrc = &quot;&quot;;
+                    fileImg.attr(&quot;src&quot;,&quot;/img/default.png&quot;);
+                    return false;
+                }else{
+                    var file = $(this)[0].files[0];
+                    var url = URL.createObjectURL(file);
+                    fileImg.attr(&quot;src&quot;,url);
+                }
+            }
+        })
+    })
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form enctype=&quot;multipart/form-date&quot; method=&quot;post&quot;&gt;
+        &lt;input type=&quot;file&quot; class=&quot;file&quot;&gt;
+        &lt;input type=&quot;submit&quot; class=&quot;sub&quot;&gt;
+    &lt;/form&gt;
+    &lt;img src=&quot;&quot; class=&quot;fileImg&quot;&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

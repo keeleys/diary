@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">给网站添加友好的bootcss样式提示</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 06 / 29</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">html</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="界面"><a href="#界面" class="headerlink" title="界面"></a>界面</h2><p><img src="https://dn-tianjun.qbox.me/ttianjunQQ%E6%88%AA%E5%9B%BE20150715144649.png" alt="界面"></p>
+<h2 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h2><table>
+<thead>
+<tr>
+<th>Min.Bootstrap version</th>
+<th>Max.Bootstrap</th>
+<th>Min.jQuery</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3.0.0</td>
+<td>3.x.x</td>
+<td>1.9.1</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li>npm<pre><code>npm install bootbox</code></pre></li>
+</ul>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><ul>
+<li><p>在jquery bootstrap.js 后面，引入bootbox.min.js 文件</p>
+</li>
+<li><p>使用前的统一的配置</p>
+<pre><code>bootbox.setDefaults({
+  //size: &#39;small&#39;,
+  locale:&quot;zh_CN&quot;,
+  title:&#39;温馨提示&#39;
+});</code></pre></li>
+<li><p>页面使用</p>
+<pre><code>bootbox.alert(&quot;Your message here…&quot;);
+bootbox.alert(&quot;Your message here…&quot;, function(){ /* your callback code */ });
+bootbox.confirm(&quot;Your message here…&quot;, function(result){ /* your callback code */ });
+bootbox.prompt(&quot;Your message here…&quot;, function(result){ /* your callback code */ });</code></pre><!-- more -->
+<h2 id="官网文档参考"><a href="#官网文档参考" class="headerlink" title="官网文档参考"></a>官网文档参考</h2><blockquote>
+<p><a href="http://bootboxjs.com/documentation.html" target="_blank" rel="noopener">http://bootboxjs.com/documentation.html</a></p>
+</blockquote>
+</li>
+</ul>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

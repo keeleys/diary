@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">hexo通过travis免费自动构建到github的page上</h1>
+	<div id="post-detail">
+		<span id="post-date">2019 / 11 / 27</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">github</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>hexo是个本地构建md生成静态页面的工具，今天我讲下搭配自动部署的方法。<br>我感觉这个travis还是不错的，相较于jenkins需要自己搭建服务，还需要公网接受hook，这个完全免费，配置也简单<br>ps:(travis有两个域名，记得用 <a href="https://travis-ci.com/" target="_blank" rel="noopener">https://travis-ci.com/</a> 这个域名)</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><ol>
+<li>github建立一个项目，关联你的hexo源代码，先不用提交代码</li>
+<li>在github添加<a href="https://github.com/marketplace/travis-ci" target="_blank" rel="noopener">travis</a>服务</li>
+<li>去<a href="https://github.com/settings/installations" target="_blank" rel="noopener">Applications settings</a>设置下授权自动构建的仓库，这里可以选前面步骤1的项目。</li>
+<li>生成一个<a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github的token</a>,复制好生成的token字符串哦。、</li>
+<li>然后回到你的<a href="https://travis-ci.com/" target="_blank" rel="noopener">Travis CI</a>网站,在<code>My Repositories</code>里面找到你授权的项目，点击进入项目详情，然后在右边的<code>more action</code>里面选择<code>setting</code>,在页面中间部分的<code>Environment Variables</code>里面添加一个环境变量<code>GH_TOKEN</code>,值就是你前面github生成的 <code>token</code>，然后点击add添加成功。</li>
+<li>前面几步就弄完了项目关联了，现在我们在hexo的源代码根目录添加<code>.travis.yml</code>文件，配置下让travis知道我们提交代码之后触发什么命令。内容如下，这段配置的含义就是让关联的仓库的master分支提交代码之后，执行下指定script，然后将<code>local-dir</code>目录推到<code>gh-pages</code>分支<pre><code class="yml">sudo: false
+language: node_js
+node_js:
+- 10 # use nodejs v10 LTS
+cache: npm
+branches:
+only:
+ - master # build master branch only
+script:
+- hexo generate # generate static files
+deploy:
+provider: pages
+skip-cleanup: true
+github-token: $GH_TOKEN
+keep-history: true
+on:
+ branch: master
+local-dir: public</code></pre>
+</li>
+<li>现在将你加好配置的hexo源代码推送到github的master分支，travis就会自动给你构建好代码推送到<code>gh-pages</code>分支了。</li>
+</ol>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

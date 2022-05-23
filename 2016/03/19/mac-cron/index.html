@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">mac 管理定时任务</h1>
+	<div id="post-detail">
+		<span id="post-date">2016 / 03 / 19</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">mac</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<blockquote>
+<p>自动执行下签到脚本啥的还是挺方便的。</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="一-编写sh文件"><a href="#一-编写sh文件" class="headerlink" title="一 编写sh文件"></a>一 编写sh文件</h2><p>例如<code>python_v2ex.sh</code></p>
+<pre><code class="bash">#!/bin/bash
+/usr/bin/python /tmp/xx1.py 
+/usr/bin/python /tmp/xx2.py</code></pre>
+<h2 id="二-编写plist文件-python-sign-plist"><a href="#二-编写plist文件-python-sign-plist" class="headerlink" title="二 编写plist文件 python_sign.plist"></a>二 编写plist文件 <code>python_sign.plist</code></h2><pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;  
+&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;  
+&lt;plist version=&quot;1.0&quot;&gt;  
+  &lt;dict&gt;
+    &lt;!-- 名称，要全局唯一 --&gt;
+    &lt;key&gt;Label&lt;/key&gt;
+    &lt;string&gt;com.uniflor.notifier&lt;/string&gt;
+    &lt;!-- 命令， 第一个为命令，其它为参数--&gt;
+    &lt;key&gt;ProgramArguments&lt;/key&gt;
+    &lt;array&gt;
+      &lt;string&gt;/Users/keeley/cron/sh/python_v2ex.sh&lt;/string&gt;
+    &lt;/array&gt;
+    &lt;!-- 运行时间 --&gt;
+    &lt;key&gt;StartCalendarInterval&lt;/key&gt;
+    &lt;dict&gt;
+      &lt;key&gt;Minute&lt;/key&gt;
+      &lt;integer&gt;0&lt;/integer&gt;
+      &lt;key&gt;Hour&lt;/key&gt;
+      &lt;integer&gt;22&lt;/integer&gt;
+      &lt;!--
+      &lt;key&gt;Day&lt;/key&gt;
+      &lt;integer&gt;1&lt;/integer&gt;
+      &lt;key&gt;Month&lt;/key&gt;
+      &lt;integer&gt;5&lt;/integer&gt;
+      &lt;key&gt;Weekday&lt;/key&gt;
+      &lt;integer&gt;0&lt;/integer&gt;
+      --&gt;
+    &lt;/dict&gt;
+    &lt;!-- 运行间隔，与StartCalenderInterval使用其一，单位为秒
+    &lt;key&gt;StartInterval&lt;/key&gt;
+    &lt;integer&gt;30&lt;/integer&gt;
+     --&gt;
+    &lt;!-- 标准输入文件 --&gt;
+    &lt;key&gt;StandardInPath&lt;/key&gt;
+    &lt;string&gt;/Users/keeley/cron/log/run-in.log&lt;/string&gt;
+    &lt;!-- 标准输出文件 --&gt;
+    &lt;key&gt;StandardOutPath&lt;/key&gt;
+    &lt;string&gt;/Users/keeley/cron/log/run-out.log&lt;/string&gt;
+    &lt;!-- 标准错误输出文件 --&gt;
+    &lt;key&gt;StandardErrorPath&lt;/key&gt;
+    &lt;string&gt;/Users/keeley/cron/log/run-err.log&lt;/string&gt;
+  &lt;/dict&gt;  
+&lt;/plist&gt;</code></pre>
+<h2 id="存放任务列表的路径"><a href="#存放任务列表的路径" class="headerlink" title="存放任务列表的路径"></a>存放任务列表的路径</h2><p><code>~/Library/LaunchAgents</code> 由用户自己定义的任务项<br><code>/Library/LaunchAgents</code> 由管理员为用户定义的任务项<br><code>/Library/LaunchDaemons</code> 由管理员定义的守护进程任务项<br><code>/System/Library/LaunchAgents</code> 由Mac OS X为用户定义的任务项<br><code>/System/Library/LaunchDaemons</code> 由Mac OS X定义的守护进程任务项</p>
+<pre><code class="plain">为用户定义的任务项，只以用户登陆后才会执行，守护进程任务项无论用户是否登陆都会执行 
+根据添加的任务类型，把它拷贝到相应的目录，通过launchctl来加载</code></pre>
+<p>把编写好的plist移动到相应的目录(这里是软连接过去的)</p>
+<pre><code class="bash">cd ~/Library/LaunchAgents
+ln -s ~/cron/plist/com.ttianjun.python_sign.plist .</code></pre>
+<h2 id="launchctl-命令"><a href="#launchctl-命令" class="headerlink" title="launchctl 命令"></a>launchctl 命令</h2><p><code>launchctl list</code> 查看所有任务<br><code>launchctl load com.ttianjun.python_sign</code> 加载任务<br><code>launchctl unload com.ttianjun.python_sign</code>删除任务</p>
+<h2 id="linux的cron命令"><a href="#linux的cron命令" class="headerlink" title="linux的cron命令"></a>linux的cron命令</h2><p><a href="https://segmentfault.com/a/1190000002628040" target="_blank" rel="noopener">https://segmentfault.com/a/1190000002628040</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man5/launchd.plist.5.html" target="_blank" rel="noopener">mac,launch官方文档</a><br><a href="http://m.oschina.net/blog/470377" target="_blank" rel="noopener">osc,在Mac上定时执行任务</a></p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

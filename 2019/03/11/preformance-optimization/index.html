@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">分享下平台优化经验</h1>
+	<div id="post-detail">
+		<span id="post-date">2019 / 03 / 11</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">java</span>
+			
+				<span id="post-tag">sql</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="谈谈性能优化"><a href="#谈谈性能优化" class="headerlink" title="谈谈性能优化"></a>谈谈性能优化</h2><blockquote>
+<p>分享下工作过程中解决过的优化问题,目前系统是saas平台,数据试企业大小不定,大的企业可能同时几万人用,只是记录了些通用部分的,真正优化的大头还得分析自己业务来进行优化.你还需要一个好的测试团队,用脚本模拟进行api压测,帮助定位问题出在哪些请求和业务.</p>
+</blockquote>
+<h3 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h3><p>最基础的优化,比如课程学习记录表,以人和课程为维度进行的,业务上大量有用到这些查询,那么就必须建立索引了.当然这部分sql也能通过数据库慢查询搜出来一个个优化,原则上sql超过1秒的就是要去优化的了.后面新建表都要在业务未来使用场景上考虑索引.</p>
+<h3 id="增加冗余"><a href="#增加冗余" class="headerlink" title="增加冗余"></a>增加冗余</h3><p>增加冗余<code>减少表连接查询</code>,比如有课程,章节和节视频三个元素,最小设计上查询某个视频需要关联这3个表依次外键查下去,但是如果新增和修改的时候,就节视频绑定到课程,这样就变成单表操作了.</p>
+<h3 id="查询字段优化"><a href="#查询字段优化" class="headerlink" title="查询字段优化"></a>查询字段优化</h3><p>比如一般开发前期,表字段不多,大家多这么写查询<code>select * from xxxTable</code>,比如一个service方法find拿着通用的,其实就包含了全部字段了,但往往有时候你只需要其中几个字段,在sql压力大的时候,多返回的字段也是很大的消耗,特别是有大段描述的时候,这块以前都没怎么重视,所以后面我们都有单独用几个字段查询几个字段.<br>然后web返回的时候,就只返回前端需要用的字段,减少网络传输的数据量<br>查询的<code>distinct</code>也非常耗时,有时候不需要分页的场景,数据返回也不是巨大的时候,我们可以用java8来进行distinct,减少数据库压力呢<br>然后<code>like查询只匹配后半段</code>,比如 <code>like &#39;李四%&#39;</code>这样,可以命中缓存.2边都匹配的就不会走缓存了</p>
+<h3 id="列表查询优化"><a href="#列表查询优化" class="headerlink" title="列表查询优化"></a>列表查询优化</h3><p><code>大数据的连接查询可以拆分成多步进行查询</code>.比如我们这边显示给前端有个权限表,以前都是left这个表去做过滤,人越多这个表的数据越多,sql渐慢.后面我们优化的时候,先把这个人的所关联的项(组织,职位啥的)查出来,业务表查询的时候,只用in这个项这个条件就好了,提升也很明显.<br>还有一部分页面条件查询,用到的可能是子表检索,可以处理下,只有前端用<code>到了这个查询的时候才去关联对应的子表</code>,不用的时候不去做关联,<br>还有分页查询总数的时候,你可以先查询列表的,<code>列表的数据量小于第一页的时候,是不用count查询的</code>.<br>count语句也要优化,不能直接count你的查询,count(id)就好了,子表能少关联就少关联</p>
+<h3 id="浏览数-点击数之类的优化"><a href="#浏览数-点击数之类的优化" class="headerlink" title="浏览数,点击数之类的优化"></a>浏览数,点击数之类的优化</h3><p>有部分统计数据绑定在主表了,比如这个课程的点击数,这类操作特别频繁,并发多的时候甚至有死锁的情况发生,后面我们把这部分<code>操作频繁的汇总数据放到mq里面</code>去,让mq去做累加.,q并发高的时候是排队处理的,而且和主业务无关的数据,就该去让队列做,加快前端的响应时间</p>
+<h3 id="缓存优化"><a href="#缓存优化" class="headerlink" title="缓存优化"></a>缓存优化</h3><p>公共的东西可以做缓冲,这个肯定都知道,但缓存不是滥用的,跟用户有关的数据,缓存会占用的内存就太多了.<br>缓存适用的地方是<code>无状态+改动频率低</code>的情况.比如基础信息表经常查的可以在缓存.<br>比如课程学习里面的章节可以做缓存,一般章节数据发布之后就不会变了,变的是人对应这个章节的状态.<br>前端我会提供2个请求,一个是通过课程查询章节,一个是通过章节ids查询这个人的状态,这样的设计,第一个查询是无状态可缓存的.<br>在比如登录的查询这个人的权限,菜单,查询消息模板,查询系统配置项,之类的都可以做缓存.<br>缓存对象要尽量不存复杂对象,<code>减少序列化</code>开销,我们用的redis,支持的数据格式还挺多的,假如一个key关联2个状态,可以value用连接符,关联多个可以用hash.</p>
+<h3 id="过滤掉无效的数据"><a href="#过滤掉无效的数据" class="headerlink" title="过滤掉无效的数据"></a>过滤掉无效的数据</h3><p><code>拦截无效请求让资源给有用的事情</code>这个要根据具体业务来.比如学习时间,你前端提交的时候,先过滤下这些数据是否有用,比如记录学习时长,如果过滤之后是0秒钟.后面的大部分操作都可以不做了.</p>
+<h3 id="排行榜-报表类的优化"><a href="#排行榜-报表类的优化" class="headerlink" title="排行榜,报表类的优化"></a>排行榜,报表类的优化</h3><p>以前是去查业务表吧,数据量大了,或者说客户选择的时间范围比较广的时候,查询是比较慢的.<br>而且我们的排行有很多跟用户相关的数据,不是能做全局静态化的,<br>后面试过了跟人和查询条件做key去redis缓存,但是首次进入的体验还是不好,而且用户较多的时候,还会影响这个表的业务性能.<br>目前的改造方法,就是建<code>特定的统计表</code>,比如学习时长统计,建立用户每月数量记录表,年表,和日表,业务上有学习时长入库的时候,同步发送mq消息到监听,监听吧这个人的时长对应的加到统计表去,这样查排行榜的时候,<code>直接查统计表</code>,压力就小多了.</p>
+<h3 id="api优化"><a href="#api优化" class="headerlink" title="api优化"></a>api优化</h3><p>当然很多点吧,api我的<code>设计原则是参数尽少则少</code>,一个api<code>完成一个独立的事情</code>.controlle可以组合多个api<br>这边举一个例子,比如有这样的场景,2个api,第一个是去给用户注册(早的接口),第二个是判断是否注册再做后续操作(新的业务).<br>第二个api里面用了第一个api的返回用户来做业务判断,这样的设计是很不好的,第二个接口的可重用性就太低了,不能独立完成的api,不是一个完整颗粒.<br>而且<code>依赖的数据多,代表参数也多,让接入也变复杂了</code>,数据的来源可靠性也得不到保障<br>第二个接口不要依赖第一个接口的数据,情愿让第二个接口自己查询,让<code>接口保持独立性和少的状态依赖</code>.</p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

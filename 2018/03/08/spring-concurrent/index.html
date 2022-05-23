@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">springboot 并发处理</h1>
+	<div id="post-detail">
+		<span id="post-date">2018 / 03 / 08</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">java</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="使用-lock解决并发问题"><a href="#使用-lock解决并发问题" class="headerlink" title="使用 lock解决并发问题"></a>使用 lock解决并发问题</h2><p>springmvc默认是单例的线程不安全的，多个请求对应的是同一个对象，所以如果客户端并发访问特别多的时候，会造成代码线程安全。<br>比如说你代码里面可能会有if判断，但是如果线程不安全的 if判断不能保证了。<br>使用lock锁住可保持一致性</p>
+<pre><code class="java">class ControllerA {
+private Lock insertLock = new ReentrantLock();
+
+public void methodA() {
+    try{
+        insertLock.lock();
+        doSomeThing();
+    }finally{
+        insertLock.unlock();
+    }
+    }
+}
+</code></pre>
+<blockquote>
+<p>ReentrantLock synchronized的对比可以网上查一下<br>另外还有reentrantreadwritelock啥的，等用的时候再说</p>
+</blockquote>
+<h2 id="使用redis解决并发"><a href="#使用redis解决并发" class="headerlink" title="使用redis解决并发"></a>使用redis解决并发</h2><blockquote>
+<p>原理，利用setnx判断是存在key(setnx)来锁定，利用redis eval(lua)来原子性删除key(删除锁),部分代码如下</p>
+</blockquote>
+<pre><code>Redis自己实现下 ClusterRedis，和JedisPool</code></pre><pre><code class="java">@Component
+public class RedisLockKit {
+    private final Logger logger = LoggerFactory.getLogger(RedisLockKit.class);
+
+    @Autowired
+    private Redis redis;
+
+    private ThreadLocal&lt;String&gt; lockFlag = new ThreadLocal&lt;&gt;();
+
+    public static final String UNLOCK_LUA;
+
+    static {
+        StringBuilder sb = new StringBuilder();
+        sb.append(&quot;if redis.call(\&quot;get\&quot;,KEYS[1]) == ARGV[1] &quot;);
+        sb.append(&quot;then &quot;);
+        sb.append(&quot;    return redis.call(\&quot;del\&quot;,KEYS[1]) &quot;);
+        sb.append(&quot;else &quot;);
+        sb.append(&quot;    return 0 &quot;);
+        sb.append(&quot;end &quot;);
+        UNLOCK_LUA = sb.toString();
+    }
+
+
+    /**
+     * 加锁
+     * @param key
+     * @return
+     */
+    public boolean lock(String key, long expire) {
+        boolean result = setRedis(key, expire);
+        while((!result)){
+            try {
+                logger.debug(&quot;获取锁失败 重试中 {}...&quot;);
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                return false;
+            }
+            result = setRedis(key, expire);
+        }
+        return result;
+    }
+
+    /**
+     * 解锁
+     * @param key
+     * @return
+     */
+    public boolean unLock(String key) {
+        try {
+            Long result = redis.eval(UNLOCK_LUA, Arrays.asList(key), Arrays.asList(lockFlag.get()));
+            return result != null &amp;&amp; result &gt; 0;
+        } catch (Exception e) {
+            logger.error(&quot;解锁失败&quot;, e);
+        }
+        return false;
+    }
+
+    private boolean setRedis(String key, long expire) {
+        try {
+            String result = redis.process(commands-&gt; {
+                String uuid = UUID.randomUUID().toString();
+                lockFlag.set(uuid);
+                return commands.set(key, uuid, &quot;NX&quot;, &quot;PX&quot;, expire);
+            });
+            logger.info(&quot;result: {}&quot;,result);
+            return !StringUtils.isEmpty(result);
+        } catch (Exception e) {
+            logger.error(&quot;key {} 设置失败&quot;, key, e);
+        }
+        return false;
+    }
+}</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

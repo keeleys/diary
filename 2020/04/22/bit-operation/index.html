@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">java位运算相关</h1>
+	<div id="post-detail">
+		<span id="post-date">2020 / 04 / 22</span>
+		<span id="post-tags">
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>经常看源码上有些例如 一个int数字的不同位拿来存储多个值，一个int数字表示多个状态之类的。<br>这篇文章来分析下常用的一些位运算。</p>
+<h2 id="一些前置概念"><a href="#一些前置概念" class="headerlink" title="一些前置概念"></a>一些前置概念</h2><p>左移，右移，原码，反码，补码这些基础运算就不解释了，网上一大堆。<br>这一篇还比较详细<br><a href="https://www.cnblogs.com/zhangziqiu/archive/2011/03/30/computercode.html" target="_blank" rel="noopener">https://www.cnblogs.com/zhangziqiu/archive/2011/03/30/computercode.html</a></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>按位与&amp;</code></td>
+<td>如果相对应位都是1，则结果为1，否则为0</td>
+<td><code>1&amp;3=1</code>，即0001&amp;0011 =0001</td>
+</tr>
+<tr>
+<td><code>按位或&#124;</code></td>
+<td>如果相对应位都是0，则结果为0，否则为1</td>
+<td><code>1&#124;3=3</code>，即0001&#124;0011 =0011</td>
+</tr>
+<tr>
+<td>按位异或<code>^</code></td>
+<td>相对应位一个0，一个1，则结果1，否则0</td>
+<td><code>1^3=2</code>，即0001^0011=0010</td>
+</tr>
+<tr>
+<td>按位取反<code>~</code></td>
+<td>按位取反运算符翻转操作数的每一位，即0变成1，1变成0</td>
+<td></td>
+</tr>
+<tr>
+<td>左移 <code>&lt;&lt;</code></td>
+<td>按位左移运算符。左操作数按位左移右操作数指定的位数</td>
+<td>1 &lt;&lt; 2 = 4，即0100</td>
+</tr>
+<tr>
+<td>右移 <code>&gt;&gt;</code></td>
+<td>按位右移运算符。左操作数按位右移右操作数指定的位数</td>
+<td>4 &gt;&gt; 2 = 1，0100 &gt;&gt; 2 = 0001</td>
+</tr>
+</tbody></table>
+<h2 id="具体例子"><a href="#具体例子" class="headerlink" title="具体例子"></a>具体例子</h2><h3 id="按位存储不同的数值"><a href="#按位存储不同的数值" class="headerlink" title="按位存储不同的数值"></a>按位存储不同的数值</h3><p>看一段线程池原码，我们通过注解来分析</p>
+<pre><code class="java">public class ThreadPoolExecutor extends AbstractExecutorService {
+    //这里其实就是保存了2个数值，低位和高位分别保存为两块领地，各自存储数据。
+    private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+
+    // 这里定义一个界限，定义了一个integer字节的高3位和剩下的位两个领地,高3位存储的时候要跳过低位的领地
+    private static final int COUNT_BITS = Integer.SIZE - 3;
+
+    /**
+    * 这东西是给你来解码(取数据)用的, 1左移29位 = 00100000000000000000000000000000
+    * 再减去 1 = 00011111111111111111111111111111
+    * 这里刚好 高3位 为0，剩下的位为1,高低区域路径分明。
+    **/
+    private static final int CAPACITY   = (1 &lt;&lt; COUNT_BITS) - 1;
+    // Packing and unpacking ctl
+    /**
+    * 通过 c &amp; CAPACITY 来取出低位的值(高3位都是0， &amp;操作的时候 c的高3位就直接忽略)
+    * 通过 c &amp; (~CAPACITY) 来取出高位的值(取反之后高3都是1，低29位是0 ，c的低29位就忽略了)
+    **/
+    private static int runStateOf(int c)     { return c &amp; ~CAPACITY; }
+    private static int workerCountOf(int c)  { return c &amp; CAPACITY; }
+
+    // runState is stored in the high-order bits
+    // -1 的补码是 11111111111111111111111111111111 左位移 29位，左位移右边补0. 那么高3 = 111，是个负数
+    private static final int RUNNING    = -1 &lt;&lt; COUNT_BITS;
+    // 0怎么移动，所有位都是0，那么高3 = 000
+    private static final int SHUTDOWN   =  0 &lt;&lt; COUNT_BITS;
+
+    // 下面三个都是正数(因为符号位是0)
+    // 这里一样的计算 高3 = 001 
+    private static final int STOP       =  1 &lt;&lt; COUNT_BITS;
+    // 高3 = 010
+    private static final int TIDYING    =  2 &lt;&lt; COUNT_BITS;
+    // 高3 = 011
+    private static final int TERMINATED =  3 &lt;&lt; COUNT_BITS;
+
+    // 通过或操作让低位和高位 二进制有数值的都同时保留。
+    private static int ctlOf(int rs, int wc) { return rs | wc; }
+}</code></pre>
+<h3 id="想一个字段存多个值。"><a href="#想一个字段存多个值。" class="headerlink" title="想一个字段存多个值。"></a>想一个字段存多个值。</h3><p>类似于多选框，用户勾选了多少个状态字段。<br>比较常见的用字符串，逗号分隔。<code>&quot;1,2,3,4&quot;</code></p>
+<p>如果了解位运算，状态不是很多 这里也可以用位运算表示,一个整数代替多个状态</p>
+<p><code>11111111111111111111111111111111</code></p>
+<p>按int=32位来说，可以把每一位代表一种状态的选中(1)和非选中(0)，为1代表这个状态位有选中，0代表没选。<br>一个int可以同时保存32个状态是否勾选的信息。</p>
+<p>每一位代表这个位对应的一个状态，如果这32位有多个1，会代表多个状态，<br>每个独立的状态对应的数值都是1，其他是0的有<br>1&lt;&lt;0,1&lt;&lt;1,1&lt;&lt;2,1&lt;&lt;3,1&lt;&lt;4,…….1&lt;&lt;31 ,这32个<br>你只能存储这32个字段，其他数字代表的都是这32个状态的1组合。</p>
+<p>例如 1和2，我们都选中的话 就是 0001|0010 = 0011 = 3;<br>0011 又能拆出 0001 + 0010 2个独立的状态。</p>
+<p>一段例子来看。</p>
+<pre><code class="java">public class TypeAndSize {
+    private static final int status_1 = 1 &lt;&lt; 0;
+    private static final int status_2 = 1 &lt;&lt; 1;
+    private static final int status_3 = 1 &lt;&lt; 2;
+    private static final int status_4 = 1 &lt;&lt; 3;
+
+    private List&lt;Integer&gt; bitToList(int num) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        for (int bit = 0; bit &lt; Integer.SIZE; bit++) {
+            // 从第0位开始左移，这个数值当基准点一直判断到最大位
+            int referenceValue = 1 &lt;&lt; bit;
+            // 这里数值都是正整数来讲的，基准点是左移递增的，如果基准点都大于实际存储的数字，说明num之后的高位都0不用对比了
+            // 如果小于0说明最高位32位肯定有数值，那么就不能跳出循环，只能对比全部位置了。
+            if ( num &gt; 0 &amp;&amp; referenceValue &gt; num) {
+                break;
+            }
+            // 依次判断这个位有没有1， 如果有1的话 这个等式肯定相等，因为referenceValue其他位都是0
+            if ((referenceValue &amp; num) == referenceValue) {
+                result.add(referenceValue);
+            }
+        }
+        return result;
+    }
+
+    private int listToBit(List&lt;Integer&gt; list) {
+        //  | 代表有一个位子是1 都是1  ，把list里面所有传递过来的状态都 合并起来,
+        return list.stream().reduce(1, (a, b) -&gt; a | b);
+    }
+    public static void main(String[] args) {
+        TypeAndSize obj = new TypeAndSize();
+
+        // 将多个状态合并成一个值
+        int status = obj.listToBit(Arrays.asList(status_1,status_2,status_3,status_4));
+
+        // 取出存储的都有哪些状态
+        obj.bitToList(status).forEach(System.out::println);
+    }
+}</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

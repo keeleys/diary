@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">用html5的localStorage保存用户名和密码</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 20</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">html5</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="js"><a href="#js" class="headerlink" title="js"></a>js</h2><p>用法很简单 把window.localStorage 当map用就可以了。<code>login.account</code>这些都是自定义的键.</p>
+<pre><code class="javascript">&lt;script type=&quot;text/javascript&quot;&gt;
+     $(&quot;#account&quot;).change(function(){//用户名改变自动保存
+        window.localStorage[&quot;login.account&quot;]=$(this).val();
+    })
+
+      $(&quot;#password&quot;).change(function(){//密码先判断是否有勾选保存密码才决定是否保存
+          if( $(&quot;#saveAccount&quot;).prop(&quot;checked&quot;) )
+              window.localStorage[&quot;login.pwd&quot;]=$(this).val();
+      })
+
+     $(&quot;#saveAccount&quot;).change(function(){
+         if( $(this).prop(&quot;checked&quot;) )//如果勾选了保存密码 保存当前密码域的数据
+             window.localStorage[&quot;login.pwd&quot;]=$(&quot;#password&quot;).val();
+         else
+             window.localStorage[&quot;login.pwd&quot;]=&quot;&quot;;
+     })
+     +function(){
+         if(window.localStorage[&quot;login.account&quot;]){
+             $(&quot;#account&quot;).val(window.localStorage[&quot;login.account&quot;]);
+         }
+         if(window.localStorage[&quot;login.pwd&quot;]){
+             $(&quot;#password&quot;).val(window.localStorage[&quot;login.pwd&quot;]);
+             $(&quot;#saveAccount&quot;).prop(&quot;checked&quot;,true);
+         }
+     }();
+&lt;/script&gt;</code></pre>
+<a id="more"></a>
+
+<h2 id="html-类似的伪代码"><a href="#html-类似的伪代码" class="headerlink" title="html 类似的伪代码"></a>html 类似的伪代码</h2><pre><code> &lt;div class=&quot;form-group&quot;&gt;
+    &lt;label for=&quot;inputtext3&quot; class=&quot;col-sm-2 control-label&quot;&gt;我的账户：&lt;/label&gt;
+    &lt;div class=&quot;col-sm-3&quot;&gt;
+    &lt;input type=&quot;text&quot; class=&quot;form-control&quot; name=&quot;customer.account&quot;  data-rule=&quot;账户:required;&quot; 
+    id=&quot;account&quot;  autocomplete=&quot;off&quot; placeholder=&quot;输入用户名/邮箱/手机&quot;&gt; 
+    &lt;span class=&quot;msg-box&quot; for=&quot;account&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-group&quot;&gt;
+    &lt;label for=&quot;inputPassword3&quot; class=&quot;col-sm-2 control-label&quot;&gt;我的密码：&lt;/label&gt;
+    &lt;div class=&quot;col-sm-3&quot;&gt;
+    &lt;input type=&quot;password&quot; id=&quot;password&quot; class=&quot;form-control&quot; data-rule=&quot;密码:required&quot;
+     name=&quot;customer.password&quot;&gt; 
+     &lt;span class=&quot;msg-box&quot; for=&quot;password&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-group&quot;&gt;
+    &lt;div class=&quot;col-sm-offset-2 col-sm-3&quot;&gt;
+      &lt;div class=&quot;checkbox&quot;&gt;
+        &lt;label&gt;
+          &lt;input type=&quot;checkbox&quot; id=&quot;saveAccount&quot;&gt; 记住密码     
+        &lt;/label&gt;  
+          &lt;span class=&quot;pull-right&quot;&gt;&lt;a href=&quot;${ctx}/updatePassMail&quot; target=&quot;_blank&quot; class=&quot;forget-pswword &quot;&gt;忘记密码？&lt;/a&gt;&lt;/span&gt;  
+      &lt;/div&gt;
+  &lt;/div&gt; 
+ &lt;/div&gt;</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

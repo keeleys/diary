@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">mac下打造漂亮的终端编辑器</h1>
+	<div id="post-detail">
+		<span id="post-date">2016 / 06 / 04</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">mac</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="mac下打造漂亮的终端编辑器"><a href="#mac下打造漂亮的终端编辑器" class="headerlink" title="mac下打造漂亮的终端编辑器."></a>mac下打造漂亮的终端编辑器.</h2><p><img src="https://dn-tianjun.qbox.me/screenshot%202016-06-04%2011.11.30.png" alt="https://dn-tianjun.qbox.me/screenshot%202016-06-04%2011.11.30.png"></p>
+<a id="more"></a>
+<h3 id="iterm2"><a href="#iterm2" class="headerlink" title="iterm2"></a>iterm2</h3><blockquote>
+<p>mac自带终端应用的加强版，功能很强大。</p>
+</blockquote>
+<p><img src="https://dn-tianjun.qbox.me/screenshot%202016-06-04%2010.56.16.png" alt="效果图"></p>
+<ol>
+<li>安装步骤<br><code>brew install Caskroom/cask/iterm2</code> 或者 down <a href="https://www.iterm2.com/downloads.html" target="_blank" rel="noopener">https://www.iterm2.com/downloads.html</a></li>
+</ol>
+<h3 id="oh-my-zsh-amp-zsh-theme"><a href="#oh-my-zsh-amp-zsh-theme" class="headerlink" title="oh-my-zsh &amp; zsh-theme"></a>oh-my-zsh &amp; zsh-theme</h3><ol>
+<li><p>官网 <a href="http://ohmyz.sh/" target="_blank" rel="noopener">http://ohmyz.sh/</a></p>
+</li>
+<li><p>安装,mac自带了zsh模式 ，直接安装ohmyz就可以了，linux需要先安装zsh</p>
+<pre><code>$ sh -c &quot;$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;</code></pre></li>
+<li><p>主题浏览<a href="https://github.com/robbyrussell/oh-my-zsh/wiki/Themes" target="_blank" rel="noopener">https://github.com/robbyrussell/oh-my-zsh/wiki/Themes</a></p>
+</li>
+<li><p>安装主题<br>打开你的<code>~/.zshrc</code>文件,然后修改<code>ZSH_THEME=robbyrussell</code>,将<code>ZSH_THEME</code>设置成你喜欢的主题名字</p>
+</li>
+</ol>
+<h3 id="iterm2主题"><a href="#iterm2主题" class="headerlink" title="iterm2主题"></a>iterm2主题</h3><ol>
+<li><p>下载开源主题<a href="https://github.com/chriskempson/tomorrow-theme" target="_blank" rel="noopener">https://github.com/chriskempson/tomorrow-theme</a></p>
+</li>
+<li><p>clone到本地然后配置到iterm2里面</p>
+<pre><code>$git clone git@github.com:chriskempson/tomorrow-theme.git</code></pre></li>
+<li><p>go to itemr2 ,Preferences/Colors/Color Presets and chose the theme</p>
+</li>
+</ol>
+<h3 id="vim主题"><a href="#vim主题" class="headerlink" title="vim主题"></a>vim主题</h3><blockquote>
+<p>你的vim命令真的使用到了vim吗，查看你的电脑是否存在，``~/.vimrc`，当vim在启动时，如果没有找到vimrc或gvimrc，它缺省工作VI兼容的模式</p>
+</blockquote>
+<h3 id="安装vim主题"><a href="#安装vim主题" class="headerlink" title="安装vim主题"></a>安装vim主题</h3><ol>
+<li>backup your old .vimrc if it is necessary<pre><code>cp ~/.vimrc ~/.vimrc_bak</code></pre></li>
+<li>just get the file<pre><code>curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc &gt; ~/.vimrc</code></pre></li>
+</ol>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

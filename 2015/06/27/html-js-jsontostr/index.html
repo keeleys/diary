@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">javascript 常用操作</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 06 / 27</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">js</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="字符转Json对象"><a href="#字符转Json对象" class="headerlink" title="字符转Json对象"></a>字符转Json对象</h2><pre><code class="javascript">var obj = eval(&#39;(&#39; + str + &#39;)&#39;);</code></pre>
+<h2 id="刷新页面"><a href="#刷新页面" class="headerlink" title="刷新页面"></a>刷新页面</h2><pre><code>window.location.reload(true);  
+window.location.href=&quot;/blog/window.location.href&quot;;   
+window.navigate(&quot;url&quot;);   </code></pre><h2 id="定时执行"><a href="#定时执行" class="headerlink" title="定时执行"></a>定时执行</h2><pre><code class="js">setTimeout(&quot;abc()&quot;,10000); 
+setInterval(&quot;function&quot;,time) ;</code></pre>
+<h2 id="控制只能输入数字和小数点"><a href="#控制只能输入数字和小数点" class="headerlink" title="控制只能输入数字和小数点"></a>控制只能输入数字和小数点</h2><pre><code class="js">onkeypress=&quot;return (/[\d.]/.test(String.fromCharCode(event.keyCode)))&quot;</code></pre>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

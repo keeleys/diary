@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">netty5实现简单的socket服务器</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 11 / 20</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">netty</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.netty&lt;/groupId&gt;
+    &lt;artifactId&gt;netty-all&lt;/artifactId&gt;
+    &lt;version&gt;5.0.0.Alpha2&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+<a id="more"></a>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><ul>
+<li>NettyService<pre><code class="java"></code></pre>
+</li>
+</ul>
+<p>import io.netty.bootstrap.ServerBootstrap;<br>import io.netty.channel.*;<br>import io.netty.channel.nio.NioEventLoopGroup;<br>import io.netty.channel.socket.SocketChannel;<br>import io.netty.channel.socket.nio.NioServerSocketChannel;<br>import io.netty.handler.codec.string.StringDecoder;<br>import io.netty.handler.logging.LogLevel;<br>import io.netty.handler.logging.LoggingHandler;<br>import io.netty.util.CharsetUtil;<br>import org.slf4j.Logger;<br>import org.slf4j.LoggerFactory;</p>
+<p>/**</p>
+<ul>
+<li><p>Created by jun on 2015/11/2.</p>
+</li>
+<li><p>/<br>public class NettyService {<br>  public static final int THREADSIZE = 10;<br> // public static final int port = 9019;<br>  private static Logger log = LoggerFactory.getLogger(NettyService.class);<br>  private static EventLoopGroup bossGroup = null;<br>  private static EventLoopGroup workerGroup = null;<br>  public static void start(int port) throws InterruptedException {</p>
+<pre><code>  ServerBootstrap sb = null;
+  try {
+      bossGroup = new NioEventLoopGroup();
+      workerGroup = new NioEventLoopGroup(THREADSIZE);
+
+      sb = new ServerBootstrap();
+      sb.option(ChannelOption.SO_BACKLOG, 1024);
+      sb.group(bossGroup, workerGroup)
+              .channel(NioServerSocketChannel.class)
+              .handler(new LoggingHandler(LogLevel.INFO))
+              .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() {
+                  @Override
+                  protected void initChannel(SocketChannel ch) throws Exception {
+                      ChannelPipeline p = ch.pipeline();
+                      p.addLast(&quot;decoder&quot;, new StringDecoder(CharsetUtil.UTF_8));
+                     // p.addLast(&quot;encoder&quot;, new StringEncoder(CharsetUtil.UTF_8));
+                      p.addLast(new NettyServerHandler());
+                  }
+
+              });
+      Channel ch = sb.bind(port).sync().channel();
+      log.info(&quot;server 127.0.0.1:&quot; + port + &quot; is starting&quot;);
+      ch.closeFuture().sync();//.addListener(new WebSocketListener());
+  }finally {
+      bossGroup.shutdownGracefully();
+      workerGroup.shutdownGracefully();
+  }</code></pre></li>
+</ul>
+<pre><code>}
+
+public static void stop() {
+    bossGroup.shutdownGracefully();
+    workerGroup.shutdownGracefully();
+}</code></pre><p>}</p>
+<pre><code>
+* NettyServerHandler
+```java
+package com.uxun.interfaces.netty;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerAdapter;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.ReferenceCountUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+/**
+ * Created by jun on 2015/11/2.
+ */
+public class NettyServerHandler extends ChannelHandlerAdapter {
+    public static final Logger log = LoggerFactory.getLogger(NettyServerHandler.class);
+    // 接收到新的数据
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
+        try {
+            String str = msg.toString();
+            NettyProcess process = new NettyProcess();//一个返回str的操作.
+            String result = process.process(str);
+            // 发送到客户端
+            byte[] responseByteArray = result.getBytes(&quot;UTF-8&quot;);
+            ByteBuf out = ctx.alloc().buffer(responseByteArray.length);
+            out.writeBytes(responseByteArray);
+            ctx.writeAndFlush(out);
+
+        } catch (IOException e) {
+            log.error(&quot;netty服务器出错&quot;,e);
+            e.printStackTrace();
+        } finally {
+            ReferenceCountUtil.release(msg);
+            ctx.close();
+        }
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+        System.out.println(&quot;channelActive&quot;);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx){
+        System.out.println(&quot;channelInactive&quot;);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        // Close the connection when an exception is raised.
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+</code></pre><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://www.cnblogs.com/wucao/p/3934913.html" target="_blank" rel="noopener">http://www.cnblogs.com/wucao/p/3934913.html</a></p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

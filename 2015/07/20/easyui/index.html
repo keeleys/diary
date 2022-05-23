@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">easyui</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 07 / 20</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">easyui</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="远程验证"><a href="#远程验证" class="headerlink" title="远程验证"></a>远程验证</h2><p>html 第二个参数是参数名</p>
+<pre><code class="html">&lt;input type=&quot;text&quot; name=&quot;order.waybillNo&quot;  class=&quot;easyui-validatebox&quot; 
+required=&quot;required&quot; validType=&quot;remote[&#39;order/order!checkWaybillNo.action&#39;,&#39;waybillNo&#39;]&quot;
+invalidMessage=&quot;运单编号已存在&quot;/&gt;</code></pre>
+<p>java</p>
+<pre><code class="java">public void checkWaybillNo(){
+    String waybillNo = getRequest().getParameter(&quot;waybillNo&quot;);
+    boolean flag =orderDao.selectByWayBillNo(waybillNo, companyId)==null;
+    outputJson(flag);//返回true,false
+}</code></pre>
+<h2 id="loading框"><a href="#loading框" class="headerlink" title="loading框"></a>loading框</h2><pre><code>直接从datagrid里面的源代码中的loading提取出来的。
+
+function addLoad(){
+        $(&quot;&lt;div class=\&quot;datagrid-mask\&quot;&gt;&lt;/div&gt;&quot;).css({display:&quot;block&quot;,width:&quot;100%&quot;,height:$(window).height()}).appendTo(&quot;body&quot;);
+        $(&quot;&lt;div class=\&quot;datagrid-mask-msg\&quot;&gt;&lt;/div&gt;&quot;).html(&quot;正在处理，请稍候。。。&quot;).appendTo(&quot;body&quot;).css({display:&quot;block&quot;,left:($(document.body).outerWidth(true) - 190) / 2,top:($(window).height() - 45) / 2});
+    }
+function removeLoad(){
+    $(&quot;.datagrid-mask,.datagrid-mask-msg&quot;).remove();
+}
+</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">win7-8安装docker</h1>
+	<div id="post-detail">
+		<span id="post-date">2018 / 11 / 12</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">docker</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="win7-8安装docker"><a href="#win7-8安装docker" class="headerlink" title="win7-8安装docker"></a>win7-8安装docker</h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>家里还是有个老旧win台式机的，平时不带电脑的时候可以利用下，就来一篇老旧系统安装docker教程吧（其实官网也很详细了。。）</p>
+<h3 id="官网下载"><a href="#官网下载" class="headerlink" title="官网下载"></a>官网下载</h3><p>首先打开官网按官网的步骤看看 <a href="https://docs.docker.com/docker-for-windows/" target="_blank" rel="noopener">https://docs.docker.com/docker-for-windows/</a><br>官网自然是推荐直接安装哇，但是要系统Windows 10 64bit，系统14393 以上，估计一般win10都满足吧</p>
+<p>那么如果不是win10，根据官网提示， 需要安装 Docker Toolbox 配合 Oracle Virtual Box 来使用<br>进入 <a href="https://docs.docker.com/toolbox/overview/" target="_blank" rel="noopener">https://docs.docker.com/toolbox/overview/</a> 看看安装步骤</p>
+<h3 id="docker-Toolbox"><a href="#docker-Toolbox" class="headerlink" title="docker Toolbox"></a>docker Toolbox</h3><p>Toolbox include是一个<code>docker工具</code> 包含如下几个方面:</p>
+<ul>
+<li>Docker Machine for running docker-machine commands，操作docker虚拟器的命令吧</li>
+<li>Docker Engine for running the docker commands，操作docker的命令哦，关键</li>
+<li>Docker Compose for running the docker-compose commands，这个容器编排用的，也要装</li>
+<li>Docker图形界面Kitematic，这个可选的装，我是没装咯，可以直接命令行看</li>
+<li>在cmd上面运行需要的预配置</li>
+<li>虚拟机Oracle VirtualBox</li>
+</ul>
+<p>当然安装他也是有条件的，电脑必须是64位，win7以上的系统，并且要开启虚拟化(<code>virtualization</code>),<br>win8可以直接任务管理器那里看是否打开了，win7好像要装工具<br><img src="https://docs.docker.com/toolbox/images/virtualization.png" alt=""><br>那么就开始安装吧，附上官网的教程<br><a href="https://docs.docker.com/toolbox/toolbox_install_windows/" target="_blank" rel="noopener">https://docs.docker.com/toolbox/toolbox_install_windows/</a><br>打开上面的链接，点那个 <code>Get Docker Toolbox for Windows</code>这个大按钮就能下载安装包咯。</p>
+<h3 id="安装Toolbox"><a href="#安装Toolbox" class="headerlink" title="安装Toolbox"></a>安装Toolbox</h3><p>下载之后双击安装，装完之后看下桌面的图标,(vm预装啦，quick需要运行的，kitematic选装的)<br><img src="https://docs.docker.com/toolbox/images/icon-set.png" alt=""><br>点击那个Docker Quickstart Terminal，然后第一次一堆东西需要设置啦，等他跑完，就见到成功的画面啦（后面也可以直接cmd运行docker启动，不需要它了）。<br><img src="http://ww1.sinaimg.cn/thumbnail/7c8c459dgy1g0xi7zbm8rj20it0hndfv.jpg" alt=""><br>输入<code>docker run hello-world</code>看看效果<br><img src="http://ww1.sinaimg.cn/large/7c8c459dgy1g0xii1e8waj20i3047jra.jpg" alt=""><br>好像镜像拉取超时了,尴尬，想着去配置下docker加速吧。。</p>
+<h3 id="镜像加速"><a href="#镜像加速" class="headerlink" title="镜像加速"></a>镜像加速</h3><p>网上搜索下docker加速，我选了这个国内镜像，打开这个地址去配置下 <a href="http://guide.daocloud.io/dcs/daocloud-9153151.html#docker-toolbox，拉倒最下面。" target="_blank" rel="noopener">http://guide.daocloud.io/dcs/daocloud-9153151.html#docker-toolbox，拉倒最下面。</a><br>关闭那个toobox命令框，用gitbash(试过cmd，乱码不靠谱) 运行下面这段，你的加速地址替换下哦。</p>
+<pre><code>docker-machine ssh default
+sudo sed -i &quot;s|EXTRA_ARGS=&#39;|EXTRA_ARGS=&#39;--registry-mirror=http://xxx.m.daocloud.io |g&quot; /var/lib/boot2docker/profile
+exit
+docker-machine restart default </code></pre><p>然后静静的等它重启重新配置完，再运行<code>docker run hello-world</code>。</p>
+<blockquote>
+<p>然后貌似并没有效果。。。</p>
+</blockquote>
+<p>转战aliyun，<a href="https://cr.console.aliyun.com/cn-hangzhou/mirrors" target="_blank" rel="noopener">https://cr.console.aliyun.com/cn-hangzhou/mirrors</a></p>
+<pre><code># 删除默认镜像
+docker-machine rm default
+# xxxx自己替换
+docker-machine create --engine-registry-mirror=https://xxxxxx.mirror.aliyuncs.com -d virtualbox default
+
+查看机器的环境配置，并配置到本地，并通过Docker客户端访问Docker服务
+docker-machine env default
+eval &quot;$(docker-machine env default)&quot;
+docker info</code></pre><p>不过好像我还是一直出错</p>
+<pre><code>Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: lookup registry-1.docker.io on 10.0.2.3:53: read udp 10.0.2.15:50679-&gt;10.0.2.3:53: i/o timeout.</code></pre><h3 id="配置代理"><a href="#配置代理" class="headerlink" title="配置代理"></a>配置代理</h3><p>curl -I 那个加速地址是没问题的，估计需要配置代理吧ε=(´ο｀*)))；我用的shadowsocks咯，你们看自己情况，不要用127的本地ip，docker运行在虚拟机呢，用你电脑的局域网ip，类似</p>
+<pre><code># 进去虚拟机
+docker-machine env default
+# 修改配置
+sudo vi /var/lib/boot2docker/profile
+export HTTP_PROXY=&quot;192.168.2.163:1080&quot;
+export HTTPS_PROXY=&quot;192.168.2.163:1080&quot;
+# 重启下咯
+sudo /etc/init.d/docker restart
+exit</code></pre><p>记得配置ssh的局域网连接，ε=(´ο｀*)))<br><img src="http://ww1.sinaimg.cn/large/7c8c459dgy1g0xkon267vj207j081aa7.jpg" alt=""></p>
+<h3 id="然后就搞定了。"><a href="#然后就搞定了。" class="headerlink" title="然后就搞定了。"></a>然后就搞定了。</h3><p><img src="http://ww1.sinaimg.cn/large/7c8c459dgy1g0xknt1thzj20rs0frt9n.jpg" alt=""></p>
+
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

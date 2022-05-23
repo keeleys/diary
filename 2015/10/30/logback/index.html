@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>KEELEYS</title>
+	<meta charset="utf-8">
+	<!-- 引入配置文件 -->
+	
+<link rel="stylesheet" href="/diary/css/main.css">
+
+	<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+	<div id="main">
+		<!-- 引入导航 -->
+		<header>
+			<div class="title">
+    <a href="/diary/">KEELEYS</a>
+</div>
+<ul class="links">
+    
+    
+    <li class="link">
+        <a href="https://github.com/keeleys" target="_blank">Github</a>
+    </li>
+    
+    <li class="link">
+        <a href="mailto:keeley.jun@qq.com" target="_blank">Email</a>
+    </li>
+    
+</ul>
+
+		</header>
+		<!-- 引入正文 -->
+		<div id="content">
+			<div id="post-header">
+	<h1 id="post-author">使用logback记录日志</h1>
+	<div id="post-detail">
+		<span id="post-date">2015 / 10 / 30</span>
+		<span id="post-tags">
+			
+				<span id="post-tag">java</span>
+			
+		</span>
+	</div>
+</div>
+
+<div id="article">
+	<h2 id="logback-优点"><a href="#logback-优点" class="headerlink" title="logback 优点"></a>logback 优点</h2><ul>
+<li>自定义日志级别过滤，日志名过滤输出到不同的文件</li>
+<li>号称速度是log4j的十倍</li>
+<li>可以配置到数据库</li>
+<li>SLF4J的实现，切换日志组建比较方便。</li>
+<li>自动重新载入配置文件</li>
+<li>文件管理更加强大， 自动清除旧的日志归档文件，自动压缩归档日志文件</li>
+<li>SiftingAppender,基于任何给定的实时属性分开（或者筛选）日志。例如，SiftingAppender可以基于用户会话分开日志事件</li>
+</ul>
+<a id="more"></a>
+<h2 id="配置logback环境"><a href="#配置logback环境" class="headerlink" title="配置logback环境"></a>配置logback环境</h2><h3 id="加载包"><a href="#加载包" class="headerlink" title="加载包"></a>加载包</h3><pre><code class="xml">&lt;dependency&gt;
+  &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+  &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;
+  &lt;version&gt;1.1.3&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+<h3 id="配置文件logback-xml"><a href="#配置文件logback-xml" class="headerlink" title="配置文件logback.xml"></a>配置文件logback.xml</h3><p>在工程src目录下建立logback.xml</p>
+<ol>
+<li>logback首先会试着查找logback.groovy文件;</li>
+<li>当没有找到时，继续试着查找logback-test.xml文件;</li>
+<li>当没有找到时，继续试着查找logback.xml文件;</li>
+<li>如果仍然没有找到，则使用默认配置（打印到控制台）</li>
+</ol>
+<h3 id="java类中使用"><a href="#java类中使用" class="headerlink" title="java类中使用"></a>java类中使用</h3><pre><code>
+import org.slf4j.Logger;  
+import org.slf4j.LoggerFactory; 
+
+private static Logger log = LoggerFactory.getLogger(Test.class);</code></pre><h2 id="logback-xml-基础配置"><a href="#logback-xml-基础配置" class="headerlink" title="logback.xml 基础配置"></a>logback.xml 基础配置</h2><h3 id="configuration"><a href="#configuration" class="headerlink" title="configuration"></a>configuration</h3><blockquote>
+<p>根节点</p>
+</blockquote>
+<pre><code class="xml">&lt;configuration scan=&quot;true&quot; scanPeriod=&quot;60 seconds&quot; debug=&quot;false&quot;&gt;  
+      &lt;!-- 其他配置省略--&gt;  
+&lt;/configuration&gt;  </code></pre>
+<ul>
+<li><code>scan</code>: 当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。</li>
+<li><code>scanPeriod</code>: 设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。</li>
+<li><code>debug</code>: 当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。</li>
+</ul>
+<h3 id="contextName"><a href="#contextName" class="headerlink" title="contextName"></a>contextName</h3><blockquote>
+<p>每个logger都关联到logger上下文，默认上下文名称为“default”,用于区分不同应用程序的记录。</p>
+</blockquote>
+<pre><code class="xml">&lt;configuration scan=&quot;true&quot; scanPeriod=&quot;60 seconds&quot; debug=&quot;false&quot;&gt;  
+      &lt;contextName&gt;appName&lt;/contextName&gt;  
+      &lt;!-- 其他配置省略--&gt;  
+&lt;/configuration&gt;  </code></pre>
+<h3 id="property"><a href="#property" class="headerlink" title="property"></a>property</h3><blockquote>
+<p>用来定义变量值的标签<br><code>property</code> 有两个属性，name和value；其中name的值是变量的名称，value的值时变量定义的值</p>
+</blockquote>
+<pre><code class="xml"> &lt;property name=&quot;APP_Name&quot; value=&quot;myAppName&quot; /&gt;</code></pre>
+<h3 id="timestamp"><a href="#timestamp" class="headerlink" title="timestamp"></a>timestamp</h3><blockquote>
+<p>将解析配置文件的时间作为上下文名称</p>
+</blockquote>
+<pre><code class="xml"> &lt;timestamp key=&quot;bySecond&quot; datePattern=&quot;yyyyMMdd&#39;T&#39;HHmmss&quot;/&gt;</code></pre>
+<h3 id="appender"><a href="#appender" class="headerlink" title="appender"></a>appender</h3><blockquote>
+<p>日志的输出配置，比如<code>ConsoleAppender</code>,<code>FileAppender</code>等</p>
+</blockquote>
+<h3 id="loger"><a href="#loger" class="headerlink" title="loger"></a>loger</h3><blockquote>
+<p>用来设置某一个包或者具体的某一个类的日志打印级别、以及指定<appender></p>
+</blockquote>
+<ul>
+<li><code>name</code>:用来指定受此loger约束的某一个包或者具体的某一个类。</li>
+<li><code>level</code> 用来设置打印级别，大小写无关,TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF,如果未设置此属性，那么当前loger将会继承上级的级别</li>
+<li><code>addtivity</code> 是否向上级loger传递打印信息。默认是true</li>
+</ul>
+<h4 id="appender-ref"><a href="#appender-ref" class="headerlink" title="appender-ref"></a>appender-ref</h4><blockquote>
+<p>loger下面可以包含多个appender-ref标签<br>标识这个appender将会添加到这个loger</p>
+</blockquote>
+<h3 id="root"><a href="#root" class="headerlink" title="root"></a>root</h3><blockquote>
+<p>特殊的loger元素，根loger，只有一个level属性<br>日志级别 <code>TRACE</code>, <code>DEBUG</code>, <code>INFO</code>, <code>WARN</code>, <code>ERROR</code></p>
+</blockquote>
+<h3 id="最简单的配置"><a href="#最简单的配置" class="headerlink" title="最简单的配置"></a>最简单的配置</h3><pre><code class="xml">&lt;configuration&gt;   
+
+  &lt;appender name=&quot;STDOUT&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;   
+    &lt;!-- encoder 默认配置为PatternLayoutEncoder --&gt;   
+    &lt;encoder&gt;   
+      &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n&lt;/pattern&gt;   
+      &lt;charset&gt;utf-8&lt;/charset&gt;
+    &lt;/encoder&gt;   
+  &lt;/appender&gt;   
+
+  &lt;root level=&quot;INFO&quot;&gt;             
+    &lt;appender-ref ref=&quot;STDOUT&quot; /&gt;   
+  &lt;/root&gt;     
+
+ &lt;/configuration&gt; </code></pre>
+<h2 id="Appender-详细描述"><a href="#Appender-详细描述" class="headerlink" title="Appender 详细描述"></a>Appender 详细描述</h2><h3 id="ConsoleAppender"><a href="#ConsoleAppender" class="headerlink" title="ConsoleAppender"></a>ConsoleAppender</h3><blockquote>
+<p>控制台日志<br>以下子节点<br><code>&lt;encoder&gt;</code>：对日志进行格式化。（具体参数稍后讲解 ）<br><code>&lt;target&gt;</code>：字符串 System.out 或者 System.err ，默认 System.out </p>
+</blockquote>
+<h3 id="FileAppender"><a href="#FileAppender" class="headerlink" title="FileAppender"></a>FileAppender</h3><blockquote>
+<p>把日志添加到文件</p>
+</blockquote>
+<ul>
+<li><code>file</code> 被写入的文件名,如果上级目录不存在会自动创建，没有默认值。</li>
+<li><code>append</code> 如果是 true，日志被追加到文件结尾，如果是 false，清空现存文件，默认是true</li>
+<li><code>encoder</code> 格式化日志</li>
+<li><code>prudent</code> 如果是 true，日志会被安全的写入文件，即使其他的FileAppender也在向此文件做写入操作，效率低，默认是 false。</li>
+</ul>
+<pre><code>&lt;configuration&gt;  
+  &lt;appender name=&quot;FILE&quot; class=&quot;ch.qos.logback.core.FileAppender&quot;&gt;  
+    &lt;file&gt;testFile.log&lt;/file&gt;  
+    &lt;append&gt;true&lt;/append&gt;  
+    &lt;encoder&gt;  
+      &lt;pattern&gt;%-4relative [%thread] %-5level %logger{35} - %msg%n&lt;/pattern&gt;  
+    &lt;/encoder&gt;  
+  &lt;/appender&gt;    
+  &lt;root level=&quot;DEBUG&quot;&gt;  
+    &lt;appender-ref ref=&quot;FILE&quot; /&gt;  
+  &lt;/root&gt;  
+&lt;/configuration&gt; </code></pre><h3 id="RollingFileAppender"><a href="#RollingFileAppender" class="headerlink" title="RollingFileAppender"></a>RollingFileAppender</h3><blockquote>
+<p>滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件</p>
+</blockquote>
+<ul>
+<li>共同的配置见 <code>FileAppender</code>描述</li>
+<li><code>rollingPolicy</code> 当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名</li>
+<li><code>triggeringPolicy</code>  告知 RollingFileAppender 何时激活滚动</li>
+</ul>
+<h4 id="rollingPolicy"><a href="#rollingPolicy" class="headerlink" title="rollingPolicy"></a>rollingPolicy</h4><h5 id="TimeBasedRollingPolicy"><a href="#TimeBasedRollingPolicy" class="headerlink" title="TimeBasedRollingPolicy"></a>TimeBasedRollingPolicy</h5><blockquote>
+<p>根据时间来制定滚动策略</p>
+</blockquote>
+<ul>
+<li><code>fileNamePattern</code> 必要节点，包含文件名及“%d”转换符</li>
+<li><code>maxHistory</code> 可选节点，控制保留的归档文件的最大数量，超出数量就删除旧文件</li>
+</ul>
+<h5 id="FixedWindowRollingPolicy"><a href="#FixedWindowRollingPolicy" class="headerlink" title="FixedWindowRollingPolicy"></a>FixedWindowRollingPolicy</h5><blockquote>
+<p>根据固定窗口算法重命名文件的滚动策略</p>
+</blockquote>
+<ul>
+<li><code>minIndex</code> 窗口索引最小值</li>
+<li><code>maxIndex</code> 窗口索引最大值</li>
+<li><code>fileNamePattern</code>  必须包含“%i”例如，假设最小值和最大值分别为1和2，命名模式为 mylog%i.log,会产生归档文件</li>
+</ul>
+<h4 id="triggeringPolicy"><a href="#triggeringPolicy" class="headerlink" title="triggeringPolicy"></a>triggeringPolicy</h4><h5 id="SizeBasedTriggeringPolicy"><a href="#SizeBasedTriggeringPolicy" class="headerlink" title="SizeBasedTriggeringPolicy"></a>SizeBasedTriggeringPolicy</h5><blockquote>
+<p>查看当前活动文件的大小，如果超过指定大小会告知 RollingFileAppender 触发当前活动文件滚动</p>
+</blockquote>
+<ul>
+<li><code>maxFileSize</code> 这是活动文件的大小，默认值是10MB</li>
+</ul>
+<h2 id="encoder-详细"><a href="#encoder-详细" class="headerlink" title="encoder 详细"></a>encoder 详细</h2><blockquote>
+<p>负责两件事，一是把日志信息转换成字节数组，二是把字节数组写入到输出流。<br>使用“%”加“转换符”方式，如果要输出“%”，则必须用“\”对“%”进行转义</p>
+</blockquote>
+<pre><code>&lt;encoder&gt;   
+   &lt;pattern&gt;%-4relative [%thread] %-5level %logger{35} - %msg%n&lt;/pattern&gt;   
+&lt;/encoder </code></pre><h3 id="logger-c-lo"><a href="#logger-c-lo" class="headerlink" title="logger,c,lo"></a>logger,c,lo</h3><blockquote>
+<p>输出日志的logger名，可有一个整形参数，功能是缩短logger名</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>%logger</th>
+<th>mainPackage.sub.sample.Bar</th>
+<th>mainPackage.sub.sample.Bar</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%logger{0}</td>
+<td>mainPackage.sub.sample.Bar</td>
+<td>Bar</td>
+</tr>
+<tr>
+<td>%logger{5}</td>
+<td>mainPackage.sub.sample.Bar</td>
+<td>m.s.s.Bar</td>
+</tr>
+<tr>
+<td>%logger{16}</td>
+<td>mainPackage.sub.sample.Bar</td>
+<td>m.sub.sample.Bar</td>
+</tr>
+</tbody></table>
+<h3 id="C-class"><a href="#C-class" class="headerlink" title="C,class"></a>C,class</h3><h3 id="contextName-cn-输出上下文名称"><a href="#contextName-cn-输出上下文名称" class="headerlink" title="contextName,cn 输出上下文名称"></a>contextName,cn 输出上下文名称</h3><h3 id="d-date"><a href="#d-date" class="headerlink" title="d ,date"></a>d ,date</h3><blockquote>
+<p>输出日志的打印日志，模式语法与java.text.SimpleDateFormat 兼容。 </p>
+</blockquote>
+<ul>
+<li>%date{dd MMM yyyy ;HH:mm:ss.SSS}</li>
+<li>%date{HH:mm:ss.SSS}</li>
+<li>%date{ISO8601}</li>
+</ul>
+<h3 id="F-file"><a href="#F-file" class="headerlink" title="F / file"></a>F / file</h3><blockquote>
+<p>输出执行记录请求的java源文件名。尽量避免使用，除非执行速度不造成任何问题</p>
+</blockquote>
+<h3 id="caller-depth"><a href="#caller-depth" class="headerlink" title="caller{depth}"></a>caller{depth}</h3><blockquote>
+<p>输出生成日志的调用者的代码执行位置信息，整数选项表示输出信息深度</p>
+</blockquote>
+<h3 id="L-line"><a href="#L-line" class="headerlink" title="L / line"></a>L / line</h3><blockquote>
+<p>输出执行日志请求的行号。尽量避免使用，除非执行速度不造成任何问题。</p>
+</blockquote>
+<h3 id="m-msg-message"><a href="#m-msg-message" class="headerlink" title="m / msg / message"></a>m / msg / message</h3><blockquote>
+<p>输出应用程序提供的信息。</p>
+</blockquote>
+<h3 id="M-method"><a href="#M-method" class="headerlink" title="M / method"></a>M / method</h3><blockquote>
+<p>输出执行日志请求的方法名。尽量避免使用，除非执行速度不造成任何问题。</p>
+</blockquote>
+<h3 id="n"><a href="#n" class="headerlink" title="n"></a>n</h3><blockquote>
+<p>输出平台先关的分行符“\n”或者“\r\n”。</p>
+</blockquote>
+<h3 id="p-le-level"><a href="#p-le-level" class="headerlink" title="p / le / level"></a>p / le / level</h3><blockquote>
+<p>输出日志级别。</p>
+</blockquote>
+<h3 id="r-relative"><a href="#r-relative" class="headerlink" title="r / relative"></a>r / relative</h3><blockquote>
+<p>输出从程序启动到创建日志记录的时间，单位是毫秒</p>
+</blockquote>
+<h3 id="t-thread"><a href="#t-thread" class="headerlink" title="t / thread"></a>t / thread</h3><blockquote>
+<p>输出产生日志的线程名</p>
+</blockquote>
+<h3 id="replace-p-r-t"><a href="#replace-p-r-t" class="headerlink" title="replace(p ){r, t}"></a>replace(p ){r, t}</h3><blockquote>
+<p>p 为日志内容，r 是正则表达式，将p 中符合r 的内容替换为t 。<br>例如， “%replace(%msg){‘\s’, ‘’}”</p>
+</blockquote>
+<h2 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h2><h3 id="LevelFilter"><a href="#LevelFilter" class="headerlink" title="LevelFilter"></a>LevelFilter</h3><blockquote>
+<p>级别过滤器，根据日志级别进行过滤<br>如果日志级别等于配置级别，过滤器会根据onMath 和 onMismatch接收或拒绝日志</p>
+</blockquote>
+<ul>
+<li><code>level</code> 设置过滤级别 TRACE, DEBUG, INFO, WARN, ERROR</li>
+<li><code>onMatch</code> 用于配置符合过滤条件的操作,ACCEPT,DENY,NEUTRAL</li>
+<li>用于配置不符合过滤条件的操作</li>
+</ul>
+<h3 id="ThresholdFilter"><a href="#ThresholdFilter" class="headerlink" title="ThresholdFilter"></a>ThresholdFilter</h3><blockquote>
+<p>临界值过滤器，过滤掉低于指定临界值的日志。</p>
+</blockquote>
+<pre><code class="xml">&lt;!-- 过滤掉 TRACE 和 DEBUG 级别的日志--&gt;   
+&lt;filter class=&quot;ch.qos.logback.classic.filter.ThresholdFilter&quot;&gt;   
+  &lt;level&gt;INFO&lt;/level&gt;   
+&lt;/filter&gt; </code></pre>
+<h3 id="EvaluatorFilter"><a href="#EvaluatorFilter" class="headerlink" title="EvaluatorFilter"></a>EvaluatorFilter</h3><blockquote>
+<p>求值过滤器，评估、鉴别日志是否符合指定条件<br> 需要额外的两个JAR包，commons-compiler.jar和janino.jar</p>
+</blockquote>
+<pre><code>&lt;filter class=&quot;ch.qos.logback.core.filter.EvaluatorFilter&quot;&gt;         
+  &lt;evaluator&gt; &lt;!-- 默认为 ch.qos.logback.classic.boolex.JaninoEventEvaluator --&gt;   
+    &lt;expression&gt;return message.contains(&quot;billing&quot;);&lt;/expression&gt;   
+  &lt;/evaluator&gt;   
+  &lt;OnMatch&gt;ACCEPT &lt;/OnMatch&gt;  
+  &lt;OnMismatch&gt;DENY&lt;/OnMismatch&gt;  
+&lt;/filter&gt;   </code></pre><h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!--
+    Copyright 2010-2011 The myBatis Team
+    Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+--&gt;
+&lt;configuration debug=&quot;false&quot;&gt;
+    &lt;contextName&gt;weixin-web&lt;/contextName&gt;
+    &lt;!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径--&gt;
+    &lt;property name=&quot;LOG_HOME&quot; value=&quot;C:\\home\\log\\weixin&quot; /&gt;
+    &lt;!-- 控制台输出 --&gt;
+    &lt;appender name=&quot;STDOUT&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
+        &lt;encoder class=&quot;ch.qos.logback.classic.encoder.PatternLayoutEncoder&quot;&gt;
+            &lt;!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--&gt;
+            &lt;pattern&gt;%-4relative %date [%thread] %-5level %logger{50} - %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;!-- 按照每天生成日志文件 --&gt;
+
+    &lt;appender name=&quot;INFO_FILE&quot;  class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+        &lt;filter class=&quot;ch.qos.logback.classic.filter.LevelFilter&quot;&gt;
+            &lt;level&gt;ERROR&lt;/level&gt;
+            &lt;onMatch&gt;DENY&lt;/onMatch&gt;
+            &lt;onMismatch&gt;ACCEPT&lt;/onMismatch&gt;
+        &lt;/filter&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;&gt;
+            &lt;!--日志文件输出的文件名--&gt;
+            &lt;FileNamePattern&gt;${LOG_HOME}/INFO.log.%d{yyyy-MM-dd}.log&lt;/FileNamePattern&gt;
+            &lt;!--日志文件保留天数--&gt;
+            &lt;MaxHistory&gt;30&lt;/MaxHistory&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder class=&quot;ch.qos.logback.classic.encoder.PatternLayoutEncoder&quot;&gt;
+            &lt;!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--&gt;
+            &lt;pattern&gt;%-4relative %date [%thread] %-5level %logger{50} - %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+        &lt;!--日志文件最大的大小--&gt;
+        &lt;triggeringPolicy class=&quot;ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy&quot;&gt;
+            &lt;MaxFileSize&gt;100MB&lt;/MaxFileSize&gt;
+        &lt;/triggeringPolicy&gt;
+    &lt;/appender&gt;
+    &lt;appender name=&quot;ERR_FILE&quot;  class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+        &lt;!--
+       返回DENY，日志将立即被抛弃不再经过其他过滤器；
+       返回NEUTRAL，有序列表里的下个过滤器过接着处理日志；
+       返回ACCEPT，日志会被立即处理，不再经过剩余过滤器
+       --&gt;
+        &lt;filter class=&quot;ch.qos.logback.classic.filter.LevelFilter&quot;&gt;
+            &lt;level&gt;ERROR&lt;/level&gt;
+            &lt;onMatch&gt;ACCEPT&lt;/onMatch&gt;
+            &lt;onMismatch&gt;DENY&lt;/onMismatch&gt;
+        &lt;/filter&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;&gt;
+            &lt;!--日志文件输出的文件名--&gt;
+            &lt;FileNamePattern&gt;${LOG_HOME}/ERROR.log.%d{yyyy-MM-dd}.log&lt;/FileNamePattern&gt;
+            &lt;!--日志文件保留天数--&gt;
+            &lt;MaxHistory&gt;30&lt;/MaxHistory&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder class=&quot;ch.qos.logback.classic.encoder.PatternLayoutEncoder&quot;&gt;
+            &lt;!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--&gt;
+            &lt;pattern&gt;%-4relative %date [%thread] %-5level %logger{50} - %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+        &lt;!--日志文件最大的大小--&gt;
+        &lt;triggeringPolicy class=&quot;ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy&quot;&gt;
+            &lt;MaxFileSize&gt;10MB&lt;/MaxFileSize&gt;
+        &lt;/triggeringPolicy&gt;
+    &lt;/appender&gt;
+    &lt;!-- 数据库输出 --&gt;
+     &lt;appender name=&quot;db&quot; class=&quot;ch.qos.logback.classic.db.DBAppender&quot;&gt;
+         &lt;connectionSource
+             class=&quot;ch.qos.logback.core.db.DriverManagerConnectionSource&quot;&gt;
+             &lt;driverClass&gt;com.mysql.jdbc.Driver&lt;/driverClass&gt;
+             &lt;url&gt;jdbc:mysql://localhost:3306/weixin_web&lt;/url&gt;
+             &lt;user&gt;root&lt;/user&gt;
+             &lt;password&gt;123456&lt;/password&gt;
+         &lt;/connectionSource&gt;
+     &lt;/appender&gt;
+    &lt;!-- show parameters for hibernate sql 专为 Hibernate 定制 --&gt;
+    &lt;logger name=&quot;org.hibernate.type.descriptor.sql.BasicBinder&quot;  level=&quot;TRACE&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.type.descriptor.sql.BasicExtractor&quot;  level=&quot;DEBUG&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.SQL&quot; level=&quot;DEBUG&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.engine.QueryParameters&quot; level=&quot;DEBUG&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.engine.query.HQLQueryPlan&quot; level=&quot;DEBUG&quot; /&gt;
+
+    &lt;!--myibatis log configure--&gt;
+    &lt;logger name=&quot;com.apache.ibatis&quot; level=&quot;TRACE&quot;/&gt;
+    &lt;logger name=&quot;java.sql.Connection&quot; level=&quot;DEBUG&quot;/&gt;
+    &lt;logger name=&quot;java.sql.Statement&quot; level=&quot;DEBUG&quot;/&gt;
+    &lt;logger name=&quot;java.sql.PreparedStatement&quot; level=&quot;DEBUG&quot;/&gt;
+    &lt;!-- 日志输出级别 --&gt;
+
+    &lt;root level=&quot;DEBUG&quot;&gt;
+        &lt;appender-ref ref=&quot;STDOUT&quot; /&gt;
+        &lt;appender-ref ref=&quot;ERR_FILE&quot; /&gt;
+        &lt;appender-ref ref=&quot;INFO_FILE&quot; /&gt;
+        &lt;appender-ref ref=&quot;db&quot; /&gt;
+    &lt;/root&gt;
+&lt;/configuration&gt;</code></pre>
+<h3 id="db日志的建表语句"><a href="#db日志的建表语句" class="headerlink" title="db日志的建表语句"></a>db日志的建表语句</h3><pre><code>BEGIN;
+DROP TABLE IF EXISTS logging_event_property;
+DROP TABLE IF EXISTS logging_event_exception;
+DROP TABLE IF EXISTS logging_event;
+COMMIT;
+
+
+BEGIN;
+CREATE TABLE logging_event 
+  (
+    timestmp         BIGINT NOT NULL,
+    formatted_message  TEXT NOT NULL,
+    logger_name       VARCHAR(254) NOT NULL,
+    level_string      VARCHAR(254) NOT NULL,
+    thread_name       VARCHAR(254),
+    reference_flag    SMALLINT,
+    arg0              VARCHAR(254),
+    arg1              VARCHAR(254),
+    arg2              VARCHAR(254),
+    arg3              VARCHAR(254),
+    caller_filename   VARCHAR(254) NOT NULL,
+    caller_class      VARCHAR(254) NOT NULL,
+    caller_method     VARCHAR(254) NOT NULL,
+    caller_line       CHAR(4) NOT NULL,
+    event_id          BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY
+  );
+COMMIT;
+
+BEGIN;
+CREATE TABLE logging_event_property
+  (
+    event_id          BIGINT NOT NULL,
+    mapped_key        VARCHAR(254) NOT NULL,
+    mapped_value      TEXT,
+    PRIMARY KEY(event_id, mapped_key),
+    FOREIGN KEY (event_id) REFERENCES logging_event(event_id)
+  );
+COMMIT;
+
+BEGIN;
+CREATE TABLE logging_event_exception
+  (
+    event_id         BIGINT NOT NULL,
+    i                SMALLINT NOT NULL,
+    trace_line       VARCHAR(254) NOT NULL,
+    PRIMARY KEY(event_id, i),
+    FOREIGN KEY (event_id) REFERENCES logging_event(event_id)
+  );
+COMMIT;</code></pre><h2 id="分文件保存日志"><a href="#分文件保存日志" class="headerlink" title="分文件保存日志"></a>分文件保存日志</h2><blockquote>
+<p><a href="https://github.com/keeleys/logback_demo" target="_blank" rel="noopener">github 参考项目</a><br>pom</p>
+</blockquote>
+<pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+    &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;
+    &lt;version&gt;1.1.3&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.codehaus.janino&lt;/groupId&gt;
+    &lt;artifactId&gt;janino&lt;/artifactId&gt;
+    &lt;version&gt;2.7.8&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+<p>java</p>
+<pre><code class="java">public class ServiceCtrl {
+    private Logger log = LoggerFactory.getLogger(ServiceCtrl.class);
+    private Logger syslog = LoggerFactory.getLogger(&quot;syslog&quot;);
+    public void login(){
+        String userName = &quot;admin&quot;;
+        String password = &quot;123&quot;;
+
+        log.info(&quot;service方法 进入登陆方法&quot;);
+        log.info(&quot;client方法 登陆账户{} ,登陆密码{}&quot;,userName,password);
+        log.error(&quot;service方法 账户{}登陆失败&quot;,userName);
+        syslog.info(&quot;我是syslog 我只记录在syslog.txt里面&quot;);
+
+    }
+}</code></pre>
+<p>logback.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;configuration debug=&quot;false&quot;&gt;
+    &lt;contextName&gt;weixin-web&lt;/contextName&gt;
+    &lt;!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径--&gt;
+    &lt;property name=&quot;LOG_HOME&quot; value=&quot;C:\\home\\log\\test_logback&quot; /&gt;
+    &lt;!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--&gt;
+    &lt;property name=&quot;print_pattern&quot; value=&quot;%date [%thread] %-5level %logger{50} - %msg%n&quot; /&gt;
+    &lt;!-- 控制台输出 --&gt;
+    &lt;appender name=&quot;STDOUT&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
+        &lt;encoder class=&quot;ch.qos.logback.classic.encoder.PatternLayoutEncoder&quot;&gt;
+            &lt;pattern&gt;${print_pattern}&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+
+
+
+    &lt;appender name=&quot;INFO_FILE&quot;  class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+        &lt;!--
+          返回DENY，日志将立即被抛弃不再经过其他过滤器；
+          返回NEUTRAL，有序列表里的下个过滤器过接着处理日志；
+          返回ACCEPT，日志会被立即处理，不再经过剩余过滤器
+          --&gt;
+        &lt;filter class=&quot;ch.qos.logback.classic.filter.LevelFilter&quot;&gt;
+            &lt;level&gt;ERROR&lt;/level&gt;
+            &lt;onMatch&gt;DENY&lt;/onMatch&gt;
+            &lt;onMismatch&gt;ACCEPT&lt;/onMismatch&gt;
+        &lt;/filter&gt;
+        &lt;!-- 按照每天生成日志文件 --&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;&gt;
+            &lt;!--日志文件输出的文件名--&gt;
+            &lt;FileNamePattern&gt;${LOG_HOME}/info.log.%d{yyyy-MM-dd}.log&lt;/FileNamePattern&gt;
+            &lt;!--日志文件保留天数--&gt;
+            &lt;MaxHistory&gt;30&lt;/MaxHistory&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder class=&quot;ch.qos.logback.classic.encoder.PatternLayoutEncoder&quot;&gt;
+            &lt;pattern&gt;${print_pattern}&lt;/pattern&gt;
+        &lt;/encoder&gt;
+        &lt;!--日志文件最大的大小--&gt;
+        &lt;triggeringPolicy class=&quot;ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy&quot;&gt;
+            &lt;MaxFileSize&gt;100MB&lt;/MaxFileSize&gt;
+        &lt;/triggeringPolicy&gt;
+    &lt;/appender&gt;
+    &lt;appender name=&quot;ERR_FILE&quot;  class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+
+        &lt;filter class=&quot;ch.qos.logback.classic.filter.LevelFilter&quot;&gt;
+            &lt;level&gt;ERROR&lt;/level&gt;
+            &lt;onMatch&gt;ACCEPT&lt;/onMatch&gt;
+            &lt;onMismatch&gt;DENY&lt;/onMismatch&gt;
+        &lt;/filter&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;&gt;
+            &lt;!--日志文件输出的文件名--&gt;
+            &lt;FileNamePattern&gt;${LOG_HOME}/error.log.%d{yyyy-MM-dd}.log&lt;/FileNamePattern&gt;
+            &lt;!--日志文件保留天数--&gt;
+            &lt;MaxHistory&gt;30&lt;/MaxHistory&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder class=&quot;ch.qos.logback.classic.encoder.PatternLayoutEncoder&quot;&gt;
+            &lt;pattern&gt;${print_pattern}&lt;/pattern&gt;
+        &lt;/encoder&gt;
+        &lt;!--日志文件最大的大小--&gt;
+        &lt;triggeringPolicy class=&quot;ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy&quot;&gt;
+            &lt;MaxFileSize&gt;10MB&lt;/MaxFileSize&gt;
+        &lt;/triggeringPolicy&gt;
+    &lt;/appender&gt;
+
+
+    &lt;appender name=&quot;SERVICE_FILE&quot;  class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+        &lt;filter class=&quot;ch.qos.logback.core.filter.EvaluatorFilter&quot;&gt;
+            &lt;evaluator&gt;
+                &lt;expression&gt;return message.contains(&quot;service方法&quot;);&lt;/expression&gt;
+            &lt;/evaluator&gt;
+            &lt;OnMatch&gt;ACCEPT&lt;/OnMatch&gt;
+            &lt;OnMismatch&gt;DENY&lt;/OnMismatch&gt;
+        &lt;/filter&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;&gt;
+            &lt;FileNamePattern&gt;${LOG_HOME}/service.log.%d{yyyy-MM-dd}.log&lt;/FileNamePattern&gt;
+            &lt;MaxHistory&gt;30&lt;/MaxHistory&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder class=&quot;ch.qos.logback.classic.encoder.PatternLayoutEncoder&quot;&gt;
+            &lt;pattern&gt;${print_pattern}&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+
+    &lt;appender name=&quot;syslogFile&quot; class=&quot;ch.qos.logback.core.FileAppender&quot;&gt;
+        &lt;file&gt;${LOG_HOME}/syslogFile.log&lt;/file&gt;
+        &lt;append&gt;true&lt;/append&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;${print_pattern}&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;!-- show parameters for hibernate sql 专为 Hibernate 定制 --&gt;
+    &lt;logger name=&quot;org.hibernate.type.descriptor.sql.BasicBinder&quot;  level=&quot;TRACE&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.type.descriptor.sql.BasicExtractor&quot;  level=&quot;DEBUG&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.SQL&quot; level=&quot;DEBUG&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.engine.QueryParameters&quot; level=&quot;DEBUG&quot; /&gt;
+    &lt;logger name=&quot;org.hibernate.engine.query.HQLQueryPlan&quot; level=&quot;DEBUG&quot; /&gt;
+
+    &lt;!--myibatis log configure--&gt;
+    &lt;logger name=&quot;com.apache.ibatis&quot; level=&quot;TRACE&quot;/&gt;
+    &lt;logger name=&quot;java.sql.Connection&quot; level=&quot;DEBUG&quot;/&gt;
+    &lt;logger name=&quot;java.sql.Statement&quot; level=&quot;DEBUG&quot;/&gt;
+    &lt;logger name=&quot;java.sql.PreparedStatement&quot; level=&quot;DEBUG&quot;/&gt;
+
+
+    &lt;logger name=&quot;syslog&quot; level=&quot;INFO&quot; additivity=&quot;false&quot;&gt;
+        &lt;appender-ref ref=&quot;syslogFile&quot; /&gt;
+    &lt;/logger&gt;
+
+    &lt;!-- 日志输出级别 --&gt;
+    &lt;root level=&quot;DEBUG&quot;&gt;
+        &lt;appender-ref ref=&quot;STDOUT&quot; /&gt;
+        &lt;appender-ref ref=&quot;SERVICE_FILE&quot; /&gt;
+        &lt;appender-ref ref=&quot;ERR_FILE&quot; /&gt;
+        &lt;appender-ref ref=&quot;INFO_FILE&quot; /&gt;
+    &lt;/root&gt;
+&lt;/configuration&gt;</code></pre><h2 id="log4j-转logback"><a href="#log4j-转logback" class="headerlink" title="log4j 转logback"></a>log4j 转logback</h2><pre><code>      &lt;!-- LOGGING begin --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+            &lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;
+            &lt;version&gt;${slf4j.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+            &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;
+            &lt;version&gt;1.0.13&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 代码直接调用log4j会被桥接到slf4j --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+            &lt;artifactId&gt;log4j-over-slf4j&lt;/artifactId&gt;
+            &lt;version&gt;${slf4j.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;!-- 代码直接调用common-logging会被桥接到slf4j --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+            &lt;artifactId&gt;jcl-over-slf4j&lt;/artifactId&gt;
+            &lt;version&gt;${slf4j.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;!-- 代码直接调用java.util.logging会被桥接到slf4j --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+            &lt;artifactId&gt;jul-to-slf4j&lt;/artifactId&gt;
+            &lt;version&gt;${slf4j.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.bgee.log4jdbc-log4j2&lt;/groupId&gt;
+            &lt;artifactId&gt;log4jdbc-log4j2-jdbc4&lt;/artifactId&gt;
+            &lt;version&gt;1.15&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;!-- LOGGING end --&gt;</code></pre>
+</div>
+
+		</div>
+		<footer>
+			<div class="seq20"></div>
+		</footer>
+	</div>
+	<!-- 引入 js 文件 -->
+	
+<script src="/diary/js/main.js"></script>
+
+	<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
